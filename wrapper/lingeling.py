@@ -39,6 +39,7 @@ class LingelingWrapper:
             with open('out/incorrect_lingelin_out', 'w') as f:
                 for out_line in output:
                     f.write(out_line + '\n')
+            time = self.min_time
         else:
             time = max(float(output[len(output) - 2].split(' ')[1]), self.min_time)
 

@@ -6,7 +6,7 @@ from algorithm.trivium_64 import Trivium_64
 from algorithm.evolution import EvolutionAlgorithm
 from module import decomposition
 from module.case_solver import CaseSolver
-from util import formatter, constant, mutation, generator, caser, parser, ploter
+from util import formatter, constant, mutation, generator, caser, parser
 from util.parser import parse_cnf
 from wrapper.lingeling import LingelingWrapper
 from wrapper.minisat import MinisatWrapper
@@ -53,8 +53,8 @@ pf_parameters = {
     "N": 1000,
     "solver_wrapper": solver_wrappers["lingeling"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
-    "d": 3,  # 2^d == threads
-    "break_time": 300
+    "d": 4,  # 2^d == threads
+    "break_time": 600
 }
 
 # data1 = parser.parse_out("./out/log_without_restarts", 2)
