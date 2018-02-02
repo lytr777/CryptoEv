@@ -21,7 +21,7 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 10 or met < 2 ** 22,
+    "iterative": lambda it, met, res: it > 600 or met < 2 ** 20,
 }
 
 mutation_strategy = {
@@ -49,12 +49,12 @@ ev_alg = EvolutionAlgorithm(ev_parameters)
 pf_parameters = {
     "crypto_algorithm": A5_toy,
     "cnf_link": constant.a5_toy_cnf,
-    "threads": 16,
+    "threads": 32,
     "N": 1000,
     "solver_wrapper": solver_wrappers["lingeling"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
-    "d": 4,  # 2^d == threads
-    "break_time": 600
+    "d": 5,  # 2^d == threads
+    "break_time": 900
 }
 
 # data1 = parser.parse_out("./out/log_without_restarts", 2)
