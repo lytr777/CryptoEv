@@ -21,7 +21,7 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 800, # or met < 2 ** 20,
+    "iterative": lambda it, met, res: it > 1000, # or met < 2 ** 20,
 }
 
 mutation_strategy = {
