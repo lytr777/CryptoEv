@@ -45,6 +45,21 @@ def parse_cnf(cnf_file):
     return cnf
 
 
+def restore_hash(metric_hash, out_path, k):
+    data = __read_file(out_path)
+    i = 0
+    while len(data) > i:
+        for j in range(k):
+            i += __skip_while(data, i, lambda s: not s.startswith("start") and not s.startswith("best"))
+            if data[i].startswith("start"):
+                key = data[i].split(" ")[4]
+                i += __skip_while(data, i, lambda s: not s.startswith("end"))
+                metric = float(data[i].split(" ")[4])
+                metric_hash[key] = metric
+            else:
+                return
+
+
 def parse_out(out_path, k):
     data = __read_file(out_path)
     i = 0

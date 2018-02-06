@@ -6,7 +6,7 @@ from algorithm.trivium_64 import Trivium_64
 from algorithm.evolution import EvolutionAlgorithm
 from module import decomposition
 from module.case_solver import CaseSolver
-from util import formatter, constant, mutation, generator, caser, parser
+from util import formatter, constant, mutation, generator, caser, parser, ploter
 from util.parser import parse_cnf
 from wrapper.lingeling import LingelingWrapper
 from wrapper.minisat import MinisatWrapper
@@ -21,7 +21,7 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 1000, # or met < 2 ** 20,
+    "iterative": lambda it, met, res: it > 3000,  # or met < 2 ** 20,
 }
 
 mutation_strategy = {
@@ -57,18 +57,31 @@ pf_parameters = {
     "break_time": 900
 }
 
-# data1 = parser.parse_out("./out/log_without_restarts", 2)
-# data2 = parser.parse_out("./out/log_swap_23", 2)
-# ploter.show_plot([data1, data2])
+parser.restore_hash(metric_hash, "./out/6.02.trivium_64_log", 2)
+
+# data1 = parser.parse_out("./out/6.02.trivium_64_log", 2)
+# # data2 = parser.parse_out("./out/log_swap_23", 2)
+# ploter.show_plot([data1])
 #
 # exit(0)
 
 best_locals = ev_alg.start(pf_parameters)
+best = (None, 2 ** 64)
+if len(best_locals) > 0:
+    best = best_locals[0]
 print "------------------------------------------------------"
 print "------------------------------------------------------"
 print "------------------------------------------------------"
 for best_local in best_locals:
+    if best[1] > best_local[1]:
+        best = best_local
     print "best local: " + formatter.format_array(best_local[0]) + " with metric: " + str(best_local[1])
+
+if best:
+    print "------------------------------------------------------"
+    print "------------------------------------------------------"
+    print "------------------------------------------------------"
+    print "best: " + formatter.format_array(best[0]) + " with metric: " + str(best[1])
 
 # key = generator.generate_key(48)
 #
