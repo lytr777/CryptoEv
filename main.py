@@ -21,7 +21,7 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 3000,  # or met < 2 ** 20,
+    "iterative": lambda it, met, res: it > 1500,  # or met < 2 ** 20,
 }
 
 mutation_strategy = {
@@ -38,7 +38,7 @@ ev_parameters = {
     "mutation_strategy": mutation_strategy["normally"],
     "stop_condition": stop_conditions["iterative"],
     "metric_hash": metric_hash,
-    "stagnation_limit": 20,
+    "stagnation_limit": 100,
 
     "lambda": 1,
     "mu": 1
@@ -58,8 +58,9 @@ pf_parameters = {
 }
 
 parser.restore_hash(metric_hash, "./out/6.02.trivium_64_log", 2)
+parser.restore_hash(metric_hash, "./out/8.02.trivium_64_log", 2)
 
-# data1 = parser.parse_out("./out/6.02.trivium_64_log", 2)
+# data1 = parser.parse_out("./out/8.02.trivium_64_log", 2)
 # # data2 = parser.parse_out("./out/log_swap_23", 2)
 # ploter.show_plot([data1])
 #
