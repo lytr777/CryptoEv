@@ -9,7 +9,7 @@ def format_array(array):
     return s
 
 
-def from_format_array(s):
+def format_to_array(s):
     s = s.split('(')[0]
     array = []
     for c in s:
