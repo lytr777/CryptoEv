@@ -17,18 +17,27 @@ pf_parameters = {
     "crypto_algorithm": Trivium_64,
     "cnf_link": constant.trivium_64_cnf,
     "threads": 16,
-    "N": 30000,
+    "N": 100000,
     "solver_wrapper": solver_wrappers["lingeling"],
 }
 
 cases = [
-    formatter.format_to_array('0000001010111101001000000010101111101100000010000100001000101000(22)'),
-    formatter.format_to_array('0100100111001011001100010001000101100100000001100010001010001100(23)'),
-    formatter.format_to_array('0100011001011001000000100110001111110100000010010100000100001000(22)'),
-    formatter.format_to_array('0101101010011001000000000011011100010110001100000100001001100000(22)')
+    formatter.format_to_array('0000001010111101001000000010101111101100000010000100001000101000(22)')
+    # , formatter.format_to_array('0000010110101001010000111011101000110000001000101010010001010000(23)')
+    # , formatter.format_to_array('0100100111001011001100010001000101100100000001100010001010001100(23)')
+    # , formatter.format_to_array('0100011001011001000000100110001111110100000010010100000100001000(22)')
+    # , formatter.format_to_array('0101101010011001000000000011011100010110001100000100001001100000(22)')
 ]
 
 metrics = []
+
+# ss = "B = { "
+# for i in range(len(cases[1])):
+#     if cases[1][i]:
+#         ss += "a" + str(i + 1) + ", "
+# ss += "}"
+# print ss
+# exit(0)
 
 for case in cases:
     print "start with mask: " + formatter.format_array(case)

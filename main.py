@@ -17,7 +17,7 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 5000,
+    "iterative": lambda it, met, res: it > 10000,
     "metric": lambda it, met, res: met < 2 ** 20,
     "mix": lambda it, met, res: it > 10000 or met < 2 ** 20,
 }
@@ -31,12 +31,12 @@ mutation_strategy = {
 # Init parameters
 
 ev_parameters = {
-    "start_s": 50,
+    "start_s": 60,
     "min_s": 0,
     "mutation_strategy": mutation_strategy["normally"],
     "stop_condition": stop_conditions["iterative"],
     "metric_hash": metric_hash,
-    "stagnation_limit": 250,
+    "stagnation_limit": 100,
 
     "lambda": 1,
     "mu": 1
@@ -45,21 +45,22 @@ ev_parameters = {
 ev_alg = EvolutionAlgorithm(ev_parameters)
 
 pf_parameters = {
-    "crypto_algorithm": Trivium_64,
-    "cnf_link": constant.trivium_64_cnf,
-    "threads": 16,
-    "N": 300,
+    "crypto_algorithm": A5_1,
+    "cnf_link": constant.a5_1_cnf,
+    "threads": 4,
+    "N": 30,
     "solver_wrapper": solver_wrappers["lingeling"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
-    "d": 4,  # 2^d == threads
+    "d": 5,  # 2^d == threads
     "break_time": 900
 }
 
-parser.restore_hash(metric_hash, "./out/6.02.trivium_64_log", 2)
-parser.restore_hash(metric_hash, "./out/8.02.trivium_64_log", 2)
-parser.restore_hash(metric_hash, "./out/9.02.trivium_64_log", 2)
+# parser.restore_hash(metric_hash, "./out/6.02.trivium_64_log", 2)
+# parser.restore_hash(metric_hash, "./out/8.02.trivium_64_log", 2)
+# parser.restore_hash(metric_hash, "./out/9.02.trivium_64_log", 2)
 
-# data1 = parser.parse_out("./out/9.02.trivium_64_log", 2)
+
+# data1 = parser.parse_out("./out/12.02.trivium_64_log", 2)
 # # data2 = parser.parse_out("./out/log_swap_23", 2)
 # ploter.show_plot([data1])
 #
