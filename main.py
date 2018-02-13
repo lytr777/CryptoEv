@@ -17,9 +17,9 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 10000,
+    "iterative": lambda it, met, res: it > 3000,
     "metric": lambda it, met, res: met < 2 ** 20,
-    "mix": lambda it, met, res: it > 10000 or met < 2 ** 20,
+    "mix": lambda it, met, res: it > 3000 or met < 2 ** 20,
 }
 
 mutation_strategy = {
@@ -47,8 +47,8 @@ ev_alg = EvolutionAlgorithm(ev_parameters)
 pf_parameters = {
     "crypto_algorithm": A5_1,
     "cnf_link": constant.a5_1_cnf,
-    "threads": 4,
-    "N": 30,
+    "threads": 32,
+    "N": 300,
     "solver_wrapper": solver_wrappers["lingeling"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
     "d": 5,  # 2^d == threads
