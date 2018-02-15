@@ -6,6 +6,7 @@ from util import formatter, constant
 from wrapper.lingeling import LingelingWrapper
 from wrapper.minisat import MinisatWrapper
 from wrapper.plingeling import PLingelingWrapper
+import numpy as np
 
 solver_wrappers = {
     "minisat": MinisatWrapper(constant.minisat_path),
@@ -16,7 +17,7 @@ solver_wrappers = {
 pf_parameters = {
     "crypto_algorithm": Trivium_64,
     "cnf_link": constant.trivium_64_cnf,
-    "threads": 16,
+    "threads": 32,
     "N": 100000,
     "solver_wrapper": solver_wrappers["lingeling"],
 }
@@ -28,6 +29,16 @@ cases = [
     # , formatter.format_to_array('0100011001011001000000100110001111110100000010010100000100001000(22)')
     # , formatter.format_to_array('0101101010011001000000000011011100010110001100000100001001100000(22)')
 ]
+
+case = np.zeros(64, dtype=np.int)
+numbers = [8, 12, 15, 19, 20, 23, 25, 26, 27, 31, 33, 35, 38, 39, 46, 50, 51, 54, 61, 62]
+for i in numbers:
+    case[i - 1] = 1
+
+cases.append(case)
+
+# for c in cases:
+#     print formatter.format_array(c)
 
 metrics = []
 
