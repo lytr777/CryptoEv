@@ -64,6 +64,7 @@ class MultiCaseSolver:
     def check_subprocesses(self, free, out_files, cases, solved_cases, broke_cases, subprocesses, break_f):
         sleep(self.sleep_time)
         j = 0
+        times = []
         while j < len(subprocesses):
             sp = subprocesses[j][1]
             i = subprocesses[j][0]
@@ -75,6 +76,7 @@ class MultiCaseSolver:
                 solved_cases.append(case)
                 free.append(i)
 
+                times.append(case.time)
                 # print "subprocess " + str(i) + " ended with result (" + case.status + ", " + str(case.time) + ")"
             else:
                 if break_f(i):
@@ -88,7 +90,7 @@ class MultiCaseSolver:
                 else:
                     j += 1
 
-        self.__print_progress(len(solved_cases), len(broke_cases), len(cases), len(subprocesses))
+        self.__print_progress(len(solved_cases), len(broke_cases), len(cases), len(subprocesses), times)
 
     def __handle_sp(self, sp, out_file, case):
         output = sp.communicate()[0]
@@ -96,8 +98,9 @@ class MultiCaseSolver:
 
         case.mark_solved(time, status, out_file)
 
-    def __print_progress(self, solved, broke, waiting, solving):
+    def __print_progress(self, solved, broke, waiting, solving, times):
         progress = (broke + solved) * 100. / (solved + broke + waiting + solving)
-        if self.last_progress != progress:
-            print "progress " + str("%.2f" % progress) + "% active(" + str(solving) + ")"
+        # if self.last_progress != progress:
+        if len(times) != 0:
+            print "progress " + str("%.2f" % progress) + "% active(" + str(solving) + ") with times: " + str(times)
             self.last_progress = progress

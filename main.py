@@ -1,6 +1,7 @@
 from algorithm.a5_1 import A5_1
 from algorithm.a5_toy import A5_toy
 from algorithm.trivium_64 import Trivium_64
+from algorithm.bivium import Bivium
 from algorithm.evolution import EvolutionAlgorithm
 from module import decomposition
 from util import formatter, constant, mutation, parser, ploter
@@ -17,9 +18,9 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 3000,
+    "iterative": lambda it, met, res: it > 10000,
     "metric": lambda it, met, res: met < 2 ** 20,
-    "mix": lambda it, met, res: it > 3000 or met < 2 ** 20,
+    "mix": lambda it, met, res: it > 10000 or met < 2 ** 20,
 }
 
 mutation_strategy = {
@@ -31,7 +32,7 @@ mutation_strategy = {
 # Init parameters
 
 ev_parameters = {
-    "start_s": 60,
+    "start_s": 150,
     "min_s": 0,
     "mutation_strategy": mutation_strategy["normally"],
     "stop_condition": stop_conditions["iterative"],
@@ -45,14 +46,14 @@ ev_parameters = {
 ev_alg = EvolutionAlgorithm(ev_parameters)
 
 pf_parameters = {
-    "crypto_algorithm": A5_1,
-    "cnf_link": constant.a5_1_cnf,
+    "crypto_algorithm": Bivium,
+    "cnf_link": constant.bivium_cnf,
     "threads": 32,
     "N": 300,
     "solver_wrapper": solver_wrappers["lingeling"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
     "d": 5,  # 2^d == threads
-    "break_time": 900
+    # "break_time": 900
 }
 
 # parser.restore_hash(metric_hash, "./out/6.02.trivium_64_log", 2)

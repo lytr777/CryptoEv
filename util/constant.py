@@ -4,6 +4,7 @@ out_suffix = ".out"
 a5_1_cnf = "./algorithm/A5_1.cnf"
 a5_toy_cnf = "./algorithm/A5_toy.cnf"
 trivium_64_cnf = "./algorithm/Trivium_64.cnf"
+bivium_cnf = "./algorithm/Bivium.cnf"
 
 minisat_path = "./minisat/core/minisat"
 lingeling_path = "./lingeling/lingeling"

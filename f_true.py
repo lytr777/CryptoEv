@@ -37,6 +37,16 @@ for i in numbers:
 
 cases.append(case)
 
+
+# for c in cases:
+#     ss = ""
+#     for i in range(len(c)):
+#         if c[i]:
+#             ss += str(i + 1) + ", "
+#     ss += ""
+#     print ss
+# exit(0)
+
 # for c in cases:
 #     print formatter.format_array(c)
 
