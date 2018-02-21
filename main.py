@@ -26,13 +26,14 @@ stop_conditions = {
 mutation_strategy = {
     "neighbour": mutation.neighbour_mutation,
     "normally": mutation.normally_mutation,
+    "scaled": lambda v: mutation.scaled_mutation(2., v),
     "swap": mutation.swap_mutation
 }
 
 # Init parameters
 
 ev_parameters = {
-    "start_s": 150,
+    "start_s": 120,
     "min_s": 0,
     "mutation_strategy": mutation_strategy["normally"],
     "stop_condition": stop_conditions["iterative"],
@@ -56,13 +57,12 @@ pf_parameters = {
     # "break_time": 900
 }
 
-# parser.restore_hash(metric_hash, "./out/6.02.trivium_64_log", 2)
+parser.restore_hash(metric_hash, "./out/21.02.bivium_log", 2)
 # parser.restore_hash(metric_hash, "./out/8.02.trivium_64_log", 2)
 # parser.restore_hash(metric_hash, "./out/9.02.trivium_64_log", 2)
 
 
-# data1 = parser.parse_out("./out/12.02.trivium_64_log", 2)
-# # data2 = parser.parse_out("./out/log_swap_23", 2)
+# data1 = parser.parse_out("./out/21.02.bivium_log", 2)
 # ploter.show_plot([data1])
 #
 # exit(0)

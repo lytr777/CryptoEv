@@ -23,6 +23,18 @@ def normally_mutation(vector):
     return new_vector
 
 
+def scaled_mutation(c, vector):
+    new_vector = copy(vector)
+    distribution = generator.generate_distribution(len(new_vector))
+    p = float(c) / len(vector)
+
+    for i in range(len(new_vector)):
+        if p >= distribution[i]:
+            new_vector[i] = not new_vector[i]
+
+    return new_vector
+
+
 def zero_mutation(vector, s):
     nonzero = np.count_nonzero(vector)
     if nonzero >= s:

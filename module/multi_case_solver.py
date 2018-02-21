@@ -3,6 +3,7 @@ import tempfile
 import os
 import numpy as np
 from time import sleep, time as now
+from datetime import datetime
 
 
 class MultiCaseSolver:
@@ -102,5 +103,5 @@ class MultiCaseSolver:
         progress = (broke + solved) * 100. / (solved + broke + waiting + solving)
         # if self.last_progress != progress:
         if len(times) != 0:
-            print "progress " + str("%.2f" % progress) + "% active(" + str(solving) + ") with times: " + str(times)
+            print "progress (" + str(datetime.now()) + ") " + str("%.2f" % progress) + "% active(" + str(solving) + ") with times: " + str(times)
             self.last_progress = progress

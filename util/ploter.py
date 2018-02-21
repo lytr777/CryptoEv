@@ -7,7 +7,7 @@ def show_plot(data):
     for d in data:
         metrics = []
         for i in range(len(d)):
-            metrics.append(d[i][0])
+            metrics.append(d[i][1])
         data_metrics.append(metrics)
 
     figures = []

@@ -73,12 +73,12 @@ def parse_out(out_path, k):
                 mask = data[i].split(" ")[1].split("(")[0]
                 i += 1
                 metric = float(data[i].split(" ")[2])
-                step.append((metric, mask))
+                step.append((mask, metric))
             elif data[i].startswith("start"):
                 mask = data[i].split(" ")[4].split("(")[0]
                 i += __skip_while(data, i, lambda s: not s.startswith("end"))
                 metric = float(data[i].split(" ")[4])
-                step.append((metric, mask))
+                step.append((mask, metric))
             else:
                 break
 
@@ -86,7 +86,7 @@ def parse_out(out_path, k):
             break
         best = step[0]
         for j in range(1, k):
-            if step[j][0] < best[0]:
+            if step[j][1] < best[1]:
                 best = step[j]
         steps.append(best)
 
