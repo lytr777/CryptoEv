@@ -93,6 +93,50 @@ def parse_out(out_path, k):
     return steps
 
 
+def parse_true_out(out_path):
+    data = __read_file(out_path)
+    i = 0
+    cases = []
+    while len(data) > i:
+        times = []
+        i += __skip_while(data, i, lambda s: not s.startswith("start") and (
+                not s.startswith("metric")))
+        if data[i].startswith("start"):
+            i += __skip_while(data, i, lambda s: not s.startswith("progress"))
+            while data[i].startswith("progress"):
+                str_times = data[i].split("[")[1].split("]")[0].split(",")
+                for j in range(len(str_times)):
+                    times.append(float(str_times[j]))
+                i += 1
+        else:
+            break
+
+        if len(times) != 0:
+            statistic = {"0.1": 0, "<1": 0, "<10": 0, ">10": 0}
+
+            time_sum = 0
+            unfair_time_sum = 0
+            for time in times:
+                if time == 0.1:
+                    statistic["0.1"] += 1
+                    unfair_time_sum += 0.000005
+                elif time < 1.:
+                    statistic["<1"] += 1
+                    unfair_time_sum += time
+                elif time < 10.:
+                    statistic["<10"] += 1
+                    unfair_time_sum += time
+                else:
+                    statistic[">10"] += 1
+                    unfair_time_sum += time
+                time_sum += time
+
+            print unfair_time_sum / time_sum
+            cases.append(statistic)
+
+    return cases
+
+
 def __skip_while(data, index, predicate):
     i = 0
     while predicate(data[index + i]):
