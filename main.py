@@ -20,7 +20,7 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 4000,
+    "iterative": lambda it, met, res: it > 1000,
     "metric": lambda it, met, res: met < 2 ** 20,
     "mix": lambda it, met, res: it > 10000 or met < 2 ** 20,
 }
@@ -52,8 +52,8 @@ pf_parameters = {
     "crypto_algorithm": Bivium,
     "cnf_link": constant.bivium_cnf,
     "threads": 32,
-    "N": 300,
-    "solver_wrapper": solver_wrappers["rokk"],
+    "N": 250,
+    "solver_wrapper": solver_wrappers["minisat"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
     "d": 5,  # 2^d == threads
     # "break_time": 900
