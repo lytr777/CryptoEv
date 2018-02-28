@@ -8,12 +8,14 @@ from util import formatter, constant, mutation, parser, ploter
 from wrapper.lingeling import LingelingWrapper
 from wrapper.minisat import MinisatWrapper
 from wrapper.plingeling import PLingelingWrapper
+from wrapper.rokk import RokkWrapper
 
 metric_hash = {}
 
 solver_wrappers = {
     "minisat": MinisatWrapper(constant.minisat_path),
     "lingeling": LingelingWrapper(constant.lingeling_path),
+    "rokk": RokkWrapper(constant.rokk_path),
     "plingeling": PLingelingWrapper(constant.plingeling_path, 4)
 }
 
@@ -51,18 +53,18 @@ pf_parameters = {
     "cnf_link": constant.bivium_cnf,
     "threads": 32,
     "N": 300,
-    "solver_wrapper": solver_wrappers["lingeling"],
+    "solver_wrapper": solver_wrappers["rokk"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
     "d": 5,  # 2^d == threads
     # "break_time": 900
 }
 
-parser.restore_hash(metric_hash, "./out/21.02.bivium_log", 2)
+# parser.restore_hash(metric_hash, "./out/21.02.bivium_log", 2)
 # parser.restore_hash(metric_hash, "./out/8.02.trivium_64_log", 2)
 # parser.restore_hash(metric_hash, "./out/9.02.trivium_64_log", 2)
 
 
-# data1 = parser.parse_out("./out/21.02.bivium_log", 2)
+# data1 = parser.parse_out("./out/26.02.bivium_log", 2)
 # ploter.show_plot([data1])
 #
 # exit(0)

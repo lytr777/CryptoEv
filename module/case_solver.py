@@ -18,7 +18,7 @@ class CaseSolver:
         case.write_to(cnf_file)
 
         p = subprocess.Popen(launching_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = p.communicate()[0] # bugs with plingeling
+        output = p.communicate()[0]  # bugs with plingeling
 
         time, status = self.solver_wrapper.parse_out(out_file, output)
 
