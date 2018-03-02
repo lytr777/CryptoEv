@@ -20,9 +20,10 @@ class CaseSolver:
         p = subprocess.Popen(launching_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = p.communicate()[0]  # bugs with plingeling
 
-        time, status = self.solver_wrapper.parse_out(out_file, output)
+        report = self.solver_wrapper.parse_out(out_file, output)
+        case.mark_solved(report)
 
-        case.mark_solved(time, status, out_file)
-
-        os.remove(cnf_file)
-        os.remove(out_file)
+        if os.path.isfile(cnf_file):
+            os.remove(cnf_file)
+        if os.path.isfile(out_file):
+            os.remove(out_file)

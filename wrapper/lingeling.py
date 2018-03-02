@@ -1,3 +1,6 @@
+from model.solver_report import SolverReport
+
+
 class LingelingWrapper:
     statuses = {
         "SATISFIABLE": "SATISFIABLE",
@@ -22,7 +25,6 @@ class LingelingWrapper:
 
     def parse_out(self, out_file, output):
         output = output.split('\n')
-        # print output
         solution = ""
         status = ""
         for out_line in output:
@@ -43,7 +45,8 @@ class LingelingWrapper:
         else:
             time = max(float(output[len(output) - 2].split(' ')[1]), self.min_time)
 
-        with open(out_file, 'w') as f:
-            f.write(status[:3] + '\n' + solution)
+        report = SolverReport(self.statuses[status], time)
+        if status == self.statuses["SATISFIABLE"]:
+            report.parse_solution(solution)
 
-        return time, self.statuses[status]
+        return report

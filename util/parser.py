@@ -9,23 +9,14 @@ def __read_file(file_path):
         return data
 
 
-def parse_solution(solver_out_file):
+def parse_solution_file(solver_out_file):
     data = __read_file(solver_out_file)
 
     status = data[0]
     if status != "SAT":
-        return []
+        return ""
 
-    data = data[1].split(" ")
-    solution = []
-    for var in data:
-        num_int = int(var)
-        if num_int < 0:
-            solution.append(0)
-        elif num_int > 0:
-            solution.append(1)
-
-    return solution
+    return data[1]
 
 
 def parse_cnf(cnf_file):

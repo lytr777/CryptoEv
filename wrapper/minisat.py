@@ -1,3 +1,6 @@
+from model.solver_report import SolverReport
+from util.parser import parse_solution_file
+
 class MinisatWrapper:
     statuses = {
         "SAT": "SATISFIABLE",
@@ -36,4 +39,10 @@ class MinisatWrapper:
             i += 1
         status = output[i]
 
-        return time, status
+        solution = parse_solution_file(out_file)
+
+        report = SolverReport(status, time)
+        if status == self.statuses["SAT"]:
+            report.parse_solution(solution)
+
+        return report

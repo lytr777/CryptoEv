@@ -95,9 +95,9 @@ class MultiCaseSolver:
 
     def __handle_sp(self, sp, out_file, case):
         output = sp.communicate()[0]
-        time, status = self.solver_wrapper.parse_out(out_file, output)
+        report = self.solver_wrapper.parse_out(out_file, output)
 
-        case.mark_solved(time, status, out_file)
+        case.mark_solved(report)
 
     def __print_progress(self, solved, broke, waiting, solving, times):
         progress = (broke + solved) * 100. / (solved + broke + waiting + solving)

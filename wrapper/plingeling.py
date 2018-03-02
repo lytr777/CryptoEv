@@ -1,5 +1,7 @@
 import warnings
 
+from model.solver_report import SolverReport
+
 
 class PLingelingWrapper:
     statuses = {
@@ -39,7 +41,9 @@ class PLingelingWrapper:
         solution = solution[:-1]
 
         time = max(float(output[len(output) - 2].split(' ')[1]), self.min_time)
-        with open(out_file, 'w') as f:
-            f.write(status[:3] + '\n' + solution)
 
-        return time, self.statuses[status]
+        report = SolverReport(self.statuses[status], time)
+        if status == self.statuses["SATISFIABLE"]:
+            report.parse_solution(solution)
+
+        return report

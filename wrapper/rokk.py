@@ -1,6 +1,8 @@
 import warnings
 import tempfile
 
+from model.solver_report import SolverReport
+
 
 class RokkWrapper:
     statuses = {
@@ -40,15 +42,16 @@ class RokkWrapper:
             i += 1
         status = output[i]
 
-        solution = ""
+        report = SolverReport(status, time)
+
         if status == self.statuses["SAT"]:
             i += 2
             solution_line = output[i].split(' ')
+            solution = ""
             for i in range(1, len(solution_line)):
                 solution += solution_line[i] + " "
             solution = solution[:-1]
 
-        with open(out_file, 'w') as f:
-            f.write(status[:3] + '\n' + solution)
+            report.parse_solution(solution)
 
-        return time, status
+        return report

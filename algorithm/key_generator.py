@@ -1,5 +1,5 @@
 from model.cnf_model import Clause, Var
-from util.parser import parse_solution
+from util.parser import parse_solution_file
 
 
 class KeyGenerator:
@@ -60,11 +60,10 @@ class KeyGenerator:
 
         self.cnf = None
 
-    def mark_solved(self, time, status, out_path):
-        self.time = time
-        self.status = status
-
-        self.solution = parse_solution(out_path)
+    def mark_solved(self, report):
+        self.time = report.time
+        self.status = report.status
+        self.solution = report.solution
 
     def get_solution_secret_key(self):
         start = self.secret_key_start - 1
