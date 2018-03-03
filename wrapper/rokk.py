@@ -28,8 +28,8 @@ class RokkWrapper:
         output = output.split('\n')
         time = 0
         i = 0
-	# parse SatElite
-	k = 0
+        # parse SatElite
+        k = 0
         for i in range(len(output)):
             if output[i].startswith("c CPU time"):
                 time_str = ""
@@ -37,11 +37,11 @@ class RokkWrapper:
                     if s.isdigit() or s == '.':
                         time_str += s
                 time += float(time_str)
-		k += 1
-		if k == 2:
+                k += 1
+                if k == 2:
                     break
 
-	time = max(time, 1e-5)
+        time = max(time, 1e-5)
         i += 1
         while not len(output[i]):
             i += 1
