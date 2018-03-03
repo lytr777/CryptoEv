@@ -20,7 +20,7 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 1000,
+    "iterative": lambda it, met, res: it > 3000,
     "metric": lambda it, met, res: met < 2 ** 20,
     "mix": lambda it, met, res: it > 10000 or met < 2 ** 20,
 }
@@ -51,7 +51,7 @@ ev_alg = EvolutionAlgorithm(ev_parameters)
 pf_parameters = {
     "crypto_algorithm": Bivium,
     "cnf_link": constant.bivium_cnf,
-    "threads": 8,
+    "threads": 32,
     "N": 300,
     "solver_wrapper": solver_wrappers["rokk"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
