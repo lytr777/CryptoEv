@@ -1,16 +1,16 @@
 #!/bin/bash
 
-rokk_path="rokk"
-mkdir $rokk_path
-tar -xf tars/rokk.tar -C $rokk_path --strip-components 1
+name="rokk"
+mkdir $name
+tar -xf tars/rokk.tar -C $name --strip-components 1
 
-cd $rokk_path/code/sources
+cd $name/code/sources
 cp rokk/core/Makefile core_Make
 cp rokk/simp/Makefile simp_Make
 rm -rf rokk
 
-mkdir $rokk_path
-tar -xf ../../../tars/minisat.tar -C $rokk_path --strip-components 1
+mkdir $name
+tar -xf ../../../tars/minisat.tar -C $name --strip-components 1
 rm -f rokk/core/Makefile
 rm -f rokk/simp/Makefile
 cp core_Make rokk/core/Makefile

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-minisat_path="minisat"
-mkdir $minisat_path
-tar -xf tars/minisat.tar -C $minisat_path --strip-components 1
-cd $minisat_path
+name="minisat"
+mkdir $name
+tar -xf tars/minisat.tar -C $name --strip-components 1
+cd $name
 
 export MROOT=$PWD
 cd core

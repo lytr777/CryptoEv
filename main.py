@@ -51,9 +51,9 @@ ev_alg = EvolutionAlgorithm(ev_parameters)
 pf_parameters = {
     "crypto_algorithm": Bivium,
     "cnf_link": constant.bivium_cnf,
-    "threads": 32,
-    "N": 250,
-    "solver_wrapper": solver_wrappers["minisat"],
+    "threads": 8,
+    "N": 300,
+    "solver_wrapper": solver_wrappers["rokk"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
     "d": 5,  # 2^d == threads
     # "break_time": 900
@@ -64,7 +64,7 @@ pf_parameters = {
 # parser.restore_hash(metric_hash, "./out/9.02.trivium_64_log", 2)
 
 
-# data1 = parser.parse_out("./out/26.02.bivium_log", 2)
+# data1 = parser.parse_out("./out/02.03.bivium_log", 2)
 # ploter.show_plot([data1])
 #
 # exit(0)
