@@ -46,7 +46,7 @@ if len(sys.argv) > 2:
 
 elite_path = './rokk/binary/SatELite_release'
 solver_path = './rokk/binary/rokk_static'
-number = int(random.random() * 1000000)
+number = str(int(random.random() * 1000000))
 out_dir = 'rokk_out'
 
 files = []
