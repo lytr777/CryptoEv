@@ -34,8 +34,8 @@ time_limit = None
 if len(sys.argv) > 2:
     time_limit = int(sys.argv[2])
 
-elite_path = ''
-minisat_path = ''
+elite_path = './rokk/binary/SatELite_release'
+solver_path = './rokk/binary/rokk_static'
 number = int(random.random() * 1000000)
 out_dir = 'rokk_out'
 
@@ -54,7 +54,7 @@ time = 0
 solution = ''
 
 if status is None:
-    l_args = [minisat_path]
+    l_args = [solver_path]
     if time_limit is not None:
         l_args.append('-cpu-lim=' + str(time_limit))
     l_args.append(files[0])
