@@ -49,9 +49,8 @@ solver_path = './rokk/binary/rokk_static'
 number = str(int(random.random() * 1000000))
 
 files = []
-for ex in ['.cnf', '.vmap', '.elim', '.result']:
-    tmp_file = tempfile.NamedTemporaryFile(prefix=number, suffix=ex)
-    files.append(tmp_file.name)
+for ex in ['.cnf', '.vmap', '.elim']:
+    files.append(tempfile.NamedTemporaryFile(prefix=number, suffix=ex).name)
 
 # start SATELite
 l_args = [elite_path, cnf, files[0], files[1], files[2]]
@@ -64,6 +63,7 @@ time = 0
 solution = ''
 
 if status is None:
+    files.append(tempfile.NamedTemporaryFile(prefix=number, suffix='.result').name)
     l_args = [solver_path]
     if time_limit is not None:
         l_args.append('-cpu-lim=' + str(time_limit))
@@ -79,7 +79,7 @@ if status is None:
     if (status is not None) and (status == 'SATISFIABLE'):
         solution = parse_solution_file(files[3])
 
-print time
+print elite_time + time
 print status
 print solution
 
