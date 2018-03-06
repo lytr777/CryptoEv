@@ -63,6 +63,9 @@ elite_time, status = parse_out(code, output)
 time = 0
 solution = ''
 
+print output
+print ' '
+
 if status is None:
     l_args = [solver_path]
     if time_limit is not None:
@@ -74,12 +77,15 @@ if status is None:
     output = p.communicate()[0]
     code = p.poll()
 
+    print output
+    print ' '
+
     time, status = parse_out(code, output)
 
     if (status is not None) and (status == 'SATISFIABLE'):
         solution = parse_solution_file(files[3])
 
-print time
+print elite_time + time
 print status
 print solution
 
