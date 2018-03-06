@@ -47,11 +47,11 @@ if len(sys.argv) > 2:
 elite_path = './rokk/binary/SatELite_release'
 solver_path = './rokk/binary/rokk_static'
 number = str(int(random.random() * 1000000))
-out_dir = 'rokk_out'
 
 files = []
 for ex in ['.cnf', '.vmap', '.elim', '.result']:
-    files.append(tempfile.NamedTemporaryFile(dir=out_dir, prefix=number, suffix=ex).name)
+    tmp_file = tempfile.NamedTemporaryFile(prefix=number, suffix=ex)
+    files.append(tmp_file.name)
 
 # start SATELite
 l_args = [elite_path, cnf, files[0], files[1], files[2]]
