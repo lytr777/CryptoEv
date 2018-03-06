@@ -4,8 +4,6 @@ import subprocess
 import tempfile
 import random
 
-from util.parser import parse_solution_file
-
 
 def parse_out(code, out):
     t = 0
@@ -23,6 +21,18 @@ def parse_out(code, out):
             st = line.split(' ')[1]
 
     return t, st
+
+
+def parse_solution_file(file_path):
+    with open(file_path) as f:
+        lines = f.readlines()
+        data = [str(x).split("\n")[0] for x in lines]
+
+        st = data[0]
+        if st != 'SAT':
+            return ''
+
+        return data[1]
 
 
 if len(sys.argv) < 2:
@@ -73,7 +83,7 @@ print time
 print status
 print solution
 
-for f in files:
-    if os.path.isfile(f):
-        os.remove(f)
+for ff in files:
+    if os.path.isfile(ff):
+        os.remove(ff)
 exit(0)
