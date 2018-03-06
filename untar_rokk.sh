@@ -8,4 +8,5 @@ cd $name
 chmod +x build.sh
 ./build.sh
 
-cp ../start_rokk.sh binary/rokk_m.sh
+cp ../tools/start_rokk.sh binary/rokk_m.sh
+cp ../tools/start_rokk.py binary/rokk_py.py
