@@ -8,7 +8,6 @@ class SolverReport:
         self.solution = []
 
     def parse_solution(self, solution_str):
-
         data = solution_str.split(" ")
 
         for var in data:
@@ -20,4 +19,3 @@ class SolverReport:
 
     def __str__(self):
         return self.status + "(" + str(self.time) + ") solution: " + formatter.format_array(self.solution)
-

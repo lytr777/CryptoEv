@@ -1,3 +1,4 @@
+from model.solver_report import SolverReport
 
 
 class RokkPyWrapper:
@@ -20,3 +21,10 @@ class RokkPyWrapper:
         return launching_args
 
     def parse_out(self, out_file, output):
+        data = output.split('\n')
+
+        report = SolverReport(data[1], float(data[0]))
+        if data[1] == self.statuses['SAT']:
+            report.parse_solution(data[2])
+
+        return report

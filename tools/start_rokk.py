@@ -4,16 +4,25 @@ import subprocess
 import tempfile
 import random
 
+from util.parser import parse_solution_file
 
 
 def parse_out(code, out):
+    t = 0
+    st = None
+    lines = out.split('\n')
+    for line in lines:
+        if line.startswith("c CPU time"):
+            t_str = ""
+            for c in line.split(':')[1]:
+                if c.isdigit() or c == '.':
+                    t_str += c
+            t = float(t_str)
 
-    return 0, '', []
+        if line.startswith("s "):
+            st = line.split(' ')[1]
 
-
-def print_report(time, status, solution):
-
-    return
+    return t, st
 
 
 if len(sys.argv) < 2:
@@ -40,13 +49,14 @@ p = subprocess.Popen(l_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 output = p.communicate()[0]
 code = p.poll()
 
-elite_time, status, solution = parse_out(code, output)
+elite_time, status = parse_out(code, output)
 time = 0
+solution = ''
 
 if status is None:
     l_args = [minisat_path]
     if time_limit is not None:
-        l_args.append("-cpu-lim=" + str(time_limit))
+        l_args.append('-cpu-lim=' + str(time_limit))
     l_args.append(files[0])
     l_args.append(files[3])
 
@@ -54,9 +64,14 @@ if status is None:
     output = p.communicate()[0]
     code = p.poll()
 
-    time, status, solution = parse_out(code, output)
+    time, status = parse_out(code, output)
 
-print_report(time + elite_time, status, solution)
+    if (status is not None) and (status == 'SATISFIABLE'):
+        solution = parse_solution_file(files[3])
+
+print time
+print status
+print solution
 
 for f in files:
     if os.path.isfile(f):
