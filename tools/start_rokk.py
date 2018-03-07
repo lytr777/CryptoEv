@@ -23,18 +23,6 @@ def parse_out(code, out):
     return t, st
 
 
-def parse_solution_file(file_path):
-    with open(file_path) as f:
-        lines = f.readlines()
-        data = [str(x).split("\n")[0] for x in lines]
-
-        st = data[0]
-        if st != 'SAT':
-            return ''
-
-        return data[1]
-
-
 if len(sys.argv) < 2:
     print "USAGE: rokk_py.py <input CNF> [time limit]"
     exit(1)
@@ -52,7 +40,6 @@ files = []
 for ex in ['.cnf', '.vmap', '.elim']:
     files.append(tempfile.NamedTemporaryFile(prefix=number, suffix=ex).name)
 
-# start SATELite
 l_args = [elite_path, cnf, files[0], files[1], files[2]]
 p = subprocess.Popen(l_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 output = p.communicate()[0]
@@ -63,7 +50,7 @@ time = 0
 solution = ''
 
 if status is None:
-    p = False
+    p_flag = False
     files.append(tempfile.NamedTemporaryFile(prefix=number, suffix='.result').name)
     l_args = [solver_path]
     if time_limit is not None:
@@ -78,11 +65,15 @@ if status is None:
     time, status = parse_out(code, output)
 
     if (status is not None) and (status == 'SATISFIABLE'):
-        solution = parse_solution_file(files[3])
-else:
-    p = True
+        l_args = [elite_path, '+ext', cnf, files[3], files[1], files[2]]
+        p = subprocess.Popen(l_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output = p.communicate()[0]
 
-print str(elite_time + time) + (' p' if p else '')
+        solution = output.split("\n")[1][2:]
+else:
+    p_flag = True
+
+print str(elite_time + time) + (' p' if p_flag else '')
 print status
 print solution
 

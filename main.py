@@ -55,7 +55,7 @@ pf_parameters = {
     "cnf_link": constant.bivium_cnf,
     "threads": 32,
     "N": 300,
-    "solver_wrapper": solver_wrappers["rokk"],
+    "solver_wrapper": solver_wrappers["rokk_py"],
     "decomposition": lambda m, k, d, p: decomposition.decomposition(metric_hash, m, k, d, p),
     "d": 5,  # 2^d == threads
     # "break_time": 900
