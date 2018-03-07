@@ -56,21 +56,27 @@ class PredictiveFunction:
         solved_cases, broke_cases = multi_solver.start(solver_args, cases)
 
         times = []
-        time_stats = {
+        time_stat = {
             "DETERMINATE": 0,
             "INDETERMINATE": 0
         }
 
+        flags_stat = {
+            "PREPROCESSING": 0,
+            "PROCESSING": 0
+        }
+
         for case in solved_cases:
-            self.__update_time_statistic(time_stats, case.status)
+            self.__update_time_statistic(time_stat, case.status)
+            self.__update_flags_statistic(flags_stat, case.flags)
             times.append(case.time)
 
         partially_metric = (2 ** np.count_nonzero(mask)) * sum(times)
 
         if self.decomposition is None:
-            time_stats["BROKE"] = len(broke_cases)
+            time_stat["BROKE"] = len(broke_cases)
 
-            return partially_metric / len(solved_cases), time_stats
+            return partially_metric / len(solved_cases), [time_stat, flags_stat]
         else:
             decomposition_metrics = []
 
@@ -89,17 +95,24 @@ class PredictiveFunction:
                 decomposition_metric = self.decomposition(mask, case, self.d, pf_parameters)
                 decomposition_metrics.append(decomposition_metric)
 
-            time_stats["DETERMINATE"] += len(broke_cases)
+            time_stat["DETERMINATE"] += len(broke_cases)
+            flags_stat["PROCESSING"] += len(broke_cases)
 
             partially_metric += sum(decomposition_metrics)
 
-            return partially_metric / self.N, time_stats
+            return partially_metric / self.N, [time_stat, flags_stat]
 
-    def __update_time_statistic(self, time_stats, status):
+    def __update_time_statistic(self, time_stat, status):
         if status == "UNSATISFIABLE" or status == "SATISFIABLE":
-            time_stats["DETERMINATE"] += 1
+            time_stat["DETERMINATE"] += 1
         else:
-            time_stats["INDETERMINATE"] += 1
+            time_stat["INDETERMINATE"] += 1
+
+    def __update_flags_statistic(self, flags_stat, flags):
+        if flags[0]:
+            flags_stat["PREPROCESSING"] += 1
+        else:
+            flags_stat["PROCESSING"] += 1
 
     def __print_info(self, init_a5):
         print "init key stream: " + format_array(self.solution_key_stream)

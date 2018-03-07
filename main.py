@@ -9,6 +9,7 @@ from wrapper.lingeling import LingelingWrapper
 from wrapper.minisat import MinisatWrapper
 from wrapper.plingeling import PLingelingWrapper
 from wrapper.rokk import RokkWrapper
+from wrapper.rokk_py import RokkPyWrapper
 
 metric_hash = {}
 
@@ -16,6 +17,7 @@ solver_wrappers = {
     "minisat": MinisatWrapper(constant.minisat_path),
     "lingeling": LingelingWrapper(constant.lingeling_path),
     "rokk": RokkWrapper(constant.rokk_path),
+    "rokk_py": RokkPyWrapper(constant.rokk_py_path),
     "plingeling": PLingelingWrapper(constant.plingeling_path, 4)
 }
 
@@ -64,7 +66,7 @@ pf_parameters = {
 # parser.restore_hash(metric_hash, "./out/9.02.trivium_64_log", 2)
 
 
-# data1 = parser.parse_out("./out/02.03.bivium_log", 2)
+# data1 = parser.parse_out("./out/6.03.bivium_rokk_log", 2)
 # ploter.show_plot([data1])
 #
 # exit(0)

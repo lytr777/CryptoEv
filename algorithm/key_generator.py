@@ -18,6 +18,7 @@ class KeyGenerator:
 
         self.time = None
         self.status = None
+        self.flags = []
         self.solution = []
 
     def set_key_stream(self, key):
@@ -63,6 +64,7 @@ class KeyGenerator:
     def mark_solved(self, report):
         self.time = report.time
         self.status = report.status
+        self.flags = report.flags
         self.solution = report.solution
 
     def get_solution_secret_key(self):

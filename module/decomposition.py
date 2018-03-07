@@ -37,6 +37,6 @@ def decomposition(metric_hash, mask, case, d, pf_parameters):
     pf_parameters_copy = copy(pf_parameters)
     pf_parameters_copy["N"] = len(cases)
     pf = PredictiveFunction(pf_parameters_copy, case.key_stream)
-    metric, time_stats = pf.compute(new_mask, cases)
+    metric, stats = pf.compute(new_mask, cases)
     # metric_hash[key] = metric
     return metric

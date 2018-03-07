@@ -37,8 +37,9 @@ class EvolutionAlgorithm:
                     print "------------------------------------------------------"
                     print "start prediction with mask: " + key
                     pf = PredictiveFunction(pf_parameters)
-                    metric, time_stats = pf.compute(p)
-                    print time_stats
+                    metric, stats = pf.compute(p)
+                    for stat in stats:
+                        print stat
                     self.metric_hash[key] = metric
                     print "end prediction with metric: " + str(metric)
 
