@@ -65,10 +65,10 @@ ev_alg = EvolutionAlgorithm(ev_parameters)
 mf_parameters = {
     "crypto_algorithm": Bivium,
     "cnf_link": constant.bivium_cnf,
-    "threads": 4,
-    "N": 30,
+    "threads": 32,
+    "N": 300,
     "solver_wrapper": solver_wrappers["lingeling"],
-    "time_limit": 5,
+    "time_limit": 1,
     "decomposition": lambda m, k, d, p, f: decomposition.decomposition(value_hash, m, k, d, p, f),
     "d": 5,  # 2^d == threads
     # "break_time": 900
@@ -94,10 +94,10 @@ print "------------------------------------------------------"
 for best_local in best_locals:
     if best[1] > best_local[1]:
         best = best_local
-    print "best local: " + formatter.format_array(best_local[0]) + " with value: " + str(best_local[1])
+    print "best local: " + formatter.format_array(best_local[0]) + " with value: " + str("%.7g" % best_local[1])
 
 if best:
     print "------------------------------------------------------"
     print "------------------------------------------------------"
     print "------------------------------------------------------"
-    print "best: " + formatter.format_array(best[0]) + " with value: " + str(best[1])
+    print "best: " + formatter.format_array(best[0]) + " with value: " + str("%.7g" % best[1])

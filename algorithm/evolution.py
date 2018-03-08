@@ -32,7 +32,7 @@ class EvolutionAlgorithm:
                     print "------------------------------------------------------"
                     print "mask: " + key + " has been saved in hash"
                     value = self.value_hash[key]
-                    print "with value: " + str(value)
+                    print "with value: " + str("%.7g" % value)
                 else:
                     print "------------------------------------------------------"
                     print "start prediction with mask: " + key
