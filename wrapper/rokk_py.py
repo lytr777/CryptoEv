@@ -15,7 +15,7 @@ class RokkPyWrapper:
         launching_args = ['python', self.solver_path, cnf]
 
         if time_limit is not None:
-            launching_args.append(time_limit)
+            launching_args.append(str(time_limit))
 
         return launching_args
 
