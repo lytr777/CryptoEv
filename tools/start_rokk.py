@@ -73,6 +73,11 @@ if status is None:
 else:
     p_flag = True
 
+with open(files[0]) as f:
+    lines = f.readlines()
+    if lines[0].__contains__('#vars: 0'):
+        p_flag = True
+
 print str(elite_time + time) + (' p' if p_flag else '')
 print status
 print solution
