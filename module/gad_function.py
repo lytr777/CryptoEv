@@ -7,7 +7,7 @@ from util.formatter import format_array
 from util.parser import parse_cnf
 
 
-class PredictiveFunction:
+class GADFunction:
     def __init__(self, parameters, solution_key_stream=None):
         self.crypto_algorithm = parameters["crypto_algorithm"]
         self.cnf_link = parameters["cnf_link"]
@@ -53,7 +53,7 @@ class PredictiveFunction:
         }
 
         multi_solver = MultiCaseSolver(self.current_solver)
-        solved_cases, broke_cases = multi_solver.start(solver_args, cases)
+        solved_cases, broken_cases = multi_solver.start(solver_args, cases)
 
         times = []
         time_stat = {
@@ -71,16 +71,16 @@ class PredictiveFunction:
             self.__update_flags_statistic(flags_stat, case.flags)
             times.append(case.time)
 
-        partially_metric = (2 ** np.count_nonzero(mask)) * sum(times)
+        partially_value = (2 ** np.count_nonzero(mask)) * sum(times)
 
         if self.decomposition is None:
-            time_stat["BROKE"] = len(broke_cases)
+            time_stat["BROKEN"] = len(broken_cases)
 
-            return partially_metric / len(solved_cases), [time_stat, flags_stat]
+            return partially_value / len(solved_cases), [time_stat, flags_stat]
         else:
-            decomposition_metrics = []
+            decomposition_values = []
 
-            pf_parameters = {
+            mf_parameters = {
                 "crypto_algorithm": self.crypto_algorithm,
                 "cnf_link": self.cnf_link,
                 "solver_wrapper": self.current_solver,
@@ -91,16 +91,16 @@ class PredictiveFunction:
                 "d": self.d
             }
 
-            for case in broke_cases:
-                decomposition_metric = self.decomposition(mask, case, self.d, pf_parameters)
-                decomposition_metrics.append(decomposition_metric)
+            for case in broken_cases:
+                decomposition_value = self.decomposition(mask, case, self.d, GADFunction, mf_parameters)
+                decomposition_values.append(decomposition_value)
 
-            time_stat["DETERMINATE"] += len(broke_cases)
-            flags_stat["PROCESSING"] += len(broke_cases)
+            time_stat["DETERMINATE"] += len(broken_cases)
+            flags_stat["PROCESSING"] += len(broken_cases)
 
-            partially_metric += sum(decomposition_metrics)
+            partially_value += sum(decomposition_values)
 
-            return partially_metric / self.N, [time_stat, flags_stat]
+            return partially_value / self.N, [time_stat, flags_stat]
 
     def __update_time_statistic(self, time_stat, status):
         if status == "UNSATISFIABLE" or status == "SATISFIABLE":

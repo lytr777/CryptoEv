@@ -1,5 +1,4 @@
 from model.cnf_model import Clause, Var
-from util.parser import parse_solution_file
 
 
 class KeyGenerator:

@@ -7,7 +7,8 @@ from datetime import datetime
 
 
 class MultiCaseSolver:
-    def __init__(self, solver_wrapper, sleep_time=2):
+    def __init__(self, solver_wrapper, sleep_time=2, verbosity=True):
+        self.verbosity = verbosity
         self.solver_wrapper = solver_wrapper
         self.sleep_time = sleep_time
         self.last_progress = 0
@@ -31,7 +32,7 @@ class MultiCaseSolver:
         subprocesses = []
         subprocess_times = np.zeros(k, dtype=np.int)
         solved_cases = []
-        broke_cases = []
+        broken_cases = []
 
         break_f = lambda x: (break_time is not None) and (now() - subprocess_times[x] > break_time)
         while len(cases) > 0:
@@ -49,10 +50,10 @@ class MultiCaseSolver:
                 if len(cases) == 0:
                     break
 
-            self.check_subprocesses(free, out_files, cases, solved_cases, broke_cases, subprocesses, break_f)
+            self.check_subprocesses(free, out_files, cases, solved_cases, broken_cases, subprocesses, break_f)
 
         while len(subprocesses) > 0:
-            self.check_subprocesses(free, out_files, cases, solved_cases, broke_cases, subprocesses, break_f)
+            self.check_subprocesses(free, out_files, cases, solved_cases, broken_cases, subprocesses, break_f)
 
         for i in range(k):
             if os.path.isfile(cnf_files[i]):
@@ -60,9 +61,9 @@ class MultiCaseSolver:
             if os.path.isfile(out_files[i]):
                 os.remove(out_files[i])
 
-        return solved_cases, broke_cases
+        return solved_cases, broken_cases
 
-    def check_subprocesses(self, free, out_files, cases, solved_cases, broke_cases, subprocesses, break_f):
+    def check_subprocesses(self, free, out_files, cases, solved_cases, broken_cases, subprocesses, break_f):
         sleep(self.sleep_time)
         j = 0
         times = []
@@ -86,12 +87,13 @@ class MultiCaseSolver:
                     sp.wait()
 
                     subprocesses.pop(j)
-                    broke_cases.append(case)
+                    broken_cases.append(case)
                     free.append(i)
                 else:
                     j += 1
 
-        self.__print_progress(len(solved_cases), len(broke_cases), len(cases), len(subprocesses), times)
+        if self.verbosity:
+            self.__print_progress(len(solved_cases), len(broken_cases), len(cases), len(subprocesses), times)
 
     def __handle_sp(self, sp, out_file, case):
         output = sp.communicate()[0]

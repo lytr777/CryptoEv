@@ -1,12 +1,12 @@
-from copy import copy
 import numpy as np
+from copy import copy
 
-from algorithm.key_generator import KeyGenerator
+from key_generator import KeyGenerator
 
 
-class Trivium_64(KeyGenerator):
-    key_stream_start = 398
-    key_stream_len = 75
+class A5_1(KeyGenerator):
+    key_stream_start = 8298
+    key_stream_len = 128
 
     secret_key_start = 1
     secret_key_len = 64
@@ -23,10 +23,10 @@ class Trivium_64(KeyGenerator):
         KeyGenerator.write_to(self, file_path)
 
     def __copy__(self):
-        copy_tr_64 = Trivium_64(self.cnf_link)
+        copy_a5_1 = A5_1(self.cnf_link)
 
-        copy_tr_64.key_stream = self.key_stream
-        copy_tr_64.secret_key = self.secret_key
-        copy_tr_64.secret_mask = self.secret_mask
+        copy_a5_1.key_stream = self.key_stream
+        copy_a5_1.secret_key = self.secret_key
+        copy_a5_1.secret_mask = self.secret_mask
 
-        return copy_tr_64
+        return copy_a5_1

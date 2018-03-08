@@ -1,11 +1,11 @@
 import numpy as np
 from copy import copy
 
-from module.predictive_function import PredictiveFunction
+from module.gad_function import GADFunction
 from util import formatter, generator
 
 
-def decomposition(metric_hash, mask, case, d, pf_parameters):
+def decomposition(value_hash, mask, case, d, m_function, mf_parameters):
     new_mask = copy(mask)
     zero_index = []
     for i in range(len(new_mask)):
@@ -22,8 +22,8 @@ def decomposition(metric_hash, mask, case, d, pf_parameters):
         new_mask[zero_index[e]] = not new_mask[zero_index[e]]
 
     key = formatter.format_array(new_mask)
-    if key in metric_hash:
-        return metric_hash[key]
+    if key in value_hash:
+        return value_hash[key]
 
     cases = []
     secret_keys = generator.generate_decomposition_key_set(case.secret_key, decomposition_indices)
@@ -34,9 +34,9 @@ def decomposition(metric_hash, mask, case, d, pf_parameters):
         cases.append(case_i)
 
     print "== decomposition from " + formatter.format_array(mask) + " to " + formatter.format_array(new_mask)
-    pf_parameters_copy = copy(pf_parameters)
-    pf_parameters_copy["N"] = len(cases)
-    pf = PredictiveFunction(pf_parameters_copy, case.key_stream)
-    metric, stats = pf.compute(new_mask, cases)
-    # metric_hash[key] = metric
-    return metric
+    mf_parameters_copy = copy(mf_parameters)
+    mf_parameters_copy["N"] = len(cases)
+    mf = m_function(mf_parameters_copy, case.key_stream)
+    value, stats = mf.compute(new_mask, cases)
+    # value_hash[key] = value
+    return value

@@ -1,4 +1,3 @@
-from module.predictive_function import PredictiveFunction
 from util import mutation, formatter, generator
 
 
@@ -6,16 +5,17 @@ class EvolutionAlgorithm:
     def __init__(self, ev_parameters):
         self.s = ev_parameters["start_s"]
         self.min_s = ev_parameters["min_s"]
+        self.minimization_function = ev_parameters["minimization_function"]
         self.stop_condition = ev_parameters["stop_condition"]
         self.mutation_strategy = ev_parameters["mutation_strategy"]
-        self.metric_hash = ev_parameters["metric_hash"]
+        self.value_hash = ev_parameters["value_hash"]
         self.stagnation_limit = ev_parameters["stagnation_limit"]
 
         self.lmbda = ev_parameters["lambda"] if ("lambda" in ev_parameters) else 1
         self.mu = ev_parameters["mu"] if ("mu" in ev_parameters) else 1
 
-    def start(self, pf_parameters):
-        algorithm = pf_parameters["crypto_algorithm"]
+    def start(self, mf_parameters):
+        algorithm = mf_parameters["crypto_algorithm"]
         P = self.__restart(algorithm)
         best = (None, 2 ** algorithm.secret_key_len)
         best_locals = []
@@ -23,31 +23,31 @@ class EvolutionAlgorithm:
         stagnation = 0
 
         while not self.stop_condition(it, best[1], len(best_locals)):
-            metrics = []
+            values = []
             print "------------------------------------------------------"
             print "iteration step: " + str(it)
             for p in P:
                 key = formatter.format_array(p)
-                if key in self.metric_hash:
+                if key in self.value_hash:
                     print "------------------------------------------------------"
                     print "mask: " + key + " has been saved in hash"
-                    metric = self.metric_hash[key]
-                    print "with metric: " + str(metric)
+                    value = self.value_hash[key]
+                    print "with value: " + str(value)
                 else:
                     print "------------------------------------------------------"
                     print "start prediction with mask: " + key
-                    pf = PredictiveFunction(pf_parameters)
-                    metric, stats = pf.compute(p)
+                    pf = self.minimization_function(mf_parameters)
+                    value, stats = pf.compute(p)
                     for stat in stats:
                         print stat
-                    self.metric_hash[key] = metric
-                    print "end prediction with metric: " + str(metric)
+                    self.value_hash[key] = value
+                    print "end prediction with value: " + str("%.7g" % value)
 
-                if best[1] is None or metric < best[1]:
-                    best = (p, metric)
+                if best[1] is None or value < best[1]:
+                    best = (p, value)
                     stagnation = -1
 
-                metrics.append(metric)
+                values.append(value)
 
             stagnation += 1
             if stagnation >= self.stagnation_limit:
@@ -55,7 +55,7 @@ class EvolutionAlgorithm:
                 best_locals.append(best)
                 best = (None, 2 ** algorithm.secret_key_len)
             else:
-                Q = self.__get_bests(P, metrics)
+                Q = self.__get_bests(P, values)
                 P = self.__mutation(Q)
             it += 1
 

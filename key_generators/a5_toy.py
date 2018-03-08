@@ -1,15 +1,15 @@
 import numpy as np
 from copy import copy
 
-from algorithm.key_generator import KeyGenerator
+from key_generator import KeyGenerator
 
 
-class Bivium(KeyGenerator):
-    key_stream_start = 443
-    key_stream_len = 200
+class A5_toy(KeyGenerator):
+    key_stream_start = 3931
+    key_stream_len = 80
 
     secret_key_start = 1
-    secret_key_len = 177
+    secret_key_len = 48
 
     def __init__(self, cnf):
         self.cnf_link = cnf
@@ -23,10 +23,10 @@ class Bivium(KeyGenerator):
         KeyGenerator.write_to(self, file_path)
 
     def __copy__(self):
-        copy_bivium = Bivium(self.cnf_link)
+        copy_a5_toy = A5_toy(self.cnf_link)
 
-        copy_bivium.key_stream = self.key_stream
-        copy_bivium.secret_key = self.secret_key
-        copy_bivium.secret_mask = self.secret_mask
+        copy_a5_toy.key_stream = self.key_stream
+        copy_a5_toy.secret_key = self.secret_key
+        copy_a5_toy.secret_mask = self.secret_mask
 
-        return copy_bivium
+        return copy_a5_toy
