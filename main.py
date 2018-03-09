@@ -67,7 +67,7 @@ mf_parameters = {
     "cnf_link": constant.bivium_cnf,
     "threads": 32,
     "N": 300,
-    "solver_wrapper": solver_wrappers["lingeling"],
+    "solver_wrapper": solver_wrappers["rokk_py"],
     "time_limit": 1,
     "decomposition": lambda m, k, d, p, f: decomposition.decomposition(value_hash, m, k, d, p, f),
     "d": 5,  # 2^d == threads
@@ -79,7 +79,7 @@ mf_parameters = {
 # parser.restore_hash(value_hash, "./out/9.02.trivium_64_log", 2)
 
 
-# data1 = parser.parse_out("./out/6.03.bivium_rokk_log", 2)
+# data1 = parser.parse_out("./out/6.03.rokk.bivium_log", 2)
 # ploter.show_plot([data1])
 #
 # exit(0)

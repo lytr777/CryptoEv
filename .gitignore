@@ -4,3 +4,6 @@ lingeling
 minisat
 rokk
 local_tools
+*.bivium_log
+*.bivium_true_log
+minisat.zip

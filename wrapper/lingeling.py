@@ -16,7 +16,7 @@ class LingelingWrapper:
     def get_arguments(self, cnf, out, time_limit):
         launching_args = [self.solver_path]
         if time_limit is not None:
-            launching_args.append("-t")
+            launching_args.append("-T")
             launching_args.append(str(time_limit))
 
         launching_args.append(cnf)
