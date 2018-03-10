@@ -70,8 +70,12 @@ class IBSFunction:
             self.__update_time_statistic(time_stat, case.status)
             self.__update_flags_statistic(flags_stat, case.flags)
 
-        xi = time_stat["DETERMINATE"] / len(solved_cases)
-        value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
+        xi = float(time_stat["DETERMINATE"]) / float(len(solved_cases))
+        print str(2 ** self.crypto_algorithm.secret_key_len)
+        if xi != 0:
+            value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
+        else:
+            value = (2 ** self.crypto_algorithm.secret_key_len) * self.time_limit
 
         return value, [time_stat, flags_stat]
 
