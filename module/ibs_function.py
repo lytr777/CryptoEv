@@ -30,9 +30,9 @@ class IBSFunction:
 
         multi_solver = MultiCaseSolver(self.current_solver, verbosity=False)
         init_start_time = now()
-        solved_init_cases, broken_int_cases = multi_solver.start(solver_args, cases)
+        solved_init_cases, broken_init_cases = multi_solver.start(solver_args, cases)
 
-        if len(broken_int_cases) != 0:
+        if len(broken_init_cases) != 0:
             print "count of broken cases in init phase not equals zero!"
             exit(0)
         else:

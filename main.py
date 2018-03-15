@@ -15,7 +15,7 @@ from module import decomposition
 
 from algorithm.evolution import EvolutionAlgorithm
 
-from util import formatter, constant, mutation, parser, ploter
+from util import formatter, constant, mutation, comparator, parser, ploter
 
 value_hash = {}
 
@@ -50,6 +50,7 @@ minimization_functions = {
 ev_parameters = {
     "start_s": 120,
     "min_s": 0,
+    "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
     "mutation_strategy": mutation_strategy["normally"],
     "stop_condition": stop_conditions["iterative"],
@@ -79,7 +80,7 @@ mf_parameters = {
 # parser.restore_hash(value_hash, "./out/9.02.trivium_64_log", 2)
 
 
-# data1 = parser.parse_out("./out/6.03.rokk.bivium_log", 2)
+# data1 = parser.parse_out("./out/13.03.ibs.rokk.bivium_log", 2)
 # ploter.show_plot([data1])
 #
 # exit(0)
