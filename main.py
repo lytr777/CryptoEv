@@ -15,7 +15,7 @@ from module import decomposition
 
 from algorithm.evolution import EvolutionAlgorithm
 
-from util import formatter, constant, mutation, comparator, parser, ploter
+from util import formatter, constant, mutation, comparator, corrector, parser, ploter
 
 value_hash = {}
 
@@ -70,8 +70,9 @@ mf_parameters = {
     "N": 300,
     "solver_wrapper": solver_wrappers["rokk_py"],
     "time_limit": 1,
+    "corrector": lambda s, t: corrector.mass_corrector(s, t, coef=5),
     "decomposition": lambda m, k, d, p, f: decomposition.decomposition(value_hash, m, k, d, p, f),
-    "d": 5,  # 2^d == threads
+    "d": 5, # 2^d == threads
     # "break_time": 900
 }
 

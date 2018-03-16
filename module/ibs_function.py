@@ -13,6 +13,7 @@ class IBSFunction:
         self.N = parameters["N"]
         self.current_solver = parameters["solver_wrapper"]
         self.time_limit = parameters["time_limit"]
+        self.corrector = parameters["corrector"]
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
 
         self.base_cnf = parse_cnf(self.cnf_link)
@@ -56,6 +57,10 @@ class IBSFunction:
         multi_solver = MultiCaseSolver(self.current_solver)
         solved_cases, broken_cases = multi_solver.start(solver_args, cases)
 
+        if len(broken_init_cases) != 0:
+            print "Some cases is broken in IBS method!!!"
+            exit(0)
+
         time_stat = {
             "DETERMINATE": 0,
             "INDETERMINATE": 0
@@ -66,12 +71,13 @@ class IBSFunction:
             "PROCESSING": 0
         }
 
+        self.time_limit = self.corrector(solved_cases, self.time_limit)
+
         for case in solved_cases:
             self.__update_time_statistic(time_stat, case.status)
             self.__update_flags_statistic(flags_stat, case.flags)
 
         xi = float(time_stat["DETERMINATE"]) / float(len(solved_cases))
-        print str(2 ** self.crypto_algorithm.secret_key_len)
         if xi != 0:
             value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
         else:
