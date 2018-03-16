@@ -28,7 +28,7 @@ solver_wrappers = {
 }
 
 stop_conditions = {
-    "iterative": lambda it, met, res: it > 3000,
+    "iterative": lambda it, met, res: it > 1500,
     "value": lambda it, met, res: met < 2 ** 20,
     "mix": lambda it, met, res: it > 10000 or met < 2 ** 20,
 }
