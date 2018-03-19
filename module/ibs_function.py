@@ -13,7 +13,7 @@ class IBSFunction:
         self.N = parameters["N"]
         self.current_solver = parameters["solver_wrapper"]
         self.time_limit = parameters["time_limit"]
-        self.corrector = parameters["corrector"]
+        self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
 
         self.base_cnf = parse_cnf(self.cnf_link)
@@ -71,7 +71,9 @@ class IBSFunction:
             "PROCESSING": 0
         }
 
-        self.time_limit = self.corrector(solved_cases, self.time_limit)
+        if self.corrector is not None:
+            self.time_limit = self.corrector(solved_cases, self.time_limit)
+            time_stat["DISCARDED"] = 0
 
         for case in solved_cases:
             self.__update_time_statistic(time_stat, case.status)
@@ -88,6 +90,8 @@ class IBSFunction:
     def __update_time_statistic(self, time_stat, status):
         if status == "UNSATISFIABLE" or status == "SATISFIABLE":
             time_stat["DETERMINATE"] += 1
+        elif status == "DISCARDED":
+            time_stat["DISCARDED"] += 1
         else:
             time_stat["INDETERMINATE"] += 1
 

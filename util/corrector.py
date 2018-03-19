@@ -9,7 +9,6 @@ def mass_corrector(cases, tl, coef):
     if len(det_times) == 0:
         return tl
 
-    max_sat_time = max(det_times)
     time_sum = 0.
     for dt in det_times:
         time_sum += dt * coef
@@ -17,6 +16,35 @@ def mass_corrector(cases, tl, coef):
         time_sum += it
 
     new_tl = time_sum / (coef * len(det_times) + len(ind_times))
+    best_tl = __choose_best_tl(new_tl, det_times, ind_times)
 
-    return max(new_tl, max_sat_time)
-    # return new_tl
+    for case in cases:
+        if case.status == "SATISFIABLE" and case.time > best_tl:
+            case.status = "DISCARDED"
+
+    return best_tl
+
+
+def __choose_best_tl(min_tl, det_times, ind_times):
+    exactly, perhaps = [], []
+    for time in det_times:
+        if time <= min_tl:
+            exactly.append(time)
+        else:
+            perhaps.append(time)
+
+    perhaps.sort()
+    print perhaps
+    n = len(det_times) + len(ind_times)
+    best = (min_tl, min_tl * n / len(exactly))
+
+    for i in range(len(perhaps)):
+        value = perhaps[i] * n / (len(exactly) + i + 1)
+        if value <= best[1]:
+            best = (perhaps[i], value)
+
+    print "min_tl = " + str(min_tl)
+    print "best_tl = " + str(best[0])
+
+    return best[0]
+
