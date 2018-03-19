@@ -16,9 +16,9 @@ class PLingelingWrapper:
         self.solver_path = solver_path
         self.threads = threads
 
-    def get_arguments(self, cnf, out, time_limit):
+    def get_arguments(self, cnf, out, tl):
         launching_args = [self.solver_path]
-        if time_limit is not None:
+        if tl is not None:
             warnings.warn("Time limit not support in plingeling", UserWarning)
 
         launching_args.append(cnf)

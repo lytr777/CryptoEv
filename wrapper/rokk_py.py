@@ -11,11 +11,11 @@ class RokkPyWrapper:
     def __init__(self, solver_path):
         self.solver_path = solver_path
 
-    def get_arguments(self, cnf, out, time_limit):
+    def get_arguments(self, cnf, out, tl):
         launching_args = ['python', self.solver_path, cnf]
 
-        if time_limit is not None:
-            launching_args.append(str(time_limit))
+        if tl is not None:
+            launching_args.append(str(tl))
 
         return launching_args
 

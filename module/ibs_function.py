@@ -1,6 +1,5 @@
 import numpy as np
 
-from module.multi_case_solver import MultiCaseSolver
 from util import caser
 from util.parser import parse_cnf
 from time import time as now
@@ -11,6 +10,7 @@ class IBSFunction:
         self.crypto_algorithm = parameters["crypto_algorithm"]
         self.cnf_link = parameters["cnf_link"]
         self.N = parameters["N"]
+        self.multi_solver = parameters["multi_solver"]
         self.current_solver = parameters["solver_wrapper"]
         self.time_limit = parameters["time_limit"]
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
@@ -29,9 +29,9 @@ class IBSFunction:
             "subprocess_thread": self.thread_count
         }
 
-        multi_solver = MultiCaseSolver(self.current_solver, verbosity=False)
+        m_solver = self.multi_solver(self.current_solver, verbosity=False)
         init_start_time = now()
-        solved_init_cases, broken_init_cases = multi_solver.start(solver_args, cases)
+        solved_init_cases, broken_init_cases = m_solver.start(solver_args, cases)
 
         if len(broken_init_cases) != 0:
             print "count of broken cases in init phase not equals zero!"
@@ -54,8 +54,8 @@ class IBSFunction:
 
         solver_args["time_limit"] = self.time_limit
 
-        multi_solver = MultiCaseSolver(self.current_solver)
-        solved_cases, broken_cases = multi_solver.start(solver_args, cases)
+        m_solver = self.multi_solver(self.current_solver)
+        solved_cases, broken_cases = m_solver.start(solver_args, cases)
 
         if len(broken_init_cases) != 0:
             print "Some cases is broken in IBS method!!!"

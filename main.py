@@ -9,6 +9,8 @@ from wrapper.plingeling import PLingelingWrapper
 from wrapper.rokk import RokkWrapper
 from wrapper.rokk_py import RokkPyWrapper
 
+from module.sleep_solver import SleepSolver
+from module.worker_solver import WorkerSolver
 from module.gad_function import GADFunction
 from module.ibs_function import IBSFunction
 from module import decomposition
@@ -45,10 +47,15 @@ minimization_functions = {
     "ibs": IBSFunction
 }
 
+multi_solvers = {
+    "sleep": SleepSolver,
+    "worker": WorkerSolver
+}
+
 # Init parameters
 
 ev_parameters = {
-    "start_s": 120,
+    "start_s": 0,
     "min_s": 0,
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
@@ -69,8 +76,9 @@ mf_parameters = {
     "threads": 32,
     "N": 300,
     "solver_wrapper": solver_wrappers["rokk_py"],
+    "multi_solver": multi_solvers["worker"],
     "time_limit": 1,
-    "corrector": lambda s, t: corrector.mass_corrector(s, t, coef=5),
+    "corrector": lambda s, t: corrector.mass_corrector(s, t, coef=3),
     "decomposition": lambda m, k, d, p, f: decomposition.decomposition(value_hash, m, k, d, p, f),
     "d": 5, # 2^d == threads
     # "break_time": 900

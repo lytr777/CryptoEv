@@ -13,7 +13,7 @@ class CaseSolver:
 
         cnf_file = tempfile.NamedTemporaryFile(prefix="cnf").name
         out_file = tempfile.NamedTemporaryFile(prefix="out").name
-        launching_args = self.solver_wrapper.get_arguments(cnf_file, out_file, time_limit=time_limit)
+        launching_args = self.solver_wrapper.get_arguments(cnf_file, out_file, tl=time_limit)
 
         case.write_to(cnf_file)
 

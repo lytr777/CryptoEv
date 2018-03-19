@@ -1,7 +1,6 @@
 import numpy as np
 
 from module.case_solver import CaseSolver
-from module.multi_case_solver import MultiCaseSolver
 from util import caser, generator
 from util.formatter import format_array
 from util.parser import parse_cnf
@@ -12,6 +11,7 @@ class GADFunction:
         self.crypto_algorithm = parameters["crypto_algorithm"]
         self.cnf_link = parameters["cnf_link"]
         self.N = parameters["N"]
+        self.multi_solver = parameters["multi_solver"]
         self.current_solver = parameters["solver_wrapper"]
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
         self.time_limit = parameters["time_limit"] if ("time_limit" in parameters) else None
@@ -52,8 +52,8 @@ class GADFunction:
             "break_time": self.break_time
         }
 
-        multi_solver = MultiCaseSolver(self.current_solver)
-        solved_cases, broken_cases = multi_solver.start(solver_args, cases)
+        m_solver = self.multi_solver(self.current_solver)
+        solved_cases, broken_cases = m_solver.start(solver_args, cases)
 
         times = []
         time_stat = {

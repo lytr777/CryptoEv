@@ -6,7 +6,7 @@ from time import sleep, time as now
 from datetime import datetime
 
 
-class MultiCaseSolver:
+class SleepSolver:
     def __init__(self, solver_wrapper, sleep_time=2, verbosity=True):
         self.verbosity = verbosity
         self.solver_wrapper = solver_wrapper
@@ -26,7 +26,7 @@ class MultiCaseSolver:
             cnf_files.append(tempfile.NamedTemporaryFile(prefix="cnf", suffix=str(i)).name)
             out_files.append(tempfile.NamedTemporaryFile(prefix="out", suffix=str(i)).name)
 
-            launching_args.append(self.solver_wrapper.get_arguments(cnf_files[i], out_files[i], time_limit=time_limit))
+            launching_args.append(self.solver_wrapper.get_arguments(cnf_files[i], out_files[i], tl=time_limit))
 
         free = range(k)
         subprocesses = []
