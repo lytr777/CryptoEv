@@ -15,8 +15,8 @@ class LingelingWrapper:
 
     def get_arguments(self, cnf, out, tl):
         launching_args = [self.solver_path]
-            launching_args.append("-T")
         if tl is not None:
+            launching_args.append("-T")
             launching_args.append(str(tl))
 
         launching_args.append(cnf)
