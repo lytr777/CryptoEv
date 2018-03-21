@@ -43,8 +43,5 @@ def __choose_best_tl(min_tl, det_times, ind_times):
         if value <= best[1]:
             best = (perhaps[i], value)
 
-    print "min_tl = " + str(min_tl)
-    print "best_tl = " + str(best[0])
-
     return best[0]
 

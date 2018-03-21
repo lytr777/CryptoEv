@@ -83,12 +83,13 @@ class GADFunction:
             mf_parameters = {
                 "crypto_algorithm": self.crypto_algorithm,
                 "cnf_link": self.cnf_link,
+                "multi_solver": self.multi_solver,
                 "solver_wrapper": self.current_solver,
                 "threads": self.thread_count,
                 "time_limit": self.time_limit,
                 "decomposition": self.decomposition,
-                "break_time": self.break_time,
-                "d": self.d
+                "d": self.d,
+                "break_time": self.break_time
             }
 
             for case in broken_cases:

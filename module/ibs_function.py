@@ -73,6 +73,7 @@ class IBSFunction:
 
         if self.corrector is not None:
             self.time_limit = self.corrector(solved_cases, self.time_limit)
+            print "time limit has been corrected: " + str(self.time_limit)
             time_stat["DISCARDED"] = 0
 
         for case in solved_cases:
