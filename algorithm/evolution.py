@@ -57,6 +57,7 @@ class EvolutionAlgorithm:
                 P = self.__restart(algorithm)
                 best_locals.append(best)
                 best = (np.zeros(algorithm.secret_key_len, dtype=np.int), 2 ** algorithm.secret_key_len)
+                stagnation = 0
             else:
                 Q = self.__get_bests(P_v)
                 P = self.__mutation(Q)
