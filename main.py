@@ -1,5 +1,5 @@
 from key_generators.a5_1 import A5_1
-from key_generators.a5_toy import A5_toy
+from key_generators.e0 import E0
 from key_generators.trivium_64 import Trivium_64
 from key_generators.bivium import Bivium
 
@@ -9,8 +9,8 @@ from wrapper.plingeling import PLingelingWrapper
 from wrapper.rokk import RokkWrapper
 from wrapper.rokk_py import RokkPyWrapper
 
-from module.sleep_solver import SleepSolver
-from module.worker_solver import WorkerSolver
+from solvers.sleep_solver import SleepSolver
+from solvers.worker_solver import WorkerSolver
 from module.gad_function import GADFunction
 from module.ibs_function import IBSFunction
 from module import decomposition
@@ -27,6 +27,13 @@ solver_wrappers = {
     "rokk": RokkWrapper(constant.rokk_path),
     "rokk_py": RokkPyWrapper(constant.rokk_py_path),
     "plingeling": PLingelingWrapper(constant.plingeling_path, 4)
+}
+
+crypto_algorithms = {
+    "a5_1" : (A5_1, constant.a5_1_cnf),
+    "bivium": (Bivium, constant.bivium_cnf),
+    "trivium_64": (Trivium_64, constant.trivium_64_cnf),
+    "e0": (E0, constant.e0_cnf)
 }
 
 stop_conditions = {
@@ -55,7 +62,7 @@ multi_solvers = {
 # Init parameters
 
 ev_parameters = {
-    "start_s": 0,
+    "start_s": 120,
     "min_s": 0,
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
@@ -89,7 +96,7 @@ mf_parameters = {
 # parser.restore_hash(value_hash, "./out/9.02.trivium_64_log", 2)
 
 
-# data1 = parser.parse_out("./out/13.03.ibs.rokk.bivium_log", 2)
+# data1 = parser.parse_out("./out/02.04.ibs.rokk.bivium_log", 2)
 # ploter.show_plot([data1])
 #
 # exit(0)

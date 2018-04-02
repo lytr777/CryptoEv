@@ -1,10 +1,11 @@
 base_out = "./out/"
 out_suffix = ".out"
 
-a5_1_cnf = "./key_generators/A5_1.cnf"
-a5_toy_cnf = "./key_generators/A5_toy.cnf"
-trivium_64_cnf = "./key_generators/Trivium_64.cnf"
-bivium_cnf = "./key_generators/Bivium.cnf"
+a5_1_cnf = "./templates/A5_1.cnf"
+a5_toy_cnf = "./templates/A5_toy.cnf"
+trivium_64_cnf = "./templates/Trivium_64.cnf"
+bivium_cnf = "./templates/Bivium.cnf"
+e0_cnf = "./templates/E0.cnf"
 
 minisat_path = "./minisat/core/minisat_static"
 lingeling_path = "./lingeling/lingeling"

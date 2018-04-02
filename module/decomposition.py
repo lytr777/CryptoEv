@@ -1,7 +1,6 @@
 import numpy as np
 from copy import copy
 
-from module.gad_function import GADFunction
 from util import formatter, generator
 
 
@@ -38,5 +37,4 @@ def decomposition(value_hash, mask, case, d, m_function, mf_parameters):
     mf_parameters_copy["N"] = len(cases)
     mf = m_function(mf_parameters_copy, case.key_stream)
     value, stats = mf.compute(new_mask, cases)
-    # value_hash[key] = value
     return value

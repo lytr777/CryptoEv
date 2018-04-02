@@ -1,6 +1,7 @@
 from util import mutation, formatter, generator
 import numpy as np
 
+
 class EvolutionAlgorithm:
     def __init__(self, ev_parameters):
         self.s = ev_parameters["start_s"]
@@ -16,7 +17,7 @@ class EvolutionAlgorithm:
         self.mu = ev_parameters["mu"] if ("mu" in ev_parameters) else 1
 
     def start(self, mf_parameters):
-        algorithm = mf_parameters["crypto_algorithm"]
+        algorithm = mf_parameters["crypto_algorithm"][0]
         P = self.__restart(algorithm)
         best = (np.zeros(algorithm.secret_key_len, dtype=np.int), 2 ** algorithm.secret_key_len)
         best_locals = []
@@ -64,7 +65,6 @@ class EvolutionAlgorithm:
             it += 1
 
         best_locals.append(best)
-
         return best_locals
 
     def __restart(self, algorithm):

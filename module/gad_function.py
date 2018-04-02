@@ -1,6 +1,6 @@
 import numpy as np
 
-from module.case_solver import CaseSolver
+from solvers.case_solver import CaseSolver
 from util import caser, generator
 from util.formatter import format_array
 from util.parser import parse_cnf
@@ -9,7 +9,6 @@ from util.parser import parse_cnf
 class GADFunction:
     def __init__(self, parameters, solution_key_stream=None):
         self.crypto_algorithm = parameters["crypto_algorithm"]
-        self.cnf_link = parameters["cnf_link"]
         self.N = parameters["N"]
         self.multi_solver = parameters["multi_solver"]
         self.current_solver = parameters["solver_wrapper"]
@@ -24,8 +23,8 @@ class GADFunction:
             self.solution_key_stream = solution_key_stream
 
     def __init_case(self):
-        self.base_cnf = parse_cnf(self.cnf_link)
-        init_alg = caser.create_init_case(self.base_cnf, self.crypto_algorithm)
+        self.base_cnf = parse_cnf(self.crypto_algorithm[1])
+        init_alg = caser.create_init_case(self.base_cnf, self.crypto_algorithm[0])
 
         solver = CaseSolver(self.current_solver)
         solver.start({}, init_alg)
@@ -41,9 +40,9 @@ class GADFunction:
 
             cases = []
             for i in range(self.N):
-                parameters["secret_key"] = generator.generate_key(self.crypto_algorithm.secret_key_len)
+                parameters["secret_key"] = generator.generate_key(self.crypto_algorithm[0].secret_key_len)
 
-                case = caser.create_case(self.base_cnf, parameters, self.crypto_algorithm)
+                case = caser.create_case(self.base_cnf, parameters, self.crypto_algorithm[0])
                 cases.append(case)
 
         solver_args = {
@@ -82,7 +81,6 @@ class GADFunction:
 
             mf_parameters = {
                 "crypto_algorithm": self.crypto_algorithm,
-                "cnf_link": self.cnf_link,
                 "multi_solver": self.multi_solver,
                 "solver_wrapper": self.current_solver,
                 "threads": self.thread_count,
