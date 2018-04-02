@@ -78,8 +78,7 @@ ev_parameters = {
 ev_alg = EvolutionAlgorithm(ev_parameters)
 
 mf_parameters = {
-    "crypto_algorithm": Bivium,
-    "cnf_link": constant.bivium_cnf,
+    "crypto_algorithm": crypto_algorithms["e0"],
     "threads": 32,
     "N": 300,
     "solver_wrapper": solver_wrappers["rokk_py"],
