@@ -1,28 +1,31 @@
-def mass_corrector(cases, tl, coef):
-    det_times, ind_times = [], []
-    for case in cases:
-        if case.status == "UNSATISFIABLE" or case.status == "SATISFIABLE":
-            det_times.append(case.time)
-        else:
-            ind_times.append(tl)
+def mass_corrector(coefficient):
+    def __mass_corrector(cases, tl):
+        det_times, ind_times = [], []
+        for case in cases:
+            if case.status == "UNSATISFIABLE" or case.status == "SATISFIABLE":
+                det_times.append(case.time)
+            else:
+                ind_times.append(tl)
 
-    if len(det_times) == 0:
-        return tl
+        if len(det_times) == 0:
+            return tl
 
-    time_sum = 0.
-    for dt in det_times:
-        time_sum += dt * coef
-    for it in ind_times:
-        time_sum += it
+        time_sum = 0.
+        for dt in det_times:
+            time_sum += dt * coefficient
+        for it in ind_times:
+            time_sum += it
 
-    new_tl = time_sum / (coef * len(det_times) + len(ind_times))
-    best_tl = __choose_best_tl(new_tl, det_times, ind_times)
+        new_tl = time_sum / (coefficient * len(det_times) + len(ind_times))
+        best_tl = __choose_best_tl(new_tl, det_times, ind_times)
 
-    for case in cases:
-        if case.status == "SATISFIABLE" and case.time > best_tl:
-            case.status = "DISCARDED"
+        for case in cases:
+            if case.status == "SATISFIABLE" and case.time > best_tl:
+                case.status = "DISCARDED"
 
-    return best_tl
+        return best_tl
+
+    return __mass_corrector
 
 
 def __choose_best_tl(min_tl, det_times, ind_times):

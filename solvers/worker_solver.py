@@ -9,7 +9,7 @@ from time import sleep, time as now
 
 
 class Worker(threading.Thread):
-    sleep_time = [0.05, 0.05, 0.1, 0.3, 0.5, 1]
+    sleep_time = [0.05, 0.05, 0.1, 0.2, 0.3, 0.5, 1]
 
     def __init__(self, args):
         self.terminated = threading.Event()
@@ -71,7 +71,7 @@ class Worker(threading.Thread):
 
 
 class WorkerSolver:
-    def __init__(self, solver_wrapper, sleep_time=2, verbosity=True):
+    def __init__(self, solver_wrapper, sleep_time=1, verbosity=True):
         self.verbosity = verbosity
         self.solver_wrapper = solver_wrapper
         self.last_progress = 0

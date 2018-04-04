@@ -54,7 +54,9 @@ class IBSFunction:
         solver_args["time_limit"] = self.time_limit
 
         m_solver = self.multi_solver(self.current_solver)
+        main_start_time = now()
         solved_cases, broken_cases = m_solver.start(solver_args, cases)
+        print "main phase ended with time: " + str(now() - main_start_time)
 
         if len(broken_init_cases) != 0:
             print "Some cases is broken in IBS method!!!"
@@ -87,7 +89,8 @@ class IBSFunction:
 
         return value, [time_stat, flags_stat]
 
-    def __update_time_statistic(self, time_stat, status):
+    @staticmethod
+    def __update_time_statistic(time_stat, status):
         if status == "UNSATISFIABLE" or status == "SATISFIABLE":
             time_stat["DETERMINATE"] += 1
         elif status == "DISCARDED":
@@ -95,7 +98,8 @@ class IBSFunction:
         else:
             time_stat["INDETERMINATE"] += 1
 
-    def __update_flags_statistic(self, flags_stat, flags):
+    @staticmethod
+    def __update_flags_statistic(flags_stat, flags):
         if flags[0]:
             flags_stat["PREPROCESSING"] += 1
         else:
