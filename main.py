@@ -24,9 +24,9 @@ ev_parameters = {
 ev_alg = EvolutionAlgorithm(ev_parameters)
 
 mf_parameters = {
-    "crypto_algorithm": crypto_algorithms["bivium"],
-    "threads": 8,
-    "N": 30,
+    "crypto_algorithm": crypto_algorithms["e0"],
+    "threads": 32,
+    "N": 300,
     "solver_wrapper": solver_wrappers["lingeling"],
     "multi_solver": multi_solvers["worker"],
     "time_limit": 1,

@@ -34,7 +34,7 @@ ev_parameters = {
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
     "mutation_strategy": mutation_strategy["normally"],
-    "stop_condition": stop_conditions(20, 2 ** 20, 5)["iterative"],
+    "stop_condition": stop_conditions(5, 2 ** 20, 5)["iterative"],
     "value_hash": empty_hash,
     "stagnation_limit": 100,
 
@@ -47,11 +47,11 @@ ev_alg = EvolutionAlgorithm(ev_parameters)
 mf_parameters = {
     "crypto_algorithm": crypto_algorithms["bivium"],
     "threads": 32,
-    "N": 300,
+    "N": 200,
     "solver_wrapper": solver_wrappers["lingeling"],
     "multi_solver": multi_solvers["worker"],
     "time_limit": 1,
-    "corrector": corrector.mass_corrector(coefficient=10),
+    "corrector": corrector.mass_corrector(coefficient=5),
     "decomposition": decomposition.decomposition(empty_hash),
     "d": 5, # 2^d == threads
     # "break_time": 900
