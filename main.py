@@ -13,7 +13,7 @@ ev_parameters = {
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
     "mutation_strategy": mutation_strategy["normally"],
-    "stop_condition": stop_conditions(1500, 2 ** 20, 5)["iterative"],
+    "stop_condition": stop_conditions(4000, 2 ** 20, 5)["locals"],
     "value_hash": value_hash,
     "stagnation_limit": 100,
 
@@ -29,7 +29,7 @@ mf_parameters = {
     "N": 300,
     "solver_wrapper": solver_wrappers["lingeling"],
     "multi_solver": multi_solvers["worker"],
-    "time_limit": 1,
+    "time_limit": 5,
     "corrector": corrector.mass_corrector(coefficient=10),
     "decomposition": decomposition.decomposition(value_hash),
     "d": 5,  # 2^d == threads

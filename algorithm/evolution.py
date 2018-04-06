@@ -18,11 +18,13 @@ class EvolutionAlgorithm:
 
     def start(self, mf_parameters):
         algorithm = mf_parameters["crypto_algorithm"][0]
-        P = self.__restart(algorithm)
-        best = (np.zeros(algorithm.secret_key_len, dtype=np.int), 2 ** algorithm.secret_key_len)
-        best_locals = []
+        max_value = 2 ** algorithm.secret_key_len
         it = 0
         stagnation = 0
+
+        P = self.__restart(algorithm)
+        best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
+        best_locals = []
 
         while not self.stop_condition(it, best[1], len(best_locals)):
             P_v = []
@@ -57,14 +59,14 @@ class EvolutionAlgorithm:
             if stagnation >= self.stagnation_limit:
                 P = self.__restart(algorithm)
                 best_locals.append(best)
-                best = (np.zeros(algorithm.secret_key_len, dtype=np.int), 2 ** algorithm.secret_key_len)
+                best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
                 stagnation = 0
             else:
                 Q = self.__get_bests(P_v)
                 P = self.__mutation(Q)
             it += 1
-
-        best_locals.append(best)
+        if best[0] != max_value:
+            best_locals.append(best)
         return best_locals
 
     def __restart(self, algorithm):
