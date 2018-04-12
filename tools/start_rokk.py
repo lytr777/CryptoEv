@@ -28,12 +28,31 @@ def parse_out(out):
     return t, st, s, c
 
 
+if len(sys.argv) < 2:
+    print "USAGE: rokk_py.py <simplify?> [time limit]"
+    exit(1)
+
+simplify = bool(sys.argv[1])
 time_limit = None
-if len(sys.argv) > 1:
-    time_limit = int(sys.argv[1])
+if len(sys.argv) > 2:
+    time_limit = int(sys.argv[2])
 
 elite_path = './rokk/binary/SatELite_release'
 solver_path = './rokk/binary/rokk_static'
+
+if not simplify:
+    l_args = [solver_path]
+    if time_limit is not None:
+        l_args.append('-cpu-lim=' + str(time_limit))
+
+    p = subprocess.Popen(l_args, stdin=sys.stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output = p.communicate()[0]
+    time, status, solution, _ = parse_out(output)
+
+    print str(time)
+    print status
+    print solution
+    exit(0)
 
 p = subprocess.Popen([elite_path], stdin=sys.stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 output = p.communicate()[0]
@@ -48,12 +67,11 @@ elif cnf != '':
     l_args = [solver_path]
     if time_limit is not None:
         l_args.append('-cpu-lim=' + str(time_limit))
+
     p = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = p.communicate(cnf)[0]
-    time, status, solution, cnf = parse_out(output)
+    time, status, solution, _ = parse_out(output)
 
     print str(elite_time + time)
     print status
     print solution
-
-exit(0)

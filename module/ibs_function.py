@@ -28,6 +28,7 @@ class IBSFunction:
             "subprocess_thread": self.thread_count
         }
 
+        self.current_solver.set_simplifying(False)
         m_solver = self.multi_solver(self.current_solver, verbosity=False)
         init_start_time = now()
         solved_init_cases, broken_init_cases = m_solver.start(solver_args, cases)
@@ -53,6 +54,7 @@ class IBSFunction:
 
         solver_args["time_limit"] = self.time_limit
 
+        self.current_solver.set_simplifying(True)
         m_solver = self.multi_solver(self.current_solver)
         main_start_time = now()
         solved_cases, broken_cases = m_solver.start(solver_args, cases)

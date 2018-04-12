@@ -10,9 +10,10 @@ class RokkPyWrapper:
 
     def __init__(self, solver_path):
         self.solver_path = solver_path
+        self.simplify = True
 
     def get_arguments(self, tl):
-        launching_args = ['python', self.solver_path]
+        launching_args = ['python', self.solver_path, '1' if self.simplify else '0']
 
         if tl is not None:
             launching_args.append(str(tl))
@@ -33,3 +34,6 @@ class RokkPyWrapper:
             report.parse_solution(data[2])
 
         return report
+
+    def set_simplifying(self, flag):
+        self.simplify = flag

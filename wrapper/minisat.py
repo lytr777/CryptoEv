@@ -47,3 +47,6 @@ class MinisatWrapper:
             report.parse_solution(solution)
 
         return report
+
+    def set_simplifying(self, flag):
+        pass
