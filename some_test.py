@@ -34,7 +34,7 @@ ev_parameters = {
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
     "mutation_strategy": mutation_strategy["normally"],
-    "stop_condition": stop_conditions(5, 2 ** 20, 5)["iterative"],
+    "stop_condition": stop_conditions(5, 2 ** 20, 5)["iterable"],
     "value_hash": empty_hash,
     "stagnation_limit": 100,
 

@@ -34,7 +34,7 @@ crypto_algorithms = {
 
 def stop_conditions(it, value, locals_count):
     return {
-        "iterative": lambda _1, _2, _3: _1 > it,
+        "iterable": lambda _1, _2, _3: _1 > it,
         "value": lambda _1, _2, _3: _2 <= value,
         "mix": lambda _1, _2, _3: _1 > it or _2 <= value,
         "locals": lambda _1, _2, _3: _3 >= locals_count,

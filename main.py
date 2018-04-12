@@ -13,7 +13,7 @@ ev_parameters = {
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
     "mutation_strategy": mutation_strategy["normally"],
-    "stop_condition": stop_conditions(4000, 2 ** 20, 5)["locals"],
+    "stop_condition": stop_conditions(2, 2 ** 20, 5)["iterable"],
     "value_hash": value_hash,
     "stagnation_limit": 100,
 
@@ -27,7 +27,7 @@ mf_parameters = {
     "crypto_algorithm": crypto_algorithms["e0"],
     "threads": 32,
     "N": 300,
-    "solver_wrapper": solver_wrappers["lingeling"],
+    "solver_wrapper": solver_wrappers["rokk_py"],
     "multi_solver": multi_solvers["worker"],
     "time_limit": 5,
     "corrector": corrector.mass_corrector(coefficient=10),
