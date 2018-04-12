@@ -417,8 +417,8 @@ void Solver::simplifyBySubsumption(bool with_var_elim)
         Report("Result  :   #vars: %d   #clauses: %d   #literals: %d\n", c, nClauses(), nLiterals());
         Report("CPU time:   %g s\n", cpuTime());
         Report("==============================================================================\n");
-	printf("i CPU time: %g\n", cpuTime());
 	if (c == 0) {
+	    printf("i CPU time: %g\n", cpuTime());
             printf("i SATISFIABLE\n");
             for (int i = 0; i < nVars(); i++){
                 if (!var_elimed[i] && value(i) != l_Undef) {
@@ -428,7 +428,6 @@ void Solver::simplifyBySubsumption(bool with_var_elim)
             printf(" 0\n");
             exit(0);
 	}
-	else printf("i PRESATELITED\n");
 
         // Write CNF or BCNF file:
         cchar*  filename = (output_file == NULL) ? "/dev/stdout" : output_file;
@@ -449,6 +448,8 @@ void Solver::simplifyBySubsumption(bool with_var_elim)
 
             // fprintf(out, "c   #vars: %d   #clauses: %d   #literals: %d\n"  , c, nClauses(), nLiterals());
             // fprintf(out, "c \n");
+	    fprintf(out, "i CPU time: %g\n", cpuTime());
+	    fprintf(out, "i PRESATELITED\n");
             fprintf(out, "p cnf %d %d\n", c, nClauses());
             for (int i = 0; i < constrs.size(); i++){
                 Clause c = constrs[i]; if (c.null()) continue;
