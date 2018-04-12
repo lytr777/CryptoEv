@@ -26,10 +26,6 @@ def parse_out(out):
     return t, st, s, c
 
 
-if len(sys.argv) < 2:
-    print "USAGE: rokk_py.py [time limit]"
-    exit(1)
-
 time_limit = None
 if len(sys.argv) > 1:
     time_limit = int(sys.argv[1])
