@@ -222,8 +222,8 @@ static void parse_BCNF(cchar* filename, Solver& S)
     if (strncmp(header, "BCNF", 4) != 0) fprintf(stderr, "ERROR! Not a BCNF file: %s\n", filename), exit(1);
     if (*(int*)(header+4) != 0x01020304) fprintf(stderr, "ERROR! BCNF file in unsupported byte-order: %s\n", filename), exit(1);
 
-    int      n_vars    = *(int*)(header + 8);
-//  int      n_clauses = *(int*)(header + 12);
+    int      n_vars    = *(int*)(header+ 8);
+//  int      n_clauses = *(int*)(header+12);
     int*     buf       = xmalloc<int>(CHUNK_LIMIT);
     int      buf_sz;
     vec<Lit> c;
@@ -378,10 +378,13 @@ static void parse_DIMACS(cchar* input_file, Solver& S) {
     FileBuffer in(input_file);
     parse_DIMACS_main(in, S); }
 
+
+//=================================================================================================
 // Main
 
+
 static void SIGINT_signalHandler(int signum) {
-    printf("e INTERRUPTED\n"); exit(-1); }
+    printf("\n*** INTERRUPTED ***\n"); exit(-1); }
 
 
 void printStats(SolverStats& stats, double cpu_time)
@@ -407,35 +410,34 @@ int main(int argc, char** argv)
     parseOptions(argc, argv);
     Solver      S(occ_Off, (opt_ext_sat) ? NULL :elimed_file);
     bool        st;
-
-    double initial_time = cpuTime();
+    opt_pre_sat = true;
 
     if (!opt_ext_sat){
         // STANDARD MODE:
         //
-        printf("c Parsing...\n");
+        reportf("Parsing...\n");
         if (input_file == NULL)
             parse_DIMACS(stdin, S);
-        else {
+        else{
             cchar*  name = input_file;
             int     len  = strlen(name);
 
             if (strcmp(name+len-5, ".bcnf") == 0){
                 parse_BCNF(name, S);
 
-            } else {
+            }else{
                 char*   tmp  = NULL;
                 int     stat = 0;
-                if (len >= 3 && strcmp(name+len-3, ".gz") == 0) {
+                if (len >= 3 && strcmp(name+len-3, ".gz") == 0){
                     tmp = xstrdup("/tmp/tmp_CNF__XXXXXX");
                     int fd = mkstemp(tmp);
                     if (fd == -1)
-                        printf("e ERROR! Could not create temporary file for unpacking problem.\n"),
+                        fprintf(stderr, "ERROR! Could not create temporary file for unpacking problem.\n"),
                         exit(1);
                     else
                         close(fd);
                     stat = system(sFree(nsprintf("zcat %s  > %s", name, tmp)));
-                    if (stat != 0) printf("e ERROR! Could not open file: %s\n", name), exit(1);
+                    if (stat != 0) fprintf(stderr, "ERROR! Could not open file: %s\n", name), exit(1);
                     parse_DIMACS(tmp, S);
                 }else
                     parse_DIMACS(name, S);
@@ -444,14 +446,18 @@ int main(int argc, char** argv)
             }
         }
         S.setOccurMode(occ_Permanent);
-
         S.verbosity = verbosity;
         st = S.solve();
-
-        printf("i CPU time: %f\n", cpuTime() - initial_time);
+	printf("i CPU time: %f\n", cpuTime());
+        printStats(S.stats, cpuTime());
+        reportf("\n");
+      #ifdef SAT_LIVE
         printf(st ? "i SATISFIABLE\n" : "i UNSATISFIABLE\n");
+      #else
+        reportf(st ? "SATISFIABLE\n" : "UNSATISFIABLE\n");
+      #endif
 
-    } else {
+    }else{
         // EXTEND A MODEL FROM MINISAT: [HACK!]
         //
         if (output_file == NULL) fprintf(stderr, "ERROR! Result file from external SAT solver missing when using '+ext'.\n"), exit(1);
