@@ -19,7 +19,7 @@ ev_parameters = {
     "start_s": 120,
     "min_s": 0,
     "comparator": comparator.compare,
-    "minimization_function": minimization_functions["gad"],
+    "minimization_function": minimization_functions["ibs"],
     "mutation_strategy": mutation_strategy["normally"],
     "stop_condition": stop_conditions(2, 2 ** 20, 5)["iterable"],
     "value_hash": value_hash,
