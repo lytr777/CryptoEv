@@ -9,10 +9,10 @@ rm -f code/sources/rokk/core/Main.cc
 cp ../tools/rokk_re/core/Main.cc code/sources/rokk/core/Main.cc
 
 rm -f code/sources/SatELite/SatELite/Main.C
-cp ../tools/SatElite/Main.C code/sources/SatELite/SatELite/Main.C
+cp ../tools/SatElite_re/Main.C code/sources/SatELite/SatELite/Main.C
 
 rm -f code/sources/SatELite/SatELite/Solver_subsume.C
-cp ../tools/SatElite/Solver_subsume.C code/sources/SatELite/SatELite/Solver_subsume.C
+cp ../tools/SatElite_re/Solver_subsume.C code/sources/SatELite/SatELite/Solver_subsume.C
 
 chmod +x build.sh
 ./build.sh
