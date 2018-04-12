@@ -1,6 +1,7 @@
 from model.solver_report import SolverReport
 from util.parser import parse_solution_file
 
+
 class MinisatWrapper:
     statuses = {
         "SAT": "SATISFIABLE",

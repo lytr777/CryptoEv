@@ -36,10 +36,14 @@ def __choose_best_tl(min_tl, det_times, ind_times):
         else:
             perhaps.append(time)
 
-    if len(exactly) == 0:
+    if len(perhaps) == 0:
         return min_tl
 
     perhaps.sort()
+    if len(exactly) == 0:
+        exactly.append(perhaps[0])
+        perhaps.pop(0)
+
     n = len(det_times) + len(ind_times)
     best = (min_tl, min_tl * n / len(exactly))
 
