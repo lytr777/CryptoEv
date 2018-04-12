@@ -32,7 +32,7 @@ if len(sys.argv) < 2:
     print "USAGE: rokk_py.py <simplify?> [time limit]"
     exit(1)
 
-simplify = bool(sys.argv[1])
+simplify = sys.argv[1] != '0'
 time_limit = None
 if len(sys.argv) > 2:
     time_limit = int(sys.argv[2])
