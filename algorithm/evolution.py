@@ -19,7 +19,7 @@ class EvolutionAlgorithm:
     def start(self, mf_parameters):
         algorithm = mf_parameters["crypto_algorithm"][0]
         max_value = 2 ** algorithm.secret_key_len
-        it = 0
+        it = 1
         stagnation = 0
 
         P = self.__restart(algorithm)

@@ -13,7 +13,7 @@ ev_parameters = {
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
     "mutation_strategy": mutation_strategy["normally"],
-    "stop_condition": stop_conditions(1, 2 ** 20, 5)["iterable"],
+    "stop_condition": stop_conditions(2, 2 ** 20, 5)["iterable"],
     "value_hash": value_hash,
     "stagnation_limit": 100,
 
@@ -22,10 +22,11 @@ ev_parameters = {
 }
 
 ev_alg = EvolutionAlgorithm(ev_parameters)
-
+# 300, 32 ~ 200 sec
+# 300, 8 ~ 230 sec
 mf_parameters = {
     "crypto_algorithm": crypto_algorithms["e0"],
-    "threads": 8,
+    "threads": 4,
     "N": 300,
     "solver_wrapper": solver_wrappers["rokk_py"],
     "multi_solver": multi_solvers["worker"],

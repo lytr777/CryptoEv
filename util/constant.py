@@ -12,3 +12,5 @@ lingeling_path = "./lingeling/lingeling"
 plingeling_path = "./lingeling/plingeling"
 rokk_path = "./rokk/binary/rokk_m.sh"
 rokk_py_path = "./rokk/binary/rokk_py.py"
+
+log_path = './out/new_log'
