@@ -11,15 +11,15 @@ class RokkPyWrapper:
     def __init__(self, solver_path):
         self.solver_path = solver_path
 
-    def get_arguments(self, cnf, out, tl):
-        launching_args = ['python', self.solver_path, cnf]
+    def get_arguments(self, tl):
+        launching_args = ['python', self.solver_path]
 
         if tl is not None:
             launching_args.append(str(tl))
 
         return launching_args
 
-    def parse_out(self, out_file, output):
+    def parse_out(self, output):
         data = output.split('\n')
 
         split_time = data[0].split(' ')
