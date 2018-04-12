@@ -22,6 +22,10 @@ class Trivium_64(KeyGenerator):
         self.cnf = copy(self.cnf_link)
         KeyGenerator.write_to(self, file_path)
 
+    def get_cnf(self):
+        self.cnf = copy(self.cnf_link)
+        return KeyGenerator.get_cnf(self)
+
     def __copy__(self):
         copy_tr_64 = Trivium_64(self.cnf_link)
 

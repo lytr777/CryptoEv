@@ -22,6 +22,10 @@ class A5_toy(KeyGenerator):
         self.cnf = copy(self.cnf_link)
         KeyGenerator.write_to(self, file_path)
 
+    def get_cnf(self):
+        self.cnf = copy(self.cnf_link)
+        return KeyGenerator.get_cnf(self)
+
     def __copy__(self):
         copy_a5_toy = A5_toy(self.cnf_link)
 

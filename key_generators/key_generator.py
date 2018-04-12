@@ -60,6 +60,17 @@ class KeyGenerator:
 
         self.cnf = None
 
+    def get_cnf(self):
+        if self.key_stream is not None:
+            self.__substitute_key_stream()
+        if self.secret_key is not None:
+            self.__substitute_secret_key()
+
+        cnf_string = str(self.cnf)
+        self.cnf = None
+
+        return cnf_string
+
     def mark_solved(self, report):
         self.time = report.time
         self.status = report.status

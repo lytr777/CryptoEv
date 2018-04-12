@@ -33,7 +33,7 @@ class Worker(threading.Thread):
         l_args = self.solver_wrapper.get_arguments(tl=self.tl)
 
         sp = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = sp.communicate(str(case.cnf))[0]
+        output = sp.communicate(case.get_cnf())[0]
 
         report = self.solver_wrapper.parse_out(output)
         case.mark_solved(report)
