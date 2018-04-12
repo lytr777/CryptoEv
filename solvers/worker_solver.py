@@ -90,10 +90,8 @@ class WorkerSolver:
         times = []
         for s_case in solved_cases:
             times.append(s_case.time)
-        if self.verbosity:
-            print "progress (" + str(datetime.now()) + ") 100% active(0) with times: " + str(times)
-
-        return solved_cases, broken_cases
+        solver_log = "progress (%s) 100%s active(0) with times: %s\n" % (datetime.now(), '%', times)
+        return solved_cases, broken_cases, solver_log
 
     def anyAlive(self):
         return any(worker.isAlive() for worker in self.workers)

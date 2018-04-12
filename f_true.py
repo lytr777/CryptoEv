@@ -1,35 +1,19 @@
-from key_generators.a5_1 import A5_1
-from key_generators.a5_toy import A5_toy
-from key_generators.trivium_64 import Trivium_64
-from key_generators.bivium import Bivium
-
-from wrapper.lingeling import LingelingWrapper
-from wrapper.minisat import MinisatWrapper
-from wrapper.plingeling import PLingelingWrapper
-from wrapper.rokk import RokkWrapper
-from wrapper.rokk_py import RokkPyWrapper
-
-from module.gad_function import GADFunction
-from module.ibs_function import IBSFunction
+from options import minimization_functions
+from options import crypto_algorithms, solver_wrappers, multi_solvers
 
 from util import formatter, constant
 
 import numpy as np
 
-solver_wrappers = {
-    "minisat": MinisatWrapper(constant.minisat_path),
-    "lingeling": LingelingWrapper(constant.lingeling_path),
-    "rokk": RokkWrapper(constant.rokk_path),
-    "rokk_py": RokkPyWrapper(constant.rokk_py_path),
-    "plingeling": PLingelingWrapper(constant.plingeling_path, 4)
-}
+m_function = minimization_functions["gad"]
 
 mf_parameters = {
-    "crypto_algorithm": Bivium,
+    "crypto_algorithm": crypto_algorithms["bivium"],
     "cnf_link": constant.bivium_cnf,
     "threads": 32,
     "N": 100000,
     "solver_wrapper": solver_wrappers["rokk_py"],
+    "multi_solver": multi_solvers["sleep"],
 }
 
 cases = [
@@ -57,21 +41,26 @@ cases.append(case)
 #     print ss
 # exit(0)
 
+with open(constant.true_log_path, 'w+'):
+    pass
+
 values = []
-
-m_function = GADFunction
-
 for case in cases:
     print "start with mask: " + formatter.format_array(case)
     mf = m_function(mf_parameters)
-    value, stats = mf.compute(case)
+    value, mf_log = mf.compute(case)
     values.append(value)
-    for stat in stats:
-        print stat
-    print "true value: " + str("%.7g" % value)
-    print "------------------------------------------------------"
 
-print "------------------------------------------------------"
-print "------------------------------------------------------"
+    mf_log += "true value: %.7g" % value
+    mf_log += "------------------------------------------------------\n"
+
+    with open(constant.true_log_path, 'a') as f:
+        f.write(mf_log)
+
+true_log = "------------------------------------------------------\n"
+true_log += "------------------------------------------------------\n"
 for i in range(len(cases)):
-    print "value for mask " + formatter.format_array(cases[i]) + ": " + str("%.7g" % values[i])
+    true_log += "value for mask %s:%.7g\n " % (formatter.format_array(cases[i]), values[i])
+
+with open(constant.true_log_path, 'a') as f:
+    f.write(true_log)

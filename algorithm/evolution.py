@@ -4,6 +4,7 @@ import numpy as np
 
 class EvolutionAlgorithm:
     def __init__(self, ev_parameters):
+        self.log_file = ev_parameters["log_file"]
         self.s = ev_parameters["start_s"]
         self.min_s = ev_parameters["min_s"]
         self.comparator = ev_parameters["comparator"]
@@ -27,33 +28,32 @@ class EvolutionAlgorithm:
         best_locals = []
 
         while not self.stop_condition(it, best[1], len(best_locals)):
+            step_log = "------------------------------------------------------\n"
+            step_log += "iteration step: %d\n" % it
             P_v = []
-            print "------------------------------------------------------"
-            print "iteration step: " + str(it)
             for p in P:
                 key = formatter.format_array(p)
                 if key in self.value_hash:
-                    print "------------------------------------------------------"
-                    print "mask: " + key + " has been saved in hash"
+                    hashed = True
                     value = self.value_hash[key]
-                    print "with value: " + str("%.7g" % value)
-                    p_v = (p, value)
+                    mf_log = ''
                 else:
-                    print "------------------------------------------------------"
-                    print "start prediction with mask: " + key
+                    hashed = False
                     pf = self.minimization_function(mf_parameters)
-                    value, stats = pf.compute(p)
-                    for stat in stats:
-                        print stat
+                    value, mf_log = pf.compute(p)
                     self.value_hash[key] = value
-                    print "end prediction with value: " + str("%.7g" % value)
-                    p_v = (p, value)
 
+                p_v = (p, value)
                 if self.comparator(best, p_v) > 0:
                     best = p_v
                     stagnation = -1
 
                 P_v.append(p_v)
+
+                step_log += self.__prepare_step_log(hashed, key, value, mf_log)
+
+            with open(self.log_file, 'a') as f:
+                f.write(step_log)
 
             stagnation += 1
             if stagnation >= self.stagnation_limit:
@@ -65,7 +65,8 @@ class EvolutionAlgorithm:
                 Q = self.__get_bests(P_v)
                 P = self.__mutation(Q)
             it += 1
-        if best[0] != max_value:
+
+        if best[1] != max_value:
             best_locals.append(best)
         return best_locals
 
@@ -94,3 +95,16 @@ class EvolutionAlgorithm:
                 P.append(new_p)
 
         return P
+
+    @staticmethod
+    def __prepare_step_log(hashed, key, value, mf_log):
+        s = "------------------------------------------------------\n"
+        if hashed:
+            s += "mask: %s has been saved in hash\n" % key
+            s += "with value: %.7g\n" % value
+        else:
+            s += "start prediction with mask: %s\n" % key
+            s += mf_log
+            s += "end prediction with value: %.7g\n" % value
+
+        return s

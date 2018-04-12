@@ -21,6 +21,7 @@ class GADFunction:
             self.__init_case()
         else:
             self.solution_key_stream = solution_key_stream
+            self.log = ""
 
     def __init_case(self):
         self.base_cnf = parse_cnf(self.crypto_algorithm[1])
@@ -29,10 +30,11 @@ class GADFunction:
         solver = CaseSolver(self.current_solver)
         solver.start({}, init_alg)
         self.solution_key_stream = init_alg.get_solution_key_stream()
-        self.__print_info(init_alg)
+        self.log = self.__get_info(init_alg)
 
     def compute(self, mask, cases=None):
         if cases is None:
+            decomposition_flag = False
             parameters = {
                 "key_stream": self.solution_key_stream,
                 "secret_mask": mask
@@ -44,6 +46,8 @@ class GADFunction:
 
                 case = caser.create_case(self.base_cnf, parameters, self.crypto_algorithm[0])
                 cases.append(case)
+        else:
+            decomposition_flag = True
 
         solver_args = {
             "subprocess_thread": self.thread_count,
@@ -52,7 +56,8 @@ class GADFunction:
         }
 
         m_solver = self.multi_solver(self.current_solver)
-        solved_cases, broken_cases = m_solver.start(solver_args, cases)
+        solved_cases, broken_cases, solver_log = m_solver.start(solver_args, cases)
+        self.log += solver_log
 
         times = []
         time_stat = {
@@ -91,30 +96,37 @@ class GADFunction:
             }
 
             for case in broken_cases:
-                decomposition_value = self.decomposition(mask, case, self.d, GADFunction, mf_parameters)
+                decomposition_value, decomposition_log = self.decomposition(mask, case, self.d, GADFunction, mf_parameters)
                 decomposition_values.append(decomposition_value)
+                self.log += decomposition_log
 
             time_stat["DETERMINATE"] += len(broken_cases)
             flags_stat["PROCESSING"] += len(broken_cases)
 
             partially_value += sum(decomposition_values)
 
-            return partially_value / self.N, [time_stat, flags_stat]
+            if not decomposition_flag:
+                self.log += "%s\n" % time_stat
+                self.log += "%s\n" % flags_stat
+            return partially_value / self.N, self.log
 
-    def __update_time_statistic(self, time_stat, status):
+    @staticmethod
+    def __update_time_statistic(time_stat, status):
         if status == "UNSATISFIABLE" or status == "SATISFIABLE":
             time_stat["DETERMINATE"] += 1
         else:
             time_stat["INDETERMINATE"] += 1
 
-    def __update_flags_statistic(self, flags_stat, flags):
+    @staticmethod
+    def __update_flags_statistic(flags_stat, flags):
         if flags[0]:
             flags_stat["PREPROCESSING"] += 1
         else:
             flags_stat["PROCESSING"] += 1
 
-    def __print_info(self, init_a5):
-        print "init key stream: " + format_array(self.solution_key_stream)
-        print "init secret key: " + format_array(init_a5.get_solution_secret_key())
+    def __get_info(self, init_a5):
+        s = "init key stream: %s\n" % format_array(self.solution_key_stream)
+        s += "init secret key: %s\n" % format_array(init_a5.get_solution_secret_key())
+        s += "init info: (%s, %f)\n" % (init_a5.status, init_a5.time)
+        return s
 
-        print "init info: (" + init_a5.status + ", " + str(init_a5.time) + ")"

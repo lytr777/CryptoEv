@@ -16,6 +16,7 @@ class IBSFunction:
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
 
         self.base_cnf = parse_cnf(self.crypto_algorithm[1])
+        self.log = ""
 
     def compute(self, mask):
         # init
@@ -29,15 +30,15 @@ class IBSFunction:
         }
 
         self.current_solver.set_simplifying(False)
-        m_solver = self.multi_solver(self.current_solver, verbosity=False)
+        m_solver = self.multi_solver(self.current_solver)
         init_start_time = now()
-        solved_init_cases, broken_init_cases = m_solver.start(solver_args, cases)
+        solved_init_cases, broken_init_cases, _ = m_solver.start(solver_args, cases)
 
         if len(broken_init_cases) != 0:
-            print "count of broken cases in init phase not equals zero!"
+            print "Count of broken cases in init phase not equals zero!"
             exit(0)
         else:
-            print "init phase ended with time: " + str(now() - init_start_time)
+            self.log += "init phase ended with time: %f\n" % (now() - init_start_time)
 
         # compute
         cases = []
@@ -57,11 +58,12 @@ class IBSFunction:
         self.current_solver.set_simplifying(True)
         m_solver = self.multi_solver(self.current_solver)
         main_start_time = now()
-        solved_cases, broken_cases = m_solver.start(solver_args, cases)
-        print "main phase ended with time: " + str(now() - main_start_time)
+        solved_cases, broken_cases, solver_log = m_solver.start(solver_args, cases)
+        self.log += solver_log
+        self.log += "main phase ended with time: %f\n" % (now() - main_start_time)
 
         if len(broken_init_cases) != 0:
-            print "Some cases is broken in IBS method!!!"
+            print "Some cases is broken in IBS method!"
             exit(0)
 
         time_stat = {
@@ -76,7 +78,7 @@ class IBSFunction:
 
         if self.corrector is not None:
             self.time_limit = self.corrector(solved_cases, self.time_limit)
-            print "time limit has been corrected: " + str(self.time_limit)
+            self.log += "time limit has been corrected: %f" % self.time_limit
             time_stat["DISCARDED"] = 0
 
         for case in solved_cases:
@@ -89,7 +91,9 @@ class IBSFunction:
         else:
             value = (2 ** self.crypto_algorithm[0].secret_key_len) * self.time_limit
 
-        return value, [time_stat, flags_stat]
+        self.log += "%s\n" % time_stat
+        self.log += "%s\n" % flags_stat
+        return value, self.log
 
     @staticmethod
     def __update_time_statistic(time_stat, status):

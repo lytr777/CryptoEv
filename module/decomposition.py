@@ -33,11 +33,11 @@ def decomposition(value_hash):
             case_i.set_secret_key(secret_keys[i], new_mask)
             cases.append(case_i)
 
-        print "== decomposition from " + formatter.format_array(mask) + " to " + formatter.format_array(new_mask)
+        d_log = "== decomposition from %s to %s\n" % (formatter.format_array(mask), formatter.format_array(new_mask))
         mf_parameters_copy = copy(mf_parameters)
         mf_parameters_copy["N"] = len(cases)
         mf = m_function(mf_parameters_copy, case.key_stream)
-        value, stats = mf.compute(new_mask, cases)
-        return value
+        value, mf_log = mf.compute(new_mask, cases)
+        return value, d_log + mf_log
 
     return __decomposition

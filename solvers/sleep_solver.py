@@ -11,10 +11,8 @@ class SleepSolver:
         self.verbosity = verbosity
         self.solver_wrapper = solver_wrapper
         self.sleep_time = sleep_time
-        self.last_progress = 0
 
     def start(self, args, cases):
-        self.last_progress = 0
         k = args["subprocess_thread"] if ("subprocess_thread" in args) else 1
         time_limit = args["time_limit"] if ("time_limit" in args) else None
         break_time = args["break_time"] if ("break_time" in args) else None
@@ -33,6 +31,7 @@ class SleepSolver:
         subprocess_times = np.zeros(k, dtype=np.int)
         solved_cases = []
         broken_cases = []
+        solver_log = ""
 
         break_f = lambda x: (break_time is not None) and (now() - subprocess_times[x] > break_time)
         while len(cases) > 0:
@@ -50,10 +49,10 @@ class SleepSolver:
                 if len(cases) == 0:
                     break
 
-            self.check_subprocesses(free, out_files, cases, solved_cases, broken_cases, subprocesses, break_f)
+            solver_log += self.check_subprocesses(free, out_files, cases, solved_cases, broken_cases, subprocesses, break_f)
 
         while len(subprocesses) > 0:
-            self.check_subprocesses(free, out_files, cases, solved_cases, broken_cases, subprocesses, break_f)
+            solver_log += self.check_subprocesses(free, out_files, cases, solved_cases, broken_cases, subprocesses, break_f)
 
         for i in range(k):
             if os.path.isfile(cnf_files[i]):
@@ -61,7 +60,7 @@ class SleepSolver:
             if os.path.isfile(out_files[i]):
                 os.remove(out_files[i])
 
-        return solved_cases, broken_cases
+        return solved_cases, broken_cases, solver_log
 
     def check_subprocesses(self, free, out_files, cases, solved_cases, broken_cases, subprocesses, break_f):
         sleep(self.sleep_time)
@@ -79,7 +78,6 @@ class SleepSolver:
                 free.append(i)
 
                 times.append(case.time)
-                # print "subprocess " + str(i) + " ended with result (" + case.status + ", " + str(case.time) + ")"
             else:
                 if break_f(i):
                     case = subprocesses[j][2]
@@ -92,8 +90,7 @@ class SleepSolver:
                 else:
                     j += 1
 
-        if self.verbosity:
-            self.__print_progress(len(solved_cases), len(broken_cases), len(cases), len(subprocesses), times)
+        return self.__get_progress(len(solved_cases), len(broken_cases), len(cases), len(subprocesses), times)
 
     def __handle_sp(self, sp, out_file, case):
         output = sp.communicate()[0]
@@ -101,9 +98,10 @@ class SleepSolver:
 
         case.mark_solved(report)
 
-    def __print_progress(self, solved, broke, waiting, solving, times):
-        progress = (broke + solved) * 100. / (solved + broke + waiting + solving)
-        # if self.last_progress != progress:
+    @staticmethod
+    def __get_progress(solved, broke, waiting, solving, times):
         if len(times) != 0:
-            print "progress (" + str(datetime.now()) + ") " + str("%.2f" % progress) + "% active(" + str(solving) + ") with times: " + str(times)
-            self.last_progress = progress
+            progress = (broke + solved) * 100. / (solved + broke + waiting + solving)
+            return "progress (%s) %.2f%s active(%d) with times: %s\n" % (datetime.now(), progress, '%', solving, times)
+
+        return ""

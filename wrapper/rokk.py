@@ -28,7 +28,6 @@ class RokkWrapper:
         output = output.split('\n')
         time = 0
         i = 0
-        # parse SatElite
         k = 0
         for i in range(len(output)):
             if output[i].startswith("c CPU time"):
