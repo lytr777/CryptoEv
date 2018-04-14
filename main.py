@@ -18,7 +18,7 @@ value_hash = {}
 ev_parameters = {
     "log_file": log_file,
     "locals_log_file": locals_log_file,
-    "start_s": 120,
+    "start_s": 60,
     "min_s": 0,
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
