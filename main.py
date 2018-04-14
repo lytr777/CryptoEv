@@ -12,10 +12,12 @@ if len(sys.argv) < 2:
     exit(1)
 
 log_file = constant.log_path + sys.argv[1]
+locals_log_file = constant.locals_log_path + sys.argv[1]
 value_hash = {}
 
 ev_parameters = {
     "log_file": log_file,
+    "locals_log_file": locals_log_file,
     "start_s": 120,
     "min_s": 0,
     "comparator": comparator.compare,
@@ -32,11 +34,11 @@ ev_parameters = {
 ev_alg = EvolutionAlgorithm(ev_parameters)
 
 # 300, 32 ~ 200 sec
-# 300, 8 ~ 230 sec
-# 300, 4 ~ 250 sec
+# 300,  8 ~ 230 sec
+# 300,  4 ~ 250 sec
 
 mf_parameters = {
-    "crypto_algorithm": crypto_algorithms["bivium"],
+    "crypto_algorithm": crypto_algorithms["a5_1"],
     "threads": 4,
     "N": 300,
     "solver_wrapper": solver_wrappers["rokk_py"],

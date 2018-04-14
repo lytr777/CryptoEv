@@ -14,4 +14,5 @@ rokk_path = "./rokk/binary/rokk_m.sh"
 rokk_py_path = "./rokk/binary/rokk_py.py"
 
 log_path = './out/new_log_'
+locals_log_path = './out/new_locals_log_'
 true_log_path = './out/true_log'

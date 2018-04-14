@@ -5,6 +5,7 @@ import numpy as np
 class EvolutionAlgorithm:
     def __init__(self, ev_parameters):
         self.log_file = ev_parameters["log_file"]
+        self.locals_log_file = ev_parameters["locals_log_file"]
         self.s = ev_parameters["start_s"]
         self.min_s = ev_parameters["min_s"]
         self.comparator = ev_parameters["comparator"]
@@ -59,6 +60,7 @@ class EvolutionAlgorithm:
             if stagnation >= self.stagnation_limit:
                 P = self.__restart(algorithm)
                 best_locals.append(best)
+                self.__print_local_info(best)
                 best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
                 stagnation = 0
             else:
@@ -68,6 +70,8 @@ class EvolutionAlgorithm:
 
         if best[1] != max_value:
             best_locals.append(best)
+            self.__print_local_info(best)
+
         return best_locals
 
     def __restart(self, algorithm):
@@ -95,6 +99,12 @@ class EvolutionAlgorithm:
                 P.append(new_p)
 
         return P
+
+    def __print_local_info(self, local):
+        with open(self.locals_log_file, 'a') as f:
+            f.write("------------------------------------------------------\n")
+            f.write("local with mask: %s\n" % formatter.format_array(local[0]))
+            f.write("and value: %.7g\n" % local[1])
 
     @staticmethod
     def __prepare_step_log(hashed, key, value, mf_log):
