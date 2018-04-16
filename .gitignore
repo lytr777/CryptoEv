@@ -8,3 +8,5 @@ local_tools
 *.bivium_true_log
 minisat.zip
 *.e0_log
+*.a5_1_log
+load.sh

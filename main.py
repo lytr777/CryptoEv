@@ -18,7 +18,7 @@ value_hash = {}
 ev_parameters = {
     "log_file": log_file,
     "locals_log_file": locals_log_file,
-    "start_s": 60,
+    "start_s": 120,
     "min_s": 0,
     "comparator": comparator.compare,
     "minimization_function": minimization_functions["ibs"],
@@ -38,12 +38,12 @@ ev_alg = EvolutionAlgorithm(ev_parameters)
 # 300,  4 ~ 250 sec
 
 mf_parameters = {
-    "crypto_algorithm": crypto_algorithms["a5_1"],
+    "crypto_algorithm": crypto_algorithms["e0"],
     "threads": 4,
-    "N": 300,
+    "N": 500,
     "solver_wrapper": solver_wrappers["rokk_py"],
     "multi_solver": multi_solvers["worker"],
-    "time_limit": 1,
+    "time_limit": 5,
     "corrector": corrector.mass_corrector(coefficient=10),
     "decomposition": decomposition.decomposition(value_hash),
     "d": 2,  # 2^d == threads
