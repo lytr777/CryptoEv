@@ -43,8 +43,8 @@ mf_parameters = {
     "N": 500,
     "solver_wrapper": solver_wrappers["rokk_py"],
     "multi_solver": multi_solvers["worker"],
-    "time_limit": 5,
-    "corrector": corrector.mass_corrector(coefficient=10),
+    "time_limit": 3,
+    "corrector": corrector.mass_corrector(coefficient=12),
     "decomposition": decomposition.decomposition(value_hash),
     "d": 2,  # 2^d == threads
     # "break_time": 2
