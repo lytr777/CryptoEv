@@ -34,11 +34,3 @@ def generate_decomposition_key_set(base_key, indices):
 
 def generate_distribution(n):
     return np.random.random((n,))
-
-
-def get_C_mask():
-    mask = np.zeros(64, dtype=np.int)
-    for i in range(41, 64):
-        mask[i] = 1
-
-    return mask

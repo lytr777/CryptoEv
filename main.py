@@ -2,7 +2,7 @@ import sys
 
 from options import minimization_functions, mutation_strategy, stop_conditions
 from options import crypto_algorithms, solver_wrappers, multi_solvers
-from util import formatter, comparator, corrector, parser, plotter, constant
+from util import formatter, comparator, corrector, parser, plotter, constant, conclusion
 
 from module import decomposition
 from algorithm.evolution import EvolutionAlgorithm
@@ -57,24 +57,7 @@ mf_parameters = {
 with open(log_file, 'w+'):
     pass
 
-best_locals = ev_alg.start(mf_parameters)
-best = (None, 2 ** 64)
-if len(best_locals) > 0:
-    best = best_locals[0]
 
-conclusion = "------------------------------------------------------\n"
-conclusion += "------------------------------------------------------\n"
-conclusion += "------------------------------------------------------\n"
-for best_local in best_locals:
-    if best[1] > best_local[1]:
-        best = best_local
-    conclusion += "best local: %s with value: %.7g\n" % (formatter.format_array(best_local[0]), best_local[1])
+locals_list = ev_alg.start(mf_parameters)
 
-if best:
-    conclusion += "------------------------------------------------------\n"
-    conclusion += "------------------------------------------------------\n"
-    conclusion += "------------------------------------------------------\n"
-    conclusion += "best: %s with value: %.7g\n" % (formatter.format_array(best[0]), best[1])
-
-with open(log_file, 'a') as f:
-    f.write(conclusion)
+conclusion.add_conclusion(log_file, ev_parameters["lambda"] + ev_parameters["mu"], locals_list=locals_list)

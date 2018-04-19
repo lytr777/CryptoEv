@@ -26,9 +26,9 @@ class EvolutionAlgorithm:
 
         P = self.__restart(algorithm)
         best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
-        best_locals = []
+        locals_list = []
 
-        while not self.stop_condition(it, best[1], len(best_locals)):
+        while not self.stop_condition(it, best[1], len(locals_list)):
             step_log = "------------------------------------------------------\n"
             step_log += "iteration step: %d\n" % it
             P_v = []
@@ -59,7 +59,7 @@ class EvolutionAlgorithm:
             stagnation += 1
             if stagnation >= self.stagnation_limit:
                 P = self.__restart(algorithm)
-                best_locals.append(best)
+                locals_list.append(best)
                 self.__print_local_info(best)
                 best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
                 stagnation = 0
@@ -69,10 +69,10 @@ class EvolutionAlgorithm:
             it += 1
 
         if best[1] != max_value:
-            best_locals.append(best)
+            locals_list.append(best)
             self.__print_local_info(best)
 
-        return best_locals
+        return locals_list
 
     def __restart(self, algorithm):
         P = []

@@ -1,7 +1,7 @@
 from options import minimization_functions
 from options import crypto_algorithms, solver_wrappers, multi_solvers
 
-from util import formatter, constant
+from util import formatter, constant, conclusion
 
 import numpy as np
 

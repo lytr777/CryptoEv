@@ -1,3 +1,5 @@
+import numpy as np
+
 from model.cnf_model import Clause, Var, Cnf
 
 
@@ -36,7 +38,7 @@ def parse_cnf(cnf_file):
     return cnf
 
 
-def restore_hash(metric_hash, out_path, k):
+def restore_hash(value_hash, out_path, k):
     data = __read_file(out_path)
     i = 0
     while len(data) > i:
@@ -45,8 +47,8 @@ def restore_hash(metric_hash, out_path, k):
             if data[i].startswith("start"):
                 key = data[i].split(" ")[4]
                 i += __skip_while(data, i, lambda s: not s.startswith("end"))
-                metric = float(data[i].split(" ")[4])
-                metric_hash[key] = metric
+                value = float(data[i].split(" ")[4])
+                value_hash[key] = value
             else:
                 return
 
@@ -58,18 +60,22 @@ def parse_out(out_path, k):
     while len(data) > i:
         step = []
         for j in range(k):
-            i += __skip_while(data, i, lambda s: not s.startswith("start") and (
-                    not s.startswith("mask") and not s.startswith("best")))
+            try:
+                i += __skip_while(data, i, lambda s: not s.startswith("start") and (not s.startswith("mask") and not s.startswith("best")))
+            except IndexError:
+                break
             if data[i].startswith("mask"):
                 mask = data[i].split(" ")[1].split("(")[0]
+                mask = np.array([c for c in mask]).astype(np.int)
                 i += 1
-                metric = float(data[i].split(" ")[2])
-                step.append((mask, metric))
+                value = float(data[i].split(" ")[2])
+                step.append((mask, value))
             elif data[i].startswith("start"):
                 mask = data[i].split(" ")[4].split("(")[0]
+                mask = np.array([c for c in mask]).astype(np.int)
                 i += __skip_while(data, i, lambda s: not s.startswith("end"))
-                metric = float(data[i].split(" ")[4])
-                step.append((mask, metric))
+                value = float(data[i].split(" ")[4])
+                step.append((mask, value))
             else:
                 break
 
