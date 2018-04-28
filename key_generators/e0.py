@@ -11,6 +11,8 @@ class E0(KeyGenerator):
     secret_key_start = 1
     secret_key_len = 128
 
+    name = "E0"
+
     def __init__(self, cnf):
         self.cnf_link = cnf
         KeyGenerator.__init__(self)

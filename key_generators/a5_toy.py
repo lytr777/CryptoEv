@@ -11,6 +11,8 @@ class A5_toy(KeyGenerator):
     secret_key_start = 1
     secret_key_len = 48
 
+    name = "A5/1 48"
+
     def __init__(self, cnf):
         self.cnf_link = cnf
         KeyGenerator.__init__(self)

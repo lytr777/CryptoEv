@@ -11,34 +11,25 @@ def neighbour_mutation(vector):
     return new_vector
 
 
-def normally_mutation(vector):
-    new_vector = copy(vector)
-    distribution = generator.generate_distribution(len(new_vector))
-    p = 1. / len(vector)
+def scaled_uniform_mutation(c):
+    def __scaled_uniform_mutation(vector):
+        new_vector = copy(vector)
+        distribution = generator.generate_distribution(len(new_vector))
+        p = float(c) / len(vector)
 
-    for i in range(len(new_vector)):
-        if p >= distribution[i]:
-            new_vector[i] = not new_vector[i]
+        for i in range(len(new_vector)):
+            if p >= distribution[i]:
+                new_vector[i] = not new_vector[i]
 
-    return new_vector
+        return new_vector
 
-
-def scaled_mutation(c, vector):
-    new_vector = copy(vector)
-    distribution = generator.generate_distribution(len(new_vector))
-    p = float(c) / len(vector)
-
-    for i in range(len(new_vector)):
-        if p >= distribution[i]:
-            new_vector[i] = not new_vector[i]
-
-    return new_vector
+    return __scaled_uniform_mutation
 
 
 def zero_mutation(vector, s):
     nonzero = np.count_nonzero(vector)
     if nonzero >= s:
-        return
+        return vector
 
     k = s - nonzero
     offset = min(np.random.randint(2 * k) + k, nonzero)
@@ -51,6 +42,8 @@ def zero_mutation(vector, s):
     choice = np.random.choice(len(zero_indices), offset, replace=False)
     for e in choice:
         vector[zero_indices[e]] = not vector[zero_indices[e]]
+
+    return vector
 
 
 def swap_mutation(vector):

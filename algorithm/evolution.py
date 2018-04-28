@@ -6,7 +6,7 @@ class EvolutionAlgorithm:
     def __init__(self, ev_parameters):
         self.log_file = ev_parameters["log_file"]
         self.locals_log_file = ev_parameters["locals_log_file"]
-        self.s = ev_parameters["start_s"]
+        self.s = ev_parameters["s"]
         self.min_s = ev_parameters["min_s"]
         self.comparator = ev_parameters["comparator"]
         self.minimization_function = ev_parameters["minimization_function"]
@@ -18,6 +18,9 @@ class EvolutionAlgorithm:
         self.lmbda = ev_parameters["lambda"] if ("lambda" in ev_parameters) else 1
         self.mu = ev_parameters["mu"] if ("mu" in ev_parameters) else 1
 
+    def get_iteration_size(self):
+        return self.lmbda + self.mu
+
     def start(self, mf_parameters):
         algorithm = mf_parameters["crypto_algorithm"][0]
         max_value = 2 ** algorithm.secret_key_len
@@ -27,6 +30,9 @@ class EvolutionAlgorithm:
         P = self.__restart(algorithm)
         best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
         locals_list = []
+
+        with open(self.log_file, 'a') as f:
+            f.write(self.__get_info(algorithm.name))
 
         while not self.stop_condition(it, best[1], len(locals_list)):
             step_log = "------------------------------------------------------\n"
@@ -99,6 +105,14 @@ class EvolutionAlgorithm:
                 P.append(new_p)
 
         return P
+
+    def __get_info(self, name):
+        s = "-- Evolution Algorithm\n"
+        s += "-- Strategy (%d + %d)\n" % (self.lmbda, self.mu)
+        s += "-- Start with s = %d\n" % self.s
+        s += "-- Key Generator: %s\n" % name
+
+        return s
 
     def __print_local_info(self, local):
         with open(self.locals_log_file, 'a') as f:

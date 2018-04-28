@@ -1,7 +1,8 @@
 from numpy import sign, count_nonzero as cnz
 
 
-def compare(p1, p2):
+# max s, min value
+def max_min(p1, p2):
     vs = int(sign(p1[1] - p2[1]))
     if vs != 0:
         return vs

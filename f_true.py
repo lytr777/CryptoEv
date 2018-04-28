@@ -1,11 +1,14 @@
-from options import minimization_functions
-from options import crypto_algorithms, solver_wrappers, multi_solvers
+from util.options import minimization_functions
+from util.options import crypto_algorithms, solver_wrappers, multi_solvers
 
-from util import formatter, constant, conclusion
+from util import formatter, constant
 
 import numpy as np
 
 m_function = minimization_functions["gad"]
+#
+# conclusion.add_conclusion('./out/06.04.ibs.rokk.e0_log', 2)
+# exit(0)
 
 mf_parameters = {
     "crypto_algorithm": crypto_algorithms["bivium"],
