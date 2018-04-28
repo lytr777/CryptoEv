@@ -30,7 +30,7 @@
     "threads": 4,
     "N": 300,
     "solver_wrapper": "rokk_py",
-    "multi_solver": "sleep",
+    "multi_solver": "worker",
     "time_limit": 5,
     "corrector": {
       "args_description": "coefficient",
