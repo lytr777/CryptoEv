@@ -61,7 +61,8 @@ def parse_out(out_path, k):
         step = []
         for j in range(k):
             try:
-                i += __skip_while(data, i, lambda s: not s.startswith("start") and (not s.startswith("mask") and not s.startswith("best")))
+                i += __skip_while(data, i, lambda s: not s.startswith("start") and (
+                            not s.startswith("mask") and not s.startswith("best")))
             except IndexError:
                 break
             if data[i].startswith("mask"):
@@ -97,7 +98,7 @@ def parse_true_out(out_path):
     while len(data) > i:
         times = []
         i += __skip_while(data, i, lambda s: not s.startswith("start") and (
-                not s.startswith("metric")))
+            not s.startswith("metric")))
         if data[i].startswith("start"):
             i += __skip_while(data, i, lambda s: not s.startswith("progress"))
             while data[i].startswith("progress"):

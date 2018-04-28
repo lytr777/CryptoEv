@@ -4,8 +4,8 @@ import numpy as np
 def format_array(array):
     s = ""
     for a in array:
-        s += str(a)
-    s += "(" + str(np.count_nonzero(array)) + ")"
+        s += "%d" % a
+    s += "(%d)" % np.count_nonzero(array)
     return s
 
 

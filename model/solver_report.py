@@ -24,4 +24,4 @@ class SolverReport:
         self.flags[i] = value
 
     def __str__(self):
-        return self.status + "(" + str(self.time) + ") solution: " + formatter.format_array(self.solution)
+        return "%s (%f) solution: %s" % (self.status, self.time, formatter.format_array(self.solution))

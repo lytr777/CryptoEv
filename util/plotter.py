@@ -10,10 +10,7 @@ def show_plot(data, configuration=111):
             metrics.append(d[i][1])
         data_metrics.append(metrics)
 
-    figure =  plt.figure()
-    # for i in range(len(data)):
-    #     fig = plt.figure()
-    #     figures.append(fig)
+    figure = plt.figure()
 
     axes = []
     for i in range(len(data)):

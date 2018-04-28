@@ -4,7 +4,7 @@ class Var:
         self.negative = negative
 
     def __str__(self):
-        return ("-" if self.negative else "") + str(self.number)
+        return ("-%d" if self.negative else "%d") % self.number
 
 
 class Clause:
@@ -23,7 +23,7 @@ class Clause:
     def __str__(self):
         s = ""
         for v in self.vars:
-            s += str(v) + " "
+            s += "%s " % v
         return s + "0"
 
 
@@ -39,8 +39,9 @@ class Cnf:
     def __str__(self):
         s = ""
         for cl in self.clauses:
-            s += str(cl) + "\n"
-        return "p cnf " + str(self.var_count) + " " + str(len(self.clauses)) + "\n" + s
+            s += "%s\n" % cl
+        s = "p cnf %d %d\n%s" % (self.var_count, len(self.clauses), s)
+        return s
 
     def __copy__(self):
         copy_cnf = Cnf()
