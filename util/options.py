@@ -1,5 +1,6 @@
 from algorithm.evolution import EvolutionAlgorithm
-from module import decomposition
+
+from module.decomposition import Decomposition
 from module.gad_function import GADFunction
 from module.ibs_function import IBSFunction
 
@@ -88,7 +89,7 @@ def decompositions(value_hash, args):
         raise Exception("Count of decomposition args must equals 2! [<decomposition power>, <break time>]")
     return {
         "none": None,
-        "base": decomposition.decomposition(value_hash)
+        "base": Decomposition(value_hash, args[0], args[1])
     }
 
 

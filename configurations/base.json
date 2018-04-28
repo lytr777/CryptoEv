@@ -2,7 +2,7 @@
   "algorithm": "ev",
   "ev_parameters": {
     "min_s": 0,
-    "s": 120,
+    "s": 60,
     "comparator": "max_min",
     "minimization_function": "ibs",
     "mutation_strategy": {
@@ -26,10 +26,10 @@
     "mu": 1
   },
   "mf_parameters": {
-    "crypto_algorithm": "e0",
+    "crypto_algorithm": "a5_1",
     "threads": 4,
-    "N": 10,
-    "solver_wrapper": "lingeling",
+    "N": 300,
+    "solver_wrapper": "rokk_py",
     "multi_solver": "sleep",
     "time_limit": 5,
     "corrector": {

@@ -12,11 +12,9 @@ class GADFunction:
         self.N = parameters["N"]
         self.multi_solver = parameters["multi_solver"]
         self.current_solver = parameters["solver_wrapper"]
+        self.decomposition = parameters["decomposition"]
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
         self.time_limit = parameters["time_limit"] if ("time_limit" in parameters) else None
-        self.decomposition = parameters["decomposition"] if ("decomposition" in parameters) else None
-        self.d = parameters["d"] if ("d" in parameters) else None
-        self.break_time = parameters["break_time"] if ("break_time" in parameters) else None
         if solution_key_stream is None:
             self.__init_case()
         else:
@@ -52,8 +50,10 @@ class GADFunction:
         solver_args = {
             "subprocess_thread": self.thread_count,
             "time_limit": self.time_limit,
-            "break_time": self.break_time
         }
+
+        if self.decomposition is not None:
+            solver_args["break_time"] = self.decomposition.break_time
 
         m_solver = self.multi_solver(self.current_solver)
         solved_cases, broken_cases, solver_log = m_solver.start(solver_args, cases)
@@ -78,25 +78,24 @@ class GADFunction:
         partially_value = (2 ** np.count_nonzero(mask)) * sum(times)
 
         if self.decomposition is None:
-            time_stat["BROKEN"] = len(broken_cases)
+            self.log += "%s\n" % time_stat
+            self.log += "%s\n" % flags_stat
 
-            return partially_value / len(solved_cases), [time_stat, flags_stat]
+            return partially_value / len(solved_cases), self.log
         else:
             decomposition_values = []
 
-            mf_parameters = {
+            mf_p = {
                 "crypto_algorithm": self.crypto_algorithm,
                 "multi_solver": self.multi_solver,
                 "solver_wrapper": self.current_solver,
                 "threads": self.thread_count,
                 "time_limit": self.time_limit,
-                "decomposition": self.decomposition,
-                "d": self.d,
-                "break_time": self.break_time
+                "decomposition": self.decomposition
             }
 
             for case in broken_cases:
-                decomposition_value, decomposition_log = self.decomposition(mask, case, self.d, GADFunction, mf_parameters)
+                decomposition_value, decomposition_log = self.decomposition.decompose(mask, case, GADFunction, mf_p)
                 decomposition_values.append(decomposition_value)
                 self.log += decomposition_log
 
@@ -108,6 +107,7 @@ class GADFunction:
             if not decomposition_flag:
                 self.log += "%s\n" % time_stat
                 self.log += "%s\n" % flags_stat
+
             return partially_value / self.N, self.log
 
     @staticmethod
@@ -129,4 +129,3 @@ class GADFunction:
         s += "init secret key: %s\n" % format_array(init_a5.get_solution_secret_key())
         s += "init info: (%s, %f)\n" % (init_a5.status, init_a5.time)
         return s
-
