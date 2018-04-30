@@ -15,7 +15,7 @@
       "name": "locals",
       "args": [1000, 1e10, 1]
     },
-    "stagnation_limit": 100,
+    "stagnation_limit": 50,
     "lambda": 1,
     "mu": 1
   },
