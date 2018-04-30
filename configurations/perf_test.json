@@ -12,8 +12,8 @@
     },
     "stop_condition": {
       "args_description": "iterations, value, locals",
-      "name": "locals",
-      "args": [1000, 1e10, 1]
+      "name": "iterable",
+      "args": [2, 1e10, 1]
     },
     "stagnation_limit": 100,
     "lambda": 1,
