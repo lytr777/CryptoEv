@@ -13,7 +13,7 @@
     "stop_condition": {
       "args_description": "iterations, value, locals",
       "name": "iterable",
-      "args": [2, 1e10, 1]
+      "args": [3, 1e10, 1]
     },
     "stagnation_limit": 100,
     "lambda": 1,
@@ -21,7 +21,7 @@
   },
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
-    "threads": 8,
+    "threads": 16,
     "N": 300,
     "solver_wrapper": "rokk_py",
     "multi_solver": "worker",
