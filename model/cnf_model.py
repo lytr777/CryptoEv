@@ -13,6 +13,7 @@ class Clause:
 
     def add_var(self, var):
         self.vars.append(var)
+        return self
 
     def get_max_var_number(self):
         m = 0
@@ -31,17 +32,33 @@ class Cnf:
     def __init__(self):
         self.clauses = []
         self.var_count = 0
+        self.edited = True
+        self.str = ""
 
     def add_clause(self, clause):
         self.var_count = max(self.var_count, clause.get_max_var_number())
         self.clauses.append(clause)
+        self.edited = True
+        return self
 
-    def __str__(self):
+    def __update_str(self):
         s = ""
         for cl in self.clauses:
             s += "%s\n" % cl
-        s = "p cnf %d %d\n%s" % (self.var_count, len(self.clauses), s)
-        return s
+        self.str = s
+        self.edited = False
+
+    def __str__(self):
+        header = "p cnf %d %d\n" % (self.var_count, len(self.clauses))
+        if self.edited:
+            self.__update_str()
+        return "%s%s" % (header, self.str)
+
+    def to_str(self, substitution):
+        header = "p cnf %d %d\n" % (self.var_count, len(self.clauses) + len(substitution))
+        if self.edited:
+            self.__update_str()
+        return "%s%s%s" % (header, self.str, substitution)
 
     def __copy__(self):
         copy_cnf = Cnf()
@@ -52,3 +69,22 @@ class Cnf:
                 copy_clause.add_var(copy_var)
             copy_cnf.add_clause(copy_clause)
         return copy_cnf
+
+
+class CnfSubstitution:
+    def __init__(self):
+        self.clauses = []
+
+    def substitute(self, number, negative):
+        var = Var(number, negative)
+        self.clauses.append(Clause().add_var(var))
+        return self
+
+    def __len__(self):
+        return len(self.clauses)
+
+    def __str__(self):
+        s = ""
+        for cl in self.clauses:
+            s += "%s\n" % cl
+        return s

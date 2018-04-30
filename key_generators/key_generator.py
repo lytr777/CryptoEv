@@ -1,4 +1,4 @@
-from model.cnf_model import Clause, Var
+from model.cnf_model import CnfSubstitution
 
 
 class KeyGenerator:
@@ -8,8 +8,9 @@ class KeyGenerator:
     secret_key_start = None
     secret_key_len = None
 
-    def __init__(self):
-        self.cnf = None
+    def __init__(self, cnf):
+        self.cnf = cnf
+        self.substitution = CnfSubstitution()
 
         self.key_stream = None
         self.secret_key = None
@@ -38,27 +39,16 @@ class KeyGenerator:
 
     def __substitute_key_stream(self):
         for i in range(len(self.key_stream)):
-            cl = Clause()
-            cl.add_var(Var(self.key_stream_start + i, not self.key_stream[i]))
-            self.cnf.add_clause(cl)
+            self.substitution.substitute(self.key_stream_start + i, not self.key_stream[i])
 
     def __substitute_secret_key(self):
         for i in range(len(self.secret_key)):
             if self.secret_mask[i]:
-                cl = Clause()
-                cl.add_var(Var(self.secret_key_start + i, not self.secret_key[i]))
-                self.cnf.add_clause(cl)
+                self.substitution.substitute(self.secret_key_start + i, not self.secret_key[i])
 
     def write_to(self, file_path):
-        if self.key_stream is not None:
-            self.__substitute_key_stream()
-        if self.secret_key is not None:
-            self.__substitute_secret_key()
-
         with open(file_path, 'w') as f:
-            f.write(str(self.cnf))
-
-        self.cnf = None
+            f.write(self.get_cnf())
 
     def get_cnf(self):
         if self.key_stream is not None:
@@ -66,10 +56,7 @@ class KeyGenerator:
         if self.secret_key is not None:
             self.__substitute_secret_key()
 
-        cnf_string = str(self.cnf)
-        self.cnf = None
-
-        return cnf_string
+        return self.cnf.to_str(self.substitution)
 
     def mark_solved(self, report):
         self.time = report.time

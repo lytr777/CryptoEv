@@ -1,18 +1,14 @@
+from algorithm import MetaAlgorithm
 from util import mutation, formatter, generator
 import numpy as np
 
 
-class EvolutionAlgorithm:
+class EvolutionAlgorithm(MetaAlgorithm):
+    name = "Evolution Algorithm"
+
     def __init__(self, ev_parameters):
-        self.log_file = ev_parameters["log_file"]
-        self.locals_log_file = ev_parameters["locals_log_file"]
-        self.s = ev_parameters["s"]
-        self.min_s = ev_parameters["min_s"]
-        self.comparator = ev_parameters["comparator"]
-        self.minimization_function = ev_parameters["minimization_function"]
-        self.stop_condition = ev_parameters["stop_condition"]
+        MetaAlgorithm.__init__(self, ev_parameters)
         self.mutation_strategy = ev_parameters["mutation_strategy"]
-        self.value_hash = ev_parameters["value_hash"]
         self.stagnation_limit = ev_parameters["stagnation_limit"]
 
         self.lmbda = ev_parameters["lambda"] if ("lambda" in ev_parameters) else 1
@@ -31,23 +27,20 @@ class EvolutionAlgorithm:
         best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
         locals_list = []
 
-        with open(self.log_file, 'a') as f:
-            f.write(self.__get_info(algorithm.name))
+        self.print_info(algorithm.name, "Evolution Strategy (%d + %d)" % (self.lmbda, self.mu))
 
         while not self.stop_condition(it, best[1], len(locals_list)):
-            step_log = "------------------------------------------------------\n"
-            step_log += "iteration step: %d\n" % it
+            self.print_iteration_header(it)
             P_v = []
             for p in P:
                 key = formatter.format_array(p)
                 if key in self.value_hash:
                     hashed = True
-                    value = self.value_hash[key]
-                    mf_log = ''
+                    value, mf_log = self.value_hash[key], ""
                 else:
                     hashed = False
-                    pf = self.minimization_function(mf_parameters)
-                    value, mf_log = pf.compute(p)
+                    mf = self.minimization_function(mf_parameters)
+                    value, mf_log = mf.compute(p)
                     self.value_hash[key] = value
 
                 p_v = (p, value)
@@ -56,17 +49,13 @@ class EvolutionAlgorithm:
                     stagnation = -1
 
                 P_v.append(p_v)
-
-                step_log += self.__prepare_step_log(hashed, key, value, mf_log)
-
-            with open(self.log_file, 'a') as f:
-                f.write(step_log)
+                self.print_mf_log(hashed, key, value, mf_log)
 
             stagnation += 1
             if stagnation >= self.stagnation_limit:
                 P = self.__restart(algorithm)
                 locals_list.append(best)
-                self.__print_local_info(best)
+                self.print_local_info(best)
                 best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
                 stagnation = 0
             else:
@@ -76,7 +65,7 @@ class EvolutionAlgorithm:
 
         if best[1] != max_value:
             locals_list.append(best)
-            self.__print_local_info(best)
+            self.print_local_info(best)
 
         return locals_list
 
@@ -99,36 +88,9 @@ class EvolutionAlgorithm:
         P = []
         for q in Q:
             P.append(q)
-            for i in range(self.lmbda / self.mu):
+            for i in range(self.lmbda / self.mu):  # bad
                 new_p = self.mutation_strategy(q)
                 mutation.zero_mutation(new_p, self.min_s)
                 P.append(new_p)
 
         return P
-
-    def __get_info(self, name):
-        s = "-- Evolution Algorithm\n"
-        s += "-- Strategy (%d + %d)\n" % (self.lmbda, self.mu)
-        s += "-- Start with s = %d\n" % self.s
-        s += "-- Key Generator: %s\n" % name
-
-        return s
-
-    def __print_local_info(self, local):
-        with open(self.locals_log_file, 'a') as f:
-            f.write("------------------------------------------------------\n")
-            f.write("local with mask: %s\n" % formatter.format_array(local[0]))
-            f.write("and value: %.7g\n" % local[1])
-
-    @staticmethod
-    def __prepare_step_log(hashed, key, value, mf_log):
-        s = "------------------------------------------------------\n"
-        if hashed:
-            s += "mask: %s has been saved in hash\n" % key
-            s += "with value: %.7g\n" % value
-        else:
-            s += "start prediction with mask: %s\n" % key
-            s += mf_log
-            s += "end prediction with value: %.7g\n" % value
-
-        return s
