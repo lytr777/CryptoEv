@@ -1,4 +1,5 @@
 from algorithm.evolution import EvolutionAlgorithm
+from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda
 
 from module.decomposition import Decomposition
 from module.gad_function import GADFunction
@@ -34,9 +35,9 @@ minimization_functions = {
 }
 
 
-def mutation_strategy(args):
+def mutation_function(args):
     if len(args) != 1:
-        raise Exception("Count of mutation_strategy args must equals 1! [<scale>]")
+        raise Exception("Count of mutation_function args must equals 1! [<scale>]")
     return {
         "neighbour": mutation.neighbour_mutation,
         "uniform": mutation.scaled_uniform_mutation(args[0]),
@@ -51,6 +52,15 @@ def stop_conditions(args):
         "iterable": lambda _1, _2, _3: _1 > args[0],
         "value": lambda _1, _2, _3: _2 <= args[1],
         "locals": lambda _1, _2, _3: _3 >= args[2],
+    }
+
+
+def evolution_strategy(args):
+    if len(args) != 2:
+        raise Exception("Count of evolution_strategy args must equals 2! [<mu>, <lambda>]")
+    return {
+        "comma": MuCommaLambda(args[0], args[1]),
+        "plus": MuPlusLambda(args[0], args[1])
     }
 
 
@@ -97,8 +107,9 @@ def decompositions(value_hash, args):
 matcher = {
     "comparator": comparators,
     "minimization_function": minimization_functions,
-    "mutation_strategy": mutation_strategy,
+    "mutation_function": mutation_function,
     "stop_condition": stop_conditions,
+    "evolution_strategy": evolution_strategy,
     "crypto_algorithm": crypto_algorithms,
     "solver_wrapper": solver_wrappers,
     "multi_solver": multi_solvers,

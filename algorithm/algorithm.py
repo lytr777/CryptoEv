@@ -8,7 +8,6 @@ class MetaAlgorithm:
         self.log_file = parameters["log_file"]
         self.locals_log_file = parameters["locals_log_file"]
         self.s = parameters["s"]
-        self.min_s = parameters["min_s"]
         self.comparator = parameters["comparator"]
         self.minimization_function = parameters["minimization_function"]
         self.stop_condition = parameters["stop_condition"]

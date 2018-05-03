@@ -1,11 +1,10 @@
 {
   "algorithm": "ev",
   "ev_parameters": {
-    "min_s": 0,
     "s": 60,
     "comparator": "max_min",
     "minimization_function": "ibs",
-    "mutation_strategy": {
+    "mutation_function": {
       "args_description": "uniform scale",
       "name": "uniform",
       "args": [1.0]
@@ -15,9 +14,12 @@
       "name": "locals",
       "args": [1000, 1e10, 1]
     },
-    "stagnation_limit": 200,
-    "lambda": 1,
-    "mu": 1
+    "stagnation_limit": 100,
+    "evolution_strategy": {
+      "args_description": "mu, lambda",
+      "name": "plus",
+      "args": [1, 2]
+    }
   },
   "mf_parameters": {
     "crypto_algorithm": "a5_1",

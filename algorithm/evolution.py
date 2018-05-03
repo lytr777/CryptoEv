@@ -1,5 +1,5 @@
 from algorithm import MetaAlgorithm
-from util import mutation, formatter, generator
+from util import formatter, generator
 import numpy as np
 
 
@@ -8,14 +8,12 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
     def __init__(self, ev_parameters):
         MetaAlgorithm.__init__(self, ev_parameters)
-        self.mutation_strategy = ev_parameters["mutation_strategy"]
+        self.mutation_f = ev_parameters["mutation_function"]
         self.stagnation_limit = ev_parameters["stagnation_limit"]
-
-        self.lmbda = ev_parameters["lambda"] if ("lambda" in ev_parameters) else 1
-        self.mu = ev_parameters["mu"] if ("mu" in ev_parameters) else 1
+        self.strategy = ev_parameters["evolution_strategy"]
 
     def get_iteration_size(self):
-        return self.lmbda + self.mu
+        return self.strategy.get_population_size()
 
     def start(self, mf_parameters):
         algorithm = mf_parameters["crypto_algorithm"][0]
@@ -27,7 +25,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
         best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
         locals_list = []
 
-        self.print_info(algorithm.name, "Evolution Strategy (%d + %d)" % (self.lmbda, self.mu))
+        self.print_info(algorithm.name, "Strategy %s" % self.strategy)
 
         while not self.stop_condition(it, best[1], len(locals_list)):
             self.print_iteration_header(it)
@@ -59,8 +57,8 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
                 stagnation = 0
             else:
-                Q = self.__get_bests(P_v)
-                P = self.__mutation(Q)
+                P_v.sort(cmp=self.comparator)
+                P = self.strategy.get_next_population(self.mutation_f, P_v)
             it += 1
 
         if best[1] != max_value:
@@ -71,26 +69,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
     def __restart(self, algorithm):
         P = []
-        for i in range(self.lmbda + self.mu):
+        for i in range(self.strategy.get_population_size()):
             P.append(generator.generate_mask(algorithm.secret_key_len, self.s))
-
-        return P
-
-    def __get_bests(self, P_v):
-        P_v.sort(cmp=self.comparator)
-
-        Q = []
-        for i in range(min(self.mu, len(P_v))):
-            Q.append(P_v[i][0])
-        return Q
-
-    def __mutation(self, Q):
-        P = []
-        for q in Q:
-            P.append(q)
-            for i in range(self.lmbda / self.mu):  # bad
-                new_p = self.mutation_strategy(q)
-                mutation.zero_mutation(new_p, self.min_s)
-                P.append(new_p)
 
         return P

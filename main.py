@@ -1,6 +1,6 @@
 import sys
 
-from util import constant, conclusion, configurator
+from util import constant, conclusion, configurator, parser, plotter
 
 if len(sys.argv) < 2:
     print "USAGE: main.py <log id> [conf path]"
@@ -10,11 +10,17 @@ log_file = constant.log_path + sys.argv[1]
 locals_log_file = constant.locals_log_path + sys.argv[1]
 value_hash = {}
 
-# data1 = parser.parse_out("./out/e0/19.04/log_1.ibs.rokk.e0_log", 2)
-# data2 = parser.parse_out("./out/e0/19.04/log_2.ibs.rokk.e0_log", 2)
-# data3 = parser.parse_out("./out/e0/19.04/log_3.ibs.rokk.e0_log", 2)
-# data4 = parser.parse_out("./out/e0/19.04/log_4.ibs.rokk.e0_log", 2)
-# plotter.show_plot([data1, data2, data3, data4], 221)
+
+# data_path = "./out/a5_1/01.05/log_%d.ibs.rokk.a5_1_log"
+# data1 = parser.parse_out(data_path % 1, 2)
+# data2 = parser.parse_out(data_path % 2, 2)
+# data3 = parser.parse_out(data_path % 3, 2)
+# data4 = parser.parse_out(data_path % 4, 2)
+# data5 = parser.parse_out(data_path % 5, 2)
+# data6 = parser.parse_out(data_path % 6, 2)
+# data7 = parser.parse_out(data_path % 7, 2)
+# data8 = parser.parse_out(data_path % 8, 2)
+# plotter.show_plot([data1, data2, data3, data4, data5, data6, data7, data8], 111)
 # exit(0)
 
 if len(sys.argv) >= 3:

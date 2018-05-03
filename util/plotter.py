@@ -12,9 +12,10 @@ def show_plot(data, configuration=111):
 
     figure = plt.figure()
 
+    mod = (configuration / 100) * (configuration / 10 % 10)
     axes = []
     for i in range(len(data)):
-        ax = figure.add_subplot(configuration + i)
+        ax = figure.add_subplot(configuration + (i % mod))
         axes.append(ax)
 
     for i in range(len(data_metrics)):
