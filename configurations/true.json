@@ -1,0 +1,23 @@
+{
+  "algorithm": "ev",
+  "ev_parameters": {
+  },
+  "mf_parameters": {
+    "crypto_algorithm": "a5_1",
+    "threads": 16,
+    "N": 50000,
+    "solver_wrapper": "rokk_py",
+    "multi_solver": "worker",
+    "time_limit": 5,
+    "corrector": {
+      "args_description": "coefficient",
+      "name": "mass",
+      "args": [12]
+    },
+    "decomposition": {
+      "args_description": "decomposition power, break time",
+      "name": "none",
+      "args": [2, 2]
+    }
+  }
+}

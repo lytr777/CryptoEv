@@ -1,35 +1,22 @@
 from util.options import minimization_functions
-from util.options import crypto_algorithms, solver_wrappers, multi_solvers
-
-from util import formatter, constant
+from util import formatter, constant, configurator
 
 import numpy as np
 
-m_function = minimization_functions["gad"]
-#
-# conclusion.add_conclusion('./out/06.04.ibs.rokk.e0_log', 2)
-# exit(0)
+value_hash = {}
+_, _, mf_p = configurator.load('configurations/true.json', value_hash)
+m_function = minimization_functions["ibs"]
 
-mf_parameters = {
-    "crypto_algorithm": crypto_algorithms["bivium"],
-    "cnf_link": constant.bivium_cnf,
-    "threads": 32,
-    "N": 100000,
-    "solver_wrapper": solver_wrappers["rokk_py"],
-    "multi_solver": multi_solvers["sleep"],
-}
+cases = []
 
-cases = [
-    formatter.format_to_array('000000000000001000011000000100010100000001011001000000101000010000000100000000000000000000000000001000000000001101001000010110111000001010111110001010100111000001000101001000000(42)')
-    # , formatter.format_to_array('011000000000000000000011110000000000010100010000010001011000000011001000000000110000000000001001100000000010000000001011100000000000111001000000101110011000000111010000000000001(41)')
-    # , formatter.format_to_array('000000011000000000010011000000001010110000000000001100000001001000000000011000000000000000010010000010010010000000100001000000001001011000010000011011000101100010000001000010100(41)')
-    # , formatter.format_to_array('000000000000000000001011000000010011010000000101011000000001110101001001000010000000000000000000000001000000000001000001000011101110001000001100101001000001001010000001000101000(40)')
+case = np.zeros(64, dtype=np.int)
+# numbers = [5, 19, 20, 22, 23, 31, 32, 34, 35, 45, 46, 47, 49, 50, 58, 59, 61, 62, 64, 74, 76, 77, 86, 88, 101, 113, 115,
+#            116, 127, 128, 129, 130, 131, 133, 140, 142, 143, 144, 145, 146, 154, 155, 156, 157, 158, 160, 161, 170, 172,
+#            173]
+numbers = [
+    2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+    51, 52
 ]
-
-case = np.zeros(177, dtype=np.int)
-numbers = [5, 19, 20, 22, 23, 31, 32, 34, 35, 45, 46, 47, 49, 50, 58, 59, 61, 62, 64, 74, 76, 77, 86, 88, 101, 113, 115,
-           116, 127, 128, 129, 130, 131, 133, 140, 142, 143, 144, 145, 146, 154, 155, 156, 157, 158, 160, 161, 170, 172,
-           173]
 for i in numbers:
     case[i - 1] = 1
 
@@ -49,21 +36,22 @@ with open(constant.true_log_path, 'w+'):
 
 values = []
 for case in cases:
-    print "start with mask: " + formatter.format_array(case)
-    mf = m_function(mf_parameters)
+    log = "start with mask: %s\n" % formatter.format_array(case)
+    mf = m_function(mf_p)
     value, mf_log = mf.compute(case)
     values.append(value)
 
-    mf_log += "true value: %.7g" % value
-    mf_log += "------------------------------------------------------\n"
+    log += mf_log
+    log += "true value: %.7g\n" % value
+    log += "------------------------------------------------------\n"
 
     with open(constant.true_log_path, 'a') as f:
-        f.write(mf_log)
+        f.write(log)
 
 true_log = "------------------------------------------------------\n"
 true_log += "------------------------------------------------------\n"
 for i in range(len(cases)):
-    true_log += "value for mask %s:%.7g\n " % (formatter.format_array(cases[i]), values[i])
+    true_log += "value for mask %s: %.7g\n " % (formatter.format_array(cases[i]), values[i])
 
 with open(constant.true_log_path, 'a') as f:
     f.write(true_log)
