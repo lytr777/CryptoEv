@@ -41,10 +41,13 @@ with open(log_file, 'w+'):
 # 50 file: 29.04
 # 30 file: 30.04
 # 20 file: 01.05
-# 1-8 - 200 file: 02.05
+# 200 file: 02.05
 #
 # (1 + 2)
-# 13-16
+# 100 file: 05.05
+#
+# (1 + 5)
+# 1-4 100
 
 alg = alg(meta_p)
 locals_list = alg.start(mf_p)
