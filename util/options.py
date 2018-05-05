@@ -1,5 +1,6 @@
 from algorithm.evolution import EvolutionAlgorithm
-from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda
+from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, Genetic
+from algorithm.module import mutation, crossover
 
 from module.decomposition import Decomposition
 from module.gad_function import GADFunction
@@ -18,7 +19,7 @@ from wrapper.rokk_py import RokkPyWrapper
 from solvers.sleep_solver import SleepSolver
 from solvers.worker_solver import WorkerSolver
 
-from util import constant, mutation, comparator, corrector
+from util import constant, comparator, corrector
 
 algorithms = {
     "ev": EvolutionAlgorithm
@@ -45,6 +46,16 @@ def mutation_function(args):
     }
 
 
+def crossover_function(args):
+    if len(args) != 1:
+        raise Exception("Count of crossover_function args must equals 1! [<p>]")
+    return {
+        "one-point": crossover.one_point_crossover,
+        "two-point": crossover.two_point_crossover,
+        "uniform": crossover.uniform_crossover(args[0])
+    }
+
+
 def stop_conditions(args):
     if len(args) != 3:
         raise Exception("Count of stop_conditions args must equals 3! [<it>, <value>, <locals>]")
@@ -56,11 +67,12 @@ def stop_conditions(args):
 
 
 def evolution_strategy(args):
-    if len(args) != 2:
-        raise Exception("Count of evolution_strategy args must equals 2! [<mu>, <lambda>]")
+    if len(args) != 3:
+        raise Exception("Count of evolution_strategy args must equals 3! [<m>, <l>, <k>]")
     return {
         "comma": MuCommaLambda(args[0], args[1]),
-        "plus": MuPlusLambda(args[0], args[1])
+        "plus": MuPlusLambda(args[0], args[1]),
+        "genetic": Genetic(args[0], args[1], args[2])
     }
 
 
@@ -108,6 +120,7 @@ matcher = {
     "comparator": comparators,
     "minimization_function": minimization_functions,
     "mutation_function": mutation_function,
+    "crossover_function": crossover_function,
     "stop_condition": stop_conditions,
     "evolution_strategy": evolution_strategy,
     "crypto_algorithm": crypto_algorithms,

@@ -14,11 +14,15 @@ class SolverReport:
         data = solution_str.split(" ")
 
         for var in data:
-            num_int = int(var)
-            if num_int < 0:
-                self.solution.append(0)
-            elif num_int > 0:
-                self.solution.append(1)
+            try:
+                num_int = int(var)
+                if num_int < 0:
+                    self.solution.append(0)
+                elif num_int > 0:
+                    self.solution.append(1)
+            except ValueError:
+                with open('out/parse_errors', 'a') as f:
+                    f.write("%s\n--\n" % solution_str)
 
     def set_flag(self, i, value):
         self.flags[i] = value

@@ -48,12 +48,13 @@ class MuCommaLambda(EvolutionStrategy):
     def get_population_size(self):
         return self.lmbda
 
-    def get_next_population(self, mutation_f, sorted_P_v):
+    def get_next_population(self, mc_f, sorted_P_v):
+        mutation_f = mc_f[0]
         P = []
         roulette = self.get_roulette(sorted_P_v)
-        ps = np.random.rand(self.lmbda)
+        distribution = np.random.rand(self.lmbda)
         for i in range(self.lmbda):
-            q = roulette.get_individual(ps[i])
+            q = roulette.get_individual(distribution[i])
             new_p = mutation_f(q)
             P.append(new_p)
 
@@ -70,8 +71,8 @@ class MuPlusLambda(MuCommaLambda):
     def get_population_size(self):
         return self.mu + self.lmbda
 
-    def get_next_population(self, mutation_f, sorted_P_v):
-        P = MuCommaLambda.get_next_population(self, mutation_f, sorted_P_v)
+    def get_next_population(self, mc_f, sorted_P_v):
+        P = MuCommaLambda.get_next_population(self, mc_f, sorted_P_v)
         P.extend(self.get_Q(sorted_P_v))
         return P
 

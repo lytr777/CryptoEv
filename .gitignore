@@ -11,3 +11,4 @@ minisat.zip
 *.a5_1_log
 load.sh
 test.json
+*.a5_1_true_log

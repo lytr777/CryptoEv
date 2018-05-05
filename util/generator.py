@@ -30,7 +30,3 @@ def generate_decomposition_key_set(base_key, indices):
         keys = new_keys
 
     return keys
-
-
-def generate_distribution(n):
-    return np.random.random((n,))

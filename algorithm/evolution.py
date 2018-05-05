@@ -9,6 +9,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
     def __init__(self, ev_parameters):
         MetaAlgorithm.__init__(self, ev_parameters)
         self.mutation_f = ev_parameters["mutation_function"]
+        self.crossover_f = ev_parameters["crossover_function"]
         self.stagnation_limit = ev_parameters["stagnation_limit"]
         self.strategy = ev_parameters["evolution_strategy"]
 
@@ -58,7 +59,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 stagnation = 0
             else:
                 P_v.sort(cmp=self.comparator)
-                P = self.strategy.get_next_population(self.mutation_f, P_v)
+                P = self.strategy.get_next_population((self.mutation_f, self.crossover_f), P_v)
             it += 1
 
         if best[1] != max_value:
