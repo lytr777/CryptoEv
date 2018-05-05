@@ -78,3 +78,40 @@ class MuPlusLambda(MuCommaLambda):
 
     def __str__(self):
         return "(%d + %d)" % (self.mu, self.lmbda)
+
+
+class Genetic(EvolutionStrategy):
+    def __init__(self,  m, l, c):
+        EvolutionStrategy.__init__(self, m + l + c)
+        self.m = m
+        self.l = l
+        self.c = c
+
+    def get_population_size(self):
+        return self.m + self.l + self.c
+
+    def get_next_population(self, mc_f, sorted_P_v):
+        mutation_f = mc_f[0]
+        crossover_f = mc_f[1]
+        P = []
+        roulette = self.get_roulette(sorted_P_v)
+        distribution = np.random.rand(self.l)
+        for i in range(self.l):
+            P.append(roulette.get_individual(distribution[i]))
+
+        distribution = np.random.rand(self.m)
+        for i in range(self.m):
+            q = roulette.get_individual(distribution[i])
+            new_p = mutation_f(q)
+            P.append(new_p)
+
+        distribution = np.random.rand(self.c * 3)
+        for i in range(self.c):
+            v = roulette.get_individual(distribution[i])
+            w = roulette.get_individual(distribution[self.c + i])
+
+            new_v, new_w = crossover_f(v, w)
+            P.append(new_v if distribution[2 * self.c + i] < 0.5 else new_w)
+
+        return P
+

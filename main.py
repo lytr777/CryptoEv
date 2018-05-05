@@ -11,7 +11,7 @@ locals_log_file = constant.locals_log_path + sys.argv[1]
 value_hash = {}
 
 
-# data_path = "./out/a5_1/01.05/log_%d.ibs.rokk.a5_1_log"
+# data_path = "./out/a5_1/02.05/log_%d.ibs.rokk.a5_1_log"
 # data1 = parser.parse_out(data_path % 1, 2)
 # data2 = parser.parse_out(data_path % 2, 2)
 # data3 = parser.parse_out(data_path % 3, 2)
@@ -35,6 +35,16 @@ meta_p["value_hash"] = value_hash
 
 with open(log_file, 'w+'):
     pass
+
+# (1 + 1)
+# 100 file: 28.04
+# 50 file: 29.04
+# 30 file: 30.04
+# 20 file: 01.05
+# 1-8 - 200 file: 02.05
+#
+# (1 + 2)
+# 13-16
 
 alg = alg(meta_p)
 locals_list = alg.start(mf_p)
