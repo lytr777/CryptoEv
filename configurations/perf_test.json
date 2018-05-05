@@ -9,6 +9,11 @@
       "name": "uniform",
       "args": [1.0]
     },
+    "crossover_function": {
+      "args_description": "uniform p",
+      "name": "one-point",
+      "args": [0.2]
+    },
     "stop_condition": {
       "args_description": "iterations, value, locals",
       "name": "iterable",
