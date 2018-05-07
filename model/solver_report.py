@@ -11,6 +11,7 @@ class SolverReport:
         ]
 
     def parse_solution(self, solution_str):
+        solution_str = solution_str.strip()
         data = solution_str.split(" ")
 
         for var in data:
