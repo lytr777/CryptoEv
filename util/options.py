@@ -1,6 +1,7 @@
 from algorithm.evolution import EvolutionAlgorithm
-from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, Genetic
+from algorithm.tabu import TabuSearch
 from algorithm.module import mutation, crossover
+from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, Genetic
 
 from module.decomposition import Decomposition
 from module.gad_function import GADFunction
@@ -22,7 +23,8 @@ from solvers.worker_solver import WorkerSolver
 from util import constant, comparator, corrector
 
 algorithms = {
-    "ev": EvolutionAlgorithm
+    "ev": EvolutionAlgorithm,
+    "ts": TabuSearch
 }
 
 # meta
