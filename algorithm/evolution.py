@@ -20,6 +20,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
         algorithm = mf_parameters["crypto_algorithm"][0]
         max_value = 2 ** algorithm.secret_key_len
         it = 1
+        mf_calls = 0
         stagnation = 0
 
         P = self.__restart(algorithm)
@@ -28,7 +29,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
         self.print_info(algorithm.name, "Strategy %s" % self.strategy)
 
-        while not self.stop_condition(it, best[1], len(locals_list)):
+        while not self.stop_condition(it, mf_calls, len(locals_list)):
             self.print_iteration_header(it)
             P_v = []
             for p in P:
@@ -40,6 +41,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                     hashed = False
                     mf = self.minimization_function(mf_parameters)
                     value, mf_log = mf.compute(p)
+                    mf_calls += 1
                     self.value_hash[key] = value
 
                 p_v = (p, value)

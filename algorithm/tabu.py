@@ -10,6 +10,7 @@ class TabuSearch(MetaAlgorithm):
     def __init__(self, ts_parameters):
         MetaAlgorithm.__init__(self, ts_parameters)
         self.iteration_size = None
+        self.upgrade_count = ts_parameters["upgrade_count"]
 
     def get_iteration_size(self):
         return self.iteration_size
@@ -18,13 +19,15 @@ class TabuSearch(MetaAlgorithm):
         algorithm = mf_parameters["crypto_algorithm"][0]
         self.iteration_size = algorithm.secret_key_len
         it = 1
+        it_upgrades = 0
+        mf_calls = 0
         locals_list = []
 
         self.print_info(algorithm.name)
         center, value = self.__get_new_center(algorithm, mf_parameters)
         best = (center, value)
 
-        while not self.stop_condition(it, best[1], len(locals_list)):
+        while not self.stop_condition(it, mf_calls, len(locals_list)):
             self.print_iteration_header(it)
             iteration_hash = {}
             updated = False
@@ -37,13 +40,18 @@ class TabuSearch(MetaAlgorithm):
                     hashed = False
                     mf = self.minimization_function(mf_parameters)
                     value, mf_log = mf.compute(x)
+                    mf_calls += 1
                     iteration_hash[key] = value
 
                 if not hashed and self.comparator(best, (x, value)) > 0:
                     best = (x, value)
                     updated = True
+                    it_upgrades += 1
 
                 self.print_mf_log(hashed, key, value, mf_log)
+
+                if self.upgrade_count <= it_upgrades:
+                    break
 
             self.value_hash.update(iteration_hash)
 
@@ -56,6 +64,7 @@ class TabuSearch(MetaAlgorithm):
                 best = (center, value)
 
             it += 1
+            it_upgrades = 0
 
         return locals_list
 

@@ -94,11 +94,10 @@ class Genetic(EvolutionStrategy):
         mutation_f = mc_f[0]
         crossover_f = mc_f[1]
         P = []
-        roulette = self.get_roulette(sorted_P_v)
-        distribution = np.random.rand(self.l)
         for i in range(self.l):
-            P.append(roulette.get_individual(distribution[i]))
+            P.append(sorted_P_v[i][0])
 
+        roulette = self.get_roulette(sorted_P_v)
         distribution = np.random.rand(self.m)
         for i in range(self.m):
             q = roulette.get_individual(distribution[i])

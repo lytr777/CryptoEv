@@ -5,10 +5,11 @@
     "comparator": "max_min",
     "minimization_function": "ibs",
     "stop_condition": {
-      "args_description": "iterations, value, locals",
+      "args_description": "iterations, mf calls, locals",
       "name": "locals",
-      "args": [1000, 1e10, 1]
-    }
+      "args": [1000, 1000, 1]
+    },
+    "upgrade_count": 1
   },
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
