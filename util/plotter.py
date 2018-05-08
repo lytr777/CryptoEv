@@ -27,6 +27,7 @@ def show_plot(data, configuration=111):
 
     for i in range(len(data_metrics)):
         axes[i].semilogy(range(len(data_metrics[i])), data_metrics[i], lw=2)
-        axes[i].set_ybound(2**26, 2**62)
+        # axes[i].set_ybound(2**40, 2**62)
+        # axes[i].set_xbound(0, 100)
 
     plt.show()

@@ -10,19 +10,6 @@ log_file = constant.log_path + sys.argv[1]
 locals_log_file = constant.locals_log_path + sys.argv[1]
 value_hash = {}
 
-
-# data_path = "./out/a5_1/02.05/log_%d.ibs.rokk.a5_1_log"
-# data1 = parser.parse_out(data_path % 1, 2)
-# data2 = parser.parse_out(data_path % 2, 2)
-# data3 = parser.parse_out(data_path % 3, 2)
-# data4 = parser.parse_out(data_path % 4, 2)
-# data5 = parser.parse_out(data_path % 5, 2)
-# data6 = parser.parse_out(data_path % 6, 2)
-# data7 = parser.parse_out(data_path % 7, 2)
-# data8 = parser.parse_out(data_path % 8, 2)
-# plotter.show_plot([data1, data2, data3, data4, data5, data6, data7, data8], 111)
-# exit(0)
-
 if len(sys.argv) >= 3:
     conf_path = sys.argv[2]
     alg, meta_p, mf_p = configurator.load(conf_path, value_hash)
@@ -36,18 +23,37 @@ meta_p["value_hash"] = value_hash
 with open(log_file, 'w+'):
     pass
 
+# # restore hash
+# paths = [
+#     ("./out/a5_1/01.05/log_%d.ibs.rokk.a5_1_log", 8, 2),
+#     ("./out/a5_1/30.04/log_%d.ibs.rokk.a5_1_log", 8, 2),
+#     ("./out/a5_1/29.04/log_%d.ibs.rokk.a5_1_log", 8, 2),
+#     ("./out/a5_1/28.04/log_%d.ibs.rokk.a5_1_log", 8, 2),
+#     ("./out/a5_1/02.05/log_%d.ibs.rokk.a5_1_log", 8, 2),
+#     ("./out/a5_1/05.05/log_%d.ibs.rokk.a5_1_log", 4, 3),
+#     ("./out/a5_1/08.05/log_%d.ibs.rokk.a5_1_log", 4, 6)
+# ]
+# for path, n, k in paths:
+#     for i in range(n):
+#         parser.restore_hash(value_hash, path % (i + 1), k)
+#         print len(value_hash)
+
 # (1 + 1)
-# 100 file: 28.04
-# 50 file: 29.04
-# 30 file: 30.04
-# 20 file: 01.05
-# 200 file: 02.05
+# st: 100, file: 28.04
+# st:  50, file: 29.04
+# st:  30, file: 30.04
+# st:  20, file: 01.05
+# st: 200, file: 02.05
 #
 # (1 + 2)
-# 100 file: 05.05
+# st: 100, file: 05.05
 #
 # (1 + 5)
-# 1-4 100
+# st: 100, file: 08.05
+#
+# (1 + 2)
+# st: 100, files: 1-4
+
 
 alg = alg(meta_p)
 locals_list = alg.start(mf_p)

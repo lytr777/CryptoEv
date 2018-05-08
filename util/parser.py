@@ -48,6 +48,8 @@ def restore_hash(value_hash, out_path, k):
                 key = data[i].split(" ")[4]
                 i += __skip_while(data, i, lambda s: not s.startswith("end"))
                 value = float(data[i].split(" ")[4])
+                if key in value_hash:
+                    print "%s: (%f --- %f)" % (key, value_hash[key], value)
                 value_hash[key] = value
             else:
                 return
@@ -57,6 +59,7 @@ def parse_out(out_path, k):
     data = __read_file(out_path)
     i = 0
     steps = []
+    stat = {"CALL": 0, "HASH": 0}
     while len(data) > i:
         step = []
         for j in range(k):
@@ -71,12 +74,14 @@ def parse_out(out_path, k):
                 i += 1
                 value = float(data[i].split(" ")[2])
                 step.append((mask, value))
+                stat["HASH"] += 1
             elif data[i].startswith("start"):
                 mask = data[i].split(" ")[4].split("(")[0]
                 mask = np.array([c for c in mask]).astype(np.int)
                 i += __skip_while(data, i, lambda s: not s.startswith("end"))
                 value = float(data[i].split(" ")[4])
                 step.append((mask, value))
+                stat["CALL"] += 1
             else:
                 break
 
@@ -88,7 +93,10 @@ def parse_out(out_path, k):
                 best = step[j]
         steps.append(best)
 
-    return steps
+        if best[1] < 1e13:
+            break
+
+    return steps, stat
 
 
 def parse_true_out(out_path):

@@ -23,7 +23,7 @@
     "evolution_strategy": {
       "args_description": "mu, lambda, c",
       "name": "plus",
-      "args": [1, 5, 4]
+      "args": [1, 2, 4]
     }
   },
   "mf_parameters": {

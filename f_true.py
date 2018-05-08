@@ -7,7 +7,10 @@ value_hash = {}
 _, _, mf_p = configurator.load('configurations/true.json', value_hash)
 m_function = minimization_functions["ibs"]
 
-cases = [formatter.format_to_array("1100111110000100000110111001110000100001011100110111000001010101")]
+cases = [
+    formatter.format_to_array("1100111110000100000110111001110000100001011100110111000001010101"),  # 100: 5.812911e+11
+    formatter.format_to_array("1111010000000100010110101010110000010110110111100111000010010000")  # 20: 3.871913e+11
+]
 
 # case = np.zeros(64, dtype=np.int)
 # # numbers = [5, 19, 20, 22, 23, 31, 32, 34, 35, 45, 46, 47, 49, 50, 58, 59, 61, 62, 64, 74, 76, 77, 86, 88, 101, 113, 115,
