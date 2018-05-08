@@ -6,7 +6,7 @@
     "minimization_function": "ibs",
     "stop_condition": {
       "args_description": "iterations, mf calls, locals",
-      "name": "locals",
+      "name": "mf_calls",
       "args": [1000, 1000, 1]
     },
     "upgrade_count": 1
@@ -14,9 +14,9 @@
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
     "threads": 4,
-    "N": 10,
-    "solver_wrapper": "lingeling",
-    "multi_solver": "sleep",
+    "N": 300,
+    "solver_wrapper": "rokk_py",
+    "multi_solver": "worker",
     "time_limit": 5,
     "corrector": {
       "args_description": "coefficient",

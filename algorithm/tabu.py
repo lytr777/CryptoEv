@@ -72,7 +72,10 @@ class TabuSearch(MetaAlgorithm):
         center = generator.generate_mask(algorithm.secret_key_len, self.s)
         key = formatter.format_array(center)
         it = 0
-        while key in self.value_hash and it < 100:
+        while key in self.value_hash:
+            if it > 20:
+                it = 0
+                self.s -= 1
             center = generator.generate_mask(algorithm.secret_key_len, self.s)
             key = formatter.format_array(center)
             it += 1
@@ -84,9 +87,11 @@ class TabuSearch(MetaAlgorithm):
 
     @staticmethod
     def __get_neighbourhood(vector):
-        for i in range(len(vector)):
+        n = len(vector)
+        for i in range(n):
+            j = n - i - 1
             new_vector = copy(vector)
-            new_vector[i] = not new_vector[i]
+            new_vector[j] = not new_vector[j]
             yield new_vector
 
     def print_mf_log(self, hashed, key, value, mf_log):
