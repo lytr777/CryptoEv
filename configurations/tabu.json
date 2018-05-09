@@ -9,7 +9,7 @@
       "name": "mf_calls",
       "args": [1000, 1000, 1]
     },
-    "upgrade_count": 1
+    "update_count": 1
   },
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
