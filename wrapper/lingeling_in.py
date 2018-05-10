@@ -36,7 +36,6 @@ class LingelingInWrapper:
                     solution += solution_line[i] + " "
             if output[i].startswith("c ="):
                 time = max(float(output[i + 1].split(' ')[4]), self.min_time)
-                print time
 
         solution = solution[:-1]
 

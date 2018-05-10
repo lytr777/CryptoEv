@@ -4,8 +4,8 @@
   },
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
-    "threads": 16,
-    "N": 50000,
+    "threads": 8,
+    "N": 10000,
     "solver_wrapper": "rokk_py",
     "multi_solver": "worker",
     "time_limit": 5,
