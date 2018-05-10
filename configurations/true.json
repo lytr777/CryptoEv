@@ -5,7 +5,7 @@
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
     "threads": 8,
-    "N": 10000,
+    "N": 50000,
     "solver_wrapper": "ling_in",
     "multi_solver": "worker",
     "time_limit": 5,

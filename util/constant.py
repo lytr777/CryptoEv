@@ -6,10 +6,11 @@ a5_toy_cnf = "./templates/A5_toy.cnf"
 trivium_64_cnf = "./templates/Trivium_64.cnf"
 bivium_cnf = "./templates/Bivium.cnf"
 e0_cnf = "./templates/E0.cnf"
+volfram_cnf = "./templates/Volfram.cnf"
 
 minisat_path = "./minisat/core/minisat_static"
 lingeling_path = "./lingeling/lingeling"
-plingeling_path = "./lingeling/plingeling"
+treengeling_path = "./lingeling/treengeling"
 rokk_path = "./rokk/binary/rokk_m.sh"
 rokk_py_path = "./rokk/binary/rokk_py.py"
 
