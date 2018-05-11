@@ -1,4 +1,5 @@
 from model.solver_report import SolverReport
+from util.constant import solver_paths
 
 
 class RokkPyWrapper:
@@ -8,8 +9,10 @@ class RokkPyWrapper:
         "INDET": "INDETERMINATE"
     }
 
-    def __init__(self, solver_path):
-        self.solver_path = solver_path
+    tag = "rokk_py"
+
+    def __init__(self):
+        self.solver_path = solver_paths[self.tag]
         self.simplify = True
 
     def get_arguments(self, tl):

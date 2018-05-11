@@ -1,4 +1,5 @@
 from model.solver_report import SolverReport
+from util.constant import solver_paths
 from util.parser import parse_solution_file
 
 
@@ -9,8 +10,10 @@ class MinisatWrapper:
         "INDET": "INDETERMINATE"
     }
 
-    def __init__(self, solver_path):
-        self.solver_path = solver_path
+    tag = "minisat"
+
+    def __init__(self):
+        self.solver_path = solver_paths[self.tag]
 
     def get_arguments(self, cnf, out, tl):
         launching_args = [self.solver_path]

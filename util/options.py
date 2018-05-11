@@ -13,7 +13,6 @@ from key_generators.trivium_64 import Trivium_64
 from key_generators.bivium import Bivium
 
 from wrapper.lingeling import LingelingWrapper
-from wrapper.lingeling_in import LingelingInWrapper
 from wrapper.minisat import MinisatWrapper
 from wrapper.rokk import RokkWrapper
 from wrapper.rokk_py import RokkPyWrapper
@@ -88,11 +87,10 @@ crypto_algorithms = {
 }
 
 solver_wrappers = {
-    "minisat": MinisatWrapper(constant.minisat_path),
-    "lingeling": LingelingWrapper(constant.lingeling_path),
-    "ling_in": LingelingInWrapper(constant.lingeling_path),
-    "rokk": RokkWrapper(constant.rokk_path),
-    "rokk_py": RokkPyWrapper(constant.rokk_py_path),
+    "minisat": MinisatWrapper(),
+    "lingeling": LingelingWrapper(),
+    "rokk": RokkWrapper(),
+    "rokk_py": RokkPyWrapper(),
 }
 
 multi_solvers = {

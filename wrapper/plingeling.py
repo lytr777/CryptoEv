@@ -1,22 +1,27 @@
+import re
+
 from model.solver_report import SolverReport
+from util.constant import solver_paths
 
 
-class LingelingInWrapper:
+class PlingelingWrapper:
     statuses = {
         "SATISFIABLE": "SATISFIABLE",
         "UNSATISFIABLE": "UNSATISFIABLE",
         "UNKNOWN": "INDETERMINATE"
     }
 
-    min_time = 0.001
+    min_time = 0.1
+    tag = "plingeling"
 
-    def __init__(self, solver_path):
-        self.solver_path = solver_path
+    def __init__(self):
+        self.solver_path = solver_paths[self.tag]
+        self.time_regexp = re.compile('[\t ]+')
 
     def get_arguments(self, tl):
         launching_args = [self.solver_path]
         if tl is not None:
-            launching_args.append("-T")
+            launching_args.append("-t")
             launching_args.append(str(tl))
 
         return launching_args
@@ -25,7 +30,6 @@ class LingelingInWrapper:
         output = output.split('\n')
         solution = ""
         status = ""
-        time = self.min_time
         for i in range(len(output)):
             if output[i].startswith("c s") or output[i].startswith("s"):
                 status = output[i].split(' ')
@@ -34,8 +38,9 @@ class LingelingInWrapper:
                 solution_line = output[i].split(' ')
                 for i in range(1, len(solution_line)):
                     solution += solution_line[i] + " "
-            if output[i].startswith("c ="):
-                time = max(float(output[i + 1].split(' ')[4]), self.min_time)
+
+        str_time = self.time_regexp.split(output[len(output) - 2])[1]
+        time = max(float(str_time), self.min_time)
 
         solution = solution[:-1]
 
