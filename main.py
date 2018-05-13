@@ -51,8 +51,8 @@ with open(log_file, 'w+'):
 # (1 + 5)
 # st: 100, file: 08.05
 #
-# (1 + 2)
-# st: 100, files: 1-4
+# tabu
+# file 11.05
 
 
 alg = alg(meta_p)
