@@ -4,23 +4,26 @@ from util.parser import parse_cnf
 
 N = 20
 workers = 4
-algorithm = options.crypto_algorithms["volfram"]
+algorithm = options.crypto_algorithms["geffe"]
 base_cnf = parse_cnf(algorithm[1])
 algorithm = algorithm[0]
 
 init_solver = options.solver_wrappers["lingeling"]
-main_solver = options.solver_wrappers["plingeling"]
+main_solver = options.solver_wrappers["treengeling"]
+
+with open('out/check.data', 'w+'):
+    pass
 
 times = []
 for i in range(N):
-    print "---------- iteration %d ----------" % (i + 1)
+    log = "---------- iteration %d ----------\n" % (i + 1)
     init_case = caser.create_init_case(base_cnf, algorithm)
     solver = CaseSolver(init_solver)
     solver.start({}, init_case)
 
     secret_key, key_stream = init_case.get_solution_secret_key(), init_case.get_solution_key_stream()
-    print "init key stream: %s" % formatter.format_array(key_stream)
-    print "init secret key: %s" % formatter.format_array(secret_key)
+    log += "init key stream: %s\n" % formatter.format_array(key_stream)
+    log += "init secret key: %s\n" % formatter.format_array(secret_key)
 
     parameters = {
         "key_stream": key_stream,
@@ -30,11 +33,15 @@ for i in range(N):
     solver = CaseSolver(main_solver)
     solver.start({"workers": workers}, case)
 
-    print "fond secret key: %s" % formatter.format_array(case.get_solution_secret_key())
-    print "time: %s" % case.time
+    log += "fond secret key: %s\n" % formatter.format_array(case.get_solution_secret_key())
+    log += "time: %s\n" % case.time
     times.append(case.time)
 
-print "av_time: %s" % (sum(times) / N)
+    with open('out/check.data', 'a') as f:
+        f.write(log)
+
+with open('out/check.data', 'a') as f:
+    f.write("av_time: %s\n" % (sum(times) / N))
 
 
 
