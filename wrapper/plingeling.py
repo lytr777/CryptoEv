@@ -1,4 +1,5 @@
 import re
+import warnings
 
 from model.solver_report import SolverReport
 from util.constant import solver_paths
@@ -18,11 +19,13 @@ class PlingelingWrapper:
         self.solver_path = solver_paths[self.tag]
         self.time_regexp = re.compile('[\t ]+')
 
-    def get_arguments(self, tl):
+    def get_arguments(self, tl=None, workers=None):
         launching_args = [self.solver_path]
         if tl is not None:
+            warnings.warn("Time limit not support in plingeling", UserWarning)
+        if workers is not None:
             launching_args.append("-t")
-            launching_args.append(str(tl))
+            launching_args.append(str(workers))
 
         return launching_args
 

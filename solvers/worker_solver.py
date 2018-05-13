@@ -87,10 +87,9 @@ class WorkerSolver:
         while self.anyAlive():
             sleep(self.sleep_time)
 
-        times = []
+        solver_log = "progress (%s) 100%s active(0) with times:\n" % (datetime.now(), '%')
         for s_case in solved_cases:
-            times.append(s_case.time)
-        solver_log = "progress (%s) 100%s active(0) with times: %s\n" % (datetime.now(), '%', times)
+            solver_log += "%s %f\n" % (s_case.get_status(True), s_case.time)
         return solved_cases, broken_cases, solver_log
 
     def anyAlive(self):

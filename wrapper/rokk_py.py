@@ -1,3 +1,5 @@
+import warnings
+
 from model.solver_report import SolverReport
 from util.constant import solver_paths
 
@@ -15,11 +17,13 @@ class RokkPyWrapper:
         self.solver_path = solver_paths[self.tag]
         self.simplify = True
 
-    def get_arguments(self, tl):
+    def get_arguments(self, tl=None, workers=None):
         launching_args = ['python', self.solver_path, '1' if self.simplify else '0']
 
         if tl is not None:
             launching_args.append(str(tl))
+        if workers is not None:
+            warnings.warn("Workers not support in ROKK", UserWarning)
 
         return launching_args
 

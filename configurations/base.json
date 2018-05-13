@@ -1,7 +1,7 @@
 {
   "algorithm": "ev",
   "ev_parameters": {
-    "s": 60,
+    "s": 64,
     "comparator": "max_min",
     "minimization_function": "ibs",
     "mutation_function": {
@@ -23,16 +23,16 @@
     "evolution_strategy": {
       "args_description": "mu, lambda, c",
       "name": "plus",
-      "args": [1, 5, 4]
+      "args": [1, 1, 4]
     }
   },
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
-    "threads": 4,
-    "N": 300,
-    "solver_wrapper": "rokk_py",
+    "threads": 32,
+    "N": 1000,
+    "solver_wrapper": "lingeling",
     "multi_solver": "worker",
-    "time_limit": 5,
+    "time_limit": 1,
     "corrector": {
       "args_description": "coefficient",
       "name": "mass",

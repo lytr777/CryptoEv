@@ -11,9 +11,13 @@ from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
 from key_generators.trivium_64 import Trivium_64
 from key_generators.bivium import Bivium
+from key_generators.geffe import Geffe
+from key_generators.volfram import Volfram
 
 from wrapper.lingeling import LingelingWrapper
 from wrapper.minisat import MinisatWrapper
+from wrapper.plingeling import PlingelingWrapper
+from wrapper.treengeling import TreengelingWrapper
 from wrapper.rokk import RokkWrapper
 from wrapper.rokk_py import RokkPyWrapper
 
@@ -83,12 +87,16 @@ crypto_algorithms = {
     "a5_1": (A5_1, constant.a5_1_cnf),
     "bivium": (Bivium, constant.bivium_cnf),
     "trivium_64": (Trivium_64, constant.trivium_64_cnf),
-    "e0": (E0, constant.e0_cnf)
+    "e0": (E0, constant.e0_cnf),
+    "volfram": (Volfram, constant.volfram_cnf),
+    "geffe": (Geffe, constant.geffe_cnf)
 }
 
 solver_wrappers = {
     "minisat": MinisatWrapper(),
     "lingeling": LingelingWrapper(),
+    "plingeling": PlingelingWrapper(),
+    "treengeling": TreengelingWrapper(),
     "rokk": RokkWrapper(),
     "rokk_py": RokkPyWrapper(),
 }

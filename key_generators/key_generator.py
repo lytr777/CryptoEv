@@ -8,6 +8,12 @@ class KeyGenerator:
     secret_key_start = None
     secret_key_len = None
 
+    short_statuses = {
+        "SATISFIABLE": "SAT",
+        "UNSATISFIABLE": "UNSAT",
+        "INDETERMINATE": "INDET"
+    }
+
     def __init__(self, cnf):
         self.cnf = cnf
         self.substitution = CnfSubstitution()
@@ -63,6 +69,12 @@ class KeyGenerator:
         self.status = report.status
         self.flags = report.flags
         self.solution = report.solution
+
+    def get_status(self, short=False):
+        if short:
+            return self.short_statuses[self.status]
+        else:
+            return self.status
 
     def get_solution_secret_key(self):
         start = self.secret_key_start - 1

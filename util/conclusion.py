@@ -4,11 +4,13 @@ from formatter import format_array
 
 def add_conclusion(filename, k, comparator, locals_list=None):
     if locals_list is None:
-        steps = parse_out(filename, k)
+        steps, stat = parse_out(filename, k)
+        print stat
 
         if len(steps) == 0:
             return
 
+        print steps
         last_step = steps[0]
         locals_list = []
         for step in steps:

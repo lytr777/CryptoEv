@@ -1,17 +1,15 @@
-from key_generators.volfram import Volfram
 from solvers.case_solver import CaseSolver
-from util import constant, caser, formatter, generator
+from util import caser, formatter, options
 from util.parser import parse_cnf
-from wrapper.lingeling_in import LingelingInWrapper
-from wrapper.treengeling import TreengelingWrapper
 
 N = 20
-base_cnf = parse_cnf(constant.volfram_cnf)
+workers = 4
+algorithm = options.crypto_algorithms["volfram"]
+base_cnf = parse_cnf(algorithm[1])
+algorithm = algorithm[0]
 
-algorithm = Volfram
-
-init_solver = LingelingInWrapper(constant.lingeling_path)
-main_solver = TreengelingWrapper(constant.treengeling_path)
+init_solver = options.solver_wrappers["lingeling"]
+main_solver = options.solver_wrappers["plingeling"]
 
 times = []
 for i in range(N):
@@ -26,16 +24,20 @@ for i in range(N):
 
     parameters = {
         "key_stream": key_stream,
-        # "secret_key": secret_key,
-        # "secret_mask": generator.generate_mask(128, 64)
     }
 
     case = caser.create_case(base_cnf, parameters, algorithm)
     solver = CaseSolver(main_solver)
-    solver.start({}, case)
+    solver.start({"workers": workers}, case)
 
     print "fond secret key: %s" % formatter.format_array(case.get_solution_secret_key())
     print "time: %s" % case.time
     times.append(case.time)
 
 print "av_time: %s" % (sum(times) / N)
+
+
+
+
+
+

@@ -10,8 +10,9 @@ class CaseSolver:
 
     def start(self, args, case):
         tl = args["time_limit"] if ("time_limit" in args) else None
+        workers = args["workers"] if ("workers" in args) else None
 
-        l_args = self.solver_wrapper.get_arguments(tl=tl)
+        l_args = self.solver_wrapper.get_arguments(tl=tl, workers=workers)
         sp = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = sp.communicate(case.get_cnf())[0]
 
