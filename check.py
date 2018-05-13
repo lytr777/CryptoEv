@@ -3,7 +3,7 @@ from util import caser, formatter, options
 from util.parser import parse_cnf
 
 N = 20
-workers = 4
+workers = 32
 algorithm = options.crypto_algorithms["geffe"]
 base_cnf = parse_cnf(algorithm[1])
 algorithm = algorithm[0]
