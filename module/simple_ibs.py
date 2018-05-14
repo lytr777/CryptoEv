@@ -84,6 +84,7 @@ class SimpleIBS:
         self.current_solver = parameters["solver_wrapper"]
         self.time_limit = parameters["time_limit"]
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
+        self.log_file = parameters["log_file"] if ("log_file" in parameters) else None
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
 
         self.base_cnf = parse_cnf(self.crypto_algorithm[1])
@@ -97,7 +98,7 @@ class SimpleIBS:
             worker.terminated.set()
         exit(s)
 
-    def compute(self, mask, log_file=None):
+    def compute(self, mask):
         case_generator = CaseGenerator(self.base_cnf, self.crypto_algorithm[0], mask)
 
         count, solved = {"N": self.N}, []
@@ -126,8 +127,8 @@ class SimpleIBS:
 
         main_start_time = now()
 
-        if log_file is not None:
-            open(log_file, "a").write("times:\n")
+        if self.log_file is not None:
+            open(self.log_file, "a").write("times:\n")
             solver_log = ""
         else:
             solver_log = "times:\n"
@@ -143,8 +144,8 @@ class SimpleIBS:
                 self.__update_time_statistic(time_stat, info[0])
             solved_lock.release()
 
-            if log_file is not None:
-                open(log_file, "a").write(log)
+            if self.log_file is not None:
+                open(self.log_file, "a").write(log)
             else:
                 solver_log += log
 

@@ -5,7 +5,9 @@ import numpy as np
 
 value_hash = {}
 _, _, mf_p = configurator.load('configurations/true.json', value_hash)
-m_function = minimization_functions["ibs"]
+m_function = minimization_functions["s_ibs"]
+
+mf_p["log_file"] = constant.true_log_path
 
 cases = [
     # formatter.format_to_array("0111000111100101000001100111110100010001111001001011010000100011(30)"),
@@ -14,9 +16,9 @@ cases = [
 ]
 
 # case = np.zeros(64, dtype=np.int)
-# # numbers = [5, 19, 20, 22, 23, 31, 32, 34, 35, 45, 46, 47, 49, 50, 58, 59, 61, 62, 64, 74, 76, 77, 86, 88, 101, 113, 115,
-# #            116, 127, 128, 129, 130, 131, 133, 140, 142, 143, 144, 145, 146, 154, 155, 156, 157, 158, 160, 161, 170, 172,
-# #            173]
+# numbers = [5, 19, 20, 22, 23, 31, 32, 34, 35, 45, 46, 47, 49, 50, 58, 59, 61, 62, 64, 74, 76, 77, 86, 88, 101, 113, 115,
+#            116, 127, 128, 129, 130, 131, 133, 140, 142, 143, 144, 145, 146, 154, 155, 156, 157, 158, 160, 161, 170, 172,
+#            173]
 # numbers = [
 #     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 42, 43, 44, 45, 46, 47, 48, 49, 50,
 #     51, 52
@@ -40,12 +42,13 @@ with open(constant.true_log_path, 'w+'):
 
 values = []
 for case in cases:
-    log = "start with mask: %s\n" % formatter.format_array(case)
+    with open(constant.true_log_path, 'a') as f:
+        f.write("start with mask: %s\n" % formatter.format_array(case))
     mf = m_function(mf_p)
     value, mf_log = mf.compute(case)
     values.append(value)
 
-    log += mf_log
+    log = mf_log
     log += "true value: %.7g\n" % value
     log += "------------------------------------------------------\n"
 

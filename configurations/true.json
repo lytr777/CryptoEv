@@ -5,10 +5,10 @@
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
     "threads": 32,
-    "N": 50000,
+    "N": 1000,
     "solver_wrapper": "lingeling",
     "multi_solver": "worker",
-    "time_limit": 1,
+    "time_limit": 5,
     "corrector": {
       "args_description": "coefficient",
       "name": "mass",
