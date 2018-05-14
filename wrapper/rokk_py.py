@@ -17,8 +17,9 @@ class RokkPyWrapper:
         self.solver_path = solver_paths[self.tag]
         self.simplify = True
 
-    def get_arguments(self, tl=None, workers=None):
-        launching_args = ['python', self.solver_path, '1' if self.simplify else '0']
+    def get_arguments(self, tl=None, workers=None, simplifying=True):
+        simplify_bit = self.simplify and simplifying
+        launching_args = ['python', self.solver_path, '1' if simplify_bit else '0']
 
         if tl is not None:
             launching_args.append(str(tl))

@@ -19,7 +19,7 @@ class TreengelingWrapper:
         self.solver_path = solver_paths[self.tag]
         self.time_regexp = re.compile('[\t ]+')
 
-    def get_arguments(self, tl=None, workers=None):
+    def get_arguments(self, tl=None, workers=None, simplifying=True):
         launching_args = [self.solver_path]
         if tl is not None:
             warnings.warn("Time limit not support in treengeling", UserWarning)

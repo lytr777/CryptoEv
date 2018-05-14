@@ -6,6 +6,7 @@ from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, G
 from module.decomposition import Decomposition
 from module.gad_function import GADFunction
 from module.ibs_function import IBSFunction
+from module.simple_ibs import SimpleIBS
 
 from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
@@ -38,7 +39,8 @@ comparators = {
 
 minimization_functions = {
     "gad": GADFunction,
-    "ibs": IBSFunction
+    "ibs": IBSFunction,
+    "s_ibs": SimpleIBS
 }
 
 

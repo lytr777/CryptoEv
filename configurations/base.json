@@ -32,7 +32,7 @@
     "N": 1000,
     "solver_wrapper": "lingeling",
     "multi_solver": "worker",
-    "time_limit": 1,
+    "time_limit": 5,
     "corrector": {
       "args_description": "coefficient",
       "name": "mass",
