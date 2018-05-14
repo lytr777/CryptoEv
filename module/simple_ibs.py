@@ -1,7 +1,6 @@
 import subprocess
 import threading
 
-import memory_profiler
 import numpy as np
 import signal
 
@@ -159,9 +158,6 @@ class SimpleIBS:
             value = (2 ** self.crypto_algorithm[0].secret_key_len) * self.time_limit
 
         self.log += "%s\n" % time_stat
-
-        print memory_profiler.memory_usage()
-
         return value, self.log
 
     def anyAlive(self):
