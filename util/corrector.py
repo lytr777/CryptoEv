@@ -1,9 +1,16 @@
+from key_generators.key_generator import KeyGenerator
+
+sat_statuses = ["SATISFIABLE", "SAT"]
+unsat_statuses = ["UNSATISFIABLE", "UNSAT"]
+dis_statuses = ["DISCARDED", "DIS"]
+
+
 def mass_corrector(coefficient):
     def __mass_corrector(cases, tl):
         det_times, ind_times = [], []
         for case in cases:
-            if case.status == "UNSATISFIABLE" or case.status == "SATISFIABLE":
-                det_times.append(case.time)
+            if __check_sat(__get_status(case)) or __check_unsat(__get_status(case)):
+                det_times.append(__get_time(case))
             else:
                 ind_times.append(tl)
 
@@ -19,13 +26,49 @@ def mass_corrector(coefficient):
         new_tl = time_sum / (coefficient * len(det_times) + len(ind_times))
         best_tl = __choose_best_tl(new_tl, det_times, ind_times)
 
-        for case in cases:
-            if case.status == "SATISFIABLE" and case.time > best_tl:
-                case.status = "DISCARDED"
+        for i in range(len(cases)):
+            if __check_sat(__get_status(cases[i])) and __get_time(cases[i]) > best_tl:
+                cases[i] = __change_status(cases[i])
 
         return best_tl
 
     return __mass_corrector
+
+
+def __check_sat(status):
+    for sat_status in sat_statuses:
+        if sat_status == status:
+            return True
+    return False
+
+
+def __check_unsat(status):
+    for unsat_status in unsat_statuses:
+        if unsat_status == status:
+            return True
+    return False
+
+
+def __get_status(case):
+    if isinstance(case, tuple):
+        return case[0]
+    elif isinstance(case, KeyGenerator):
+        return case.status
+
+
+def __change_status(case):
+    if isinstance(case, tuple):
+        return dis_statuses[1], case[1]
+    elif isinstance(case, KeyGenerator):
+        case.status = dis_statuses[0]
+        return case
+
+
+def __get_time(case):
+    if isinstance(case, tuple):
+        return case[1]
+    elif isinstance(case, KeyGenerator):
+        return case.time
 
 
 def __choose_best_tl(min_tl, det_times, ind_times):

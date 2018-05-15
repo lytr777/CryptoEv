@@ -128,27 +128,34 @@ class SimpleIBS:
 
         if self.log_file is not None:
             open(self.log_file, "a").write("times:\n")
-            solver_log = ""
         else:
-            solver_log = "times:\n"
+            self.log += "times:\n"
 
         while self.anyAlive():
             sleep(self.sleep_time)
 
-            log = ""
-            solved_lock.acquire()
-            while len(solved) > 0:
-                info = solved.pop()
-                log += "%s %f\n" % info
-                self.__update_time_statistic(time_stat, info[0])
-            solved_lock.release()
-
             if self.log_file is not None:
+                log = ""
+                solved_lock.acquire()
+                while len(solved) > 0:
+                    info = solved.pop()
+                    log += "%s %f\n" % info
+                    self.__update_time_statistic(time_stat, info[0])
+                solved_lock.release()
                 open(self.log_file, "a").write(log)
-            else:
-                solver_log += log
 
-        self.log += solver_log
+        if self.log_file is None:
+            for info in solved:
+                self.log += "%s %f\n" % info
+
+            if self.corrector is not None:
+                self.time_limit = self.corrector(solved, self.time_limit)
+                self.log += "time limit has been corrected: %f\n" % self.time_limit
+                time_stat["DISCARDED"] = 0
+
+            for info in solved:
+                self.__update_time_statistic(time_stat, info[0])
+
         self.log += "main phase ended with time: %f\n" % (now() - main_start_time)
 
         xi = float(time_stat["DETERMINATE"]) / float(self.N)
@@ -167,5 +174,7 @@ class SimpleIBS:
     def __update_time_statistic(time_stat, status):
         if status == "UNSAT" or status == "SAT":
             time_stat["DETERMINATE"] += 1
+        elif status == "DIS":
+            time_stat["DISCARDED"] += 1
         else:
             time_stat["INDETERMINATE"] += 1
