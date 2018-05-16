@@ -165,7 +165,8 @@ class SimpleIBS:
             value = (2 ** self.crypto_algorithm[0].secret_key_len) * self.time_limit
 
         self.log += "%s\n" % time_stat
-        return value, self.log
+        re = time_stat["DETERMINATE"] == 1
+        return value, self.log, re
 
     def anyAlive(self):
         return any(worker.isAlive() for worker in self.workers)

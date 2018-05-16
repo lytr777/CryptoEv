@@ -1,6 +1,7 @@
 from algorithm import MetaAlgorithm
 from util import formatter, generator
 import numpy as np
+from copy import copy
 
 
 class EvolutionAlgorithm(MetaAlgorithm):
@@ -40,7 +41,13 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 else:
                     hashed = False
                     mf = self.minimization_function(mf_parameters)
-                    value, mf_log = mf.compute(p)
+                    value, mf_log, re = mf.compute(p)
+                    if re:
+                        re_mf_parameters = copy(mf_parameters)
+                        re_mf_parameters["N"] = 2 * mf_parameters["N"]
+                        mf = self.minimization_function(re_mf_parameters)
+                        value, mf_log, re = mf.compute(p)
+                        value = max_value if re else value
                     mf_calls += 1
                     self.value_hash[key] = value
 
