@@ -22,8 +22,8 @@
     "stagnation_limit": 100,
     "evolution_strategy": {
       "args_description": "mu, lambda, c",
-      "name": "plus",
-      "args": [1, 1, 4]
+      "name": "genetic",
+      "args": [4, 2, 4]
     }
   },
   "mf_parameters": {

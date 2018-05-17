@@ -61,7 +61,7 @@ class MuCommaLambda(EvolutionStrategy):
         return P
 
     def __str__(self):
-        return "(%d, %d)" % (self.mu, self.lmbda)
+        return "Strategy (%d, %d)" % (self.mu, self.lmbda)
 
 
 class MuPlusLambda(MuCommaLambda):
@@ -77,7 +77,7 @@ class MuPlusLambda(MuCommaLambda):
         return P
 
     def __str__(self):
-        return "(%d + %d)" % (self.mu, self.lmbda)
+        return "Strategy (%d + %d)" % (self.mu, self.lmbda)
 
 
 class Genetic(EvolutionStrategy):
@@ -113,4 +113,7 @@ class Genetic(EvolutionStrategy):
             P.append(new_v if distribution[2 * self.c + i] < 0.5 else new_w)
 
         return P
+
+    def __str__(self):
+        return "Genetic (%d, %d, %d)" % (self.m, self.l, self.c)
 

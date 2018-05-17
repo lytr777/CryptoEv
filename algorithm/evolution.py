@@ -28,7 +28,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
         best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
         locals_list = []
 
-        self.print_info(algorithm.name, "Strategy %s" % self.strategy)
+        self.print_info(algorithm.name, "%s" % self.strategy)
 
         while not self.stop_condition(it, mf_calls, len(locals_list)):
             self.print_iteration_header(it)
