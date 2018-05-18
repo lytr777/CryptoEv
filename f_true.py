@@ -10,7 +10,7 @@ m_function = minimization_functions["s_ibs"]
 mf_p["log_file"] = constant.true_log_path
 
 cases = [
-    formatter.format_to_array("1010101100001100111011001100011001000001001011110100000000001101(27)")
+    formatter.format_to_array("1110000100010000100111111111001000000001110111001010000000010010(26)")
 ]
 
 # case = np.zeros(64, dtype=np.int)
