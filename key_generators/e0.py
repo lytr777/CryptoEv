@@ -11,6 +11,7 @@ class E0(KeyGenerator):
     secret_key_len = 128
 
     name = "E0"
+    tag = "e0"
 
     def __init__(self, cnf):
         KeyGenerator.__init__(self, cnf)

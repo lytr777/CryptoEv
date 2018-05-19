@@ -11,6 +11,7 @@ class Bivium(KeyGenerator):
     secret_key_len = 177
 
     name = "Bivium"
+    tag = "bivium"
 
     def __init__(self, cnf):
         KeyGenerator.__init__(self, cnf)

@@ -11,6 +11,7 @@ class Trivium_64(KeyGenerator):
     secret_key_len = 64
 
     name = "Trivium 64"
+    tag = "trivium_64"
 
     def __init__(self, cnf):
         KeyGenerator.__init__(self, cnf)

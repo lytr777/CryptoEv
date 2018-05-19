@@ -11,6 +11,7 @@ class A5_1(KeyGenerator):
     secret_key_len = 64
 
     name = "A5/1"
+    tag = "a5_1"
 
     def __init__(self, cnf):
         KeyGenerator.__init__(self, cnf)

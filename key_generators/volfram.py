@@ -11,6 +11,7 @@ class Volfram(KeyGenerator):
     secret_key_len = 128
 
     name = "Volfram"
+    tag = "volfram"
 
     def __init__(self, cnf):
         KeyGenerator.__init__(self, cnf)

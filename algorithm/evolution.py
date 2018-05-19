@@ -24,6 +24,12 @@ class EvolutionAlgorithm(MetaAlgorithm):
         mf_calls = 0
         stagnation = 0
 
+        if "adaptive_N" in mf_parameters:
+            adaptive_selection = mf_parameters["adaptive_N"]
+            adaptive_selection.choose_function(algorithm.tag)
+        else:
+            adaptive_selection = None
+
         P = self.__restart(algorithm)
         best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
         locals_list = []
@@ -40,14 +46,11 @@ class EvolutionAlgorithm(MetaAlgorithm):
                     value, mf_log = self.value_hash[key], ""
                 else:
                     hashed = False
+                    if adaptive_selection is not None:
+                        mf_parameters["N"] = adaptive_selection.get_N(best)
+
                     mf = self.minimization_function(mf_parameters)
-                    value, mf_log, re = mf.compute(p)
-                    if re:
-                        re_mf_parameters = copy(mf_parameters)
-                        re_mf_parameters["N"] = 2 * mf_parameters["N"]
-                        mf = self.minimization_function(re_mf_parameters)
-                        value, mf_log, re = mf.compute(p)
-                        value = max_value if re else value
+                    value, mf_log = mf.compute(p)
                     mf_calls += 1
                     self.value_hash[key] = value
 

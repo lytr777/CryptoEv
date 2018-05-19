@@ -26,6 +26,7 @@ from solvers.sleep_solver import SleepSolver
 from solvers.worker_solver import WorkerSolver
 
 from util import constant, comparator, corrector
+from util.adaptive_selection import AdaptiveFunction
 
 algorithms = {
     "ev": EvolutionAlgorithm,
@@ -94,6 +95,15 @@ crypto_algorithms = {
     "geffe": (Geffe, constant.geffe_cnf)
 }
 
+
+def adaptive_selection(args):
+    if len(args) != 2:
+        raise Exception("Count of evolution_strategy args must equals 3! [<min_N>, <max_N>]")
+    return {
+        "function": AdaptiveFunction(args[0], args[1])
+    }
+
+
 solver_wrappers = {
     "minisat": MinisatWrapper(),
     "lingeling": LingelingWrapper(),
@@ -136,6 +146,7 @@ matcher = {
     "stop_condition": stop_conditions,
     "evolution_strategy": evolution_strategy,
     "crypto_algorithm": crypto_algorithms,
+    "adaptive_N": adaptive_selection,
     "solver_wrapper": solver_wrappers,
     "multi_solver": multi_solvers,
     "corrector": correctors,

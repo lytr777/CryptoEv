@@ -113,7 +113,7 @@ class SimpleIBS:
             "locks": (count_lock, solved_lock)
         }
 
-        for i in range(self.thread_count):
+        for i in range(min(self.N, self.thread_count)):
             self.workers.append(Worker(worker_args))
 
         for worker in self.workers:
@@ -165,8 +165,7 @@ class SimpleIBS:
             value = (2 ** self.crypto_algorithm[0].secret_key_len) * self.time_limit
 
         self.log += "%s\n" % time_stat
-        re = time_stat["DETERMINATE"] == 1
-        return value, self.log, re
+        return value, self.log
 
     def anyAlive(self):
         return any(worker.isAlive() for worker in self.workers)

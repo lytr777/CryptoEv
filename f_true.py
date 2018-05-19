@@ -43,7 +43,7 @@ for case in cases:
     with open(constant.true_log_path, 'a') as f:
         f.write("start with mask: %s\n" % formatter.format_array(case))
     mf = m_function(mf_p)
-    value, mf_log, _ = mf.compute(case)
+    value, mf_log = mf.compute(case)
     values.append(value)
 
     log = mf_log

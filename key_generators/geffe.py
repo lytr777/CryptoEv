@@ -11,6 +11,7 @@ class Geffe(KeyGenerator):
     secret_key_len = 64
 
     name = "Geffe"
+    tag = "geffe"
 
     def __init__(self, cnf):
         KeyGenerator.__init__(self, cnf)
