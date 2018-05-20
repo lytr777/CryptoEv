@@ -96,4 +96,3 @@ def __choose_best_tl(min_tl, det_times, ind_times):
             best = (perhaps[i], value)
 
     return best[0]
-

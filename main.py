@@ -54,6 +54,7 @@ with open(log_file, 'w+'):
 # tabu
 # file 11.05
 
+# 20.05 (1 + 1) with adaptive
 
 alg = alg(meta_p)
 locals_list = alg.start(mf_p)
