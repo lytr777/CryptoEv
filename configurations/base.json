@@ -38,11 +38,7 @@
     "solver_wrapper": "lingeling",
     "multi_solver": "worker",
     "time_limit": 5,
-    "corrector": {
-      "args_description": "coefficient",
-      "name": "mass",
-      "args": [12]
-    },
+    "corrector": "mass",
     "decomposition": {
       "args_description": "decomposition power, break time",
       "name": "none",

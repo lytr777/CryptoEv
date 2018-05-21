@@ -5,34 +5,36 @@ unsat_statuses = ["UNSATISFIABLE", "UNSAT"]
 dis_statuses = ["DISCARDED", "DIS"]
 
 
-def mass_corrector(coefficient):
-    def __mass_corrector(cases, tl):
-        det_times, ind_times = [], []
-        for case in cases:
-            if __check_sat(__get_status(case)) or __check_unsat(__get_status(case)):
-                det_times.append(__get_time(case))
-            else:
-                ind_times.append(tl)
+def mass_corrector(cases, tl):
+    n = len(cases)
+    det_times, ind_times = [], []
+    for case in cases:
+        if __check_sat(__get_status(case)) or __check_unsat(__get_status(case)):
+            det_times.append(__get_time(case))
+        else:
+            ind_times.append(tl)
 
-        if len(det_times) == 0:
-            return tl
+    if len(det_times) == 0:
+        return tl
 
-        time_sum = 0.
-        for dt in det_times:
-            time_sum += dt * coefficient
-        for it in ind_times:
-            time_sum += it
+    time_sum = 0.
+    for dt in det_times:
+        time_sum += dt * n
+    for it in ind_times:
+        time_sum += it
 
-        new_tl = time_sum / (coefficient * len(det_times) + len(ind_times))
-        best_tl = __choose_best_tl(new_tl, det_times, ind_times)
+    new_tl = time_sum / (n * len(det_times) + len(ind_times))
+    best_tl = __choose_best_tl(new_tl, det_times, ind_times)
 
-        for i in range(len(cases)):
-            if __check_sat(__get_status(cases[i])) and __get_time(cases[i]) > best_tl:
-                cases[i] = __change_status(cases[i])
+    for i in range(len(cases)):
+        if __check_sat(__get_status(cases[i])) and __get_time(cases[i]) > best_tl:
+            cases[i] = __change_status(cases[i])
 
-        return best_tl
+    return best_tl
 
-    return __mass_corrector
+
+def throw_corrector(cases, tl):
+    pass
 
 
 def __check_sat(status):

@@ -118,14 +118,11 @@ multi_solvers = {
     "worker": WorkerSolver
 }
 
-
-def correctors(args):
-    if len(args) != 1:
-        raise Exception("Count of correctors args must equals 1! [<coefficient>]")
-    return {
-        "none": None,
-        "mass": corrector.mass_corrector(args[0])
-    }
+correctors = {
+    "none": None,
+    "mass": corrector.mass_corrector,
+    "throw": corrector.throw_corrector,
+}
 
 
 def decompositions(value_hash, args):
