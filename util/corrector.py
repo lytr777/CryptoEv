@@ -3,6 +3,7 @@ from key_generators.key_generator import KeyGenerator
 sat_statuses = ["SATISFIABLE", "SAT"]
 unsat_statuses = ["UNSATISFIABLE", "UNSAT"]
 dis_statuses = ["DISCARDED", "DIS"]
+min_tl = 0.1
 
 
 def mass_corrector(cases, tl):
@@ -24,7 +25,7 @@ def mass_corrector(cases, tl):
         time_sum += it
 
     new_tl = time_sum / (n * len(det_times) + len(ind_times))
-    new_tl = max(1., new_tl)
+    new_tl = max(min_tl, new_tl)
     best_tl = __choose_best_tl(new_tl, det_times, ind_times)
 
     for i in range(len(cases)):
