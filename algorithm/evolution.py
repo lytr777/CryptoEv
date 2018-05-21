@@ -23,6 +23,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
         it = 1
         mf_calls = 0
         stagnation = 0
+        updated_logs = {}
 
         if "adaptive_N" in mf_parameters:
             adaptive_selection = mf_parameters["adaptive_N"]
@@ -31,7 +32,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
             adaptive_selection = None
 
         P = self.__restart(algorithm)
-        best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
+        best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value, [])
         locals_list = []
 
         self.print_info(algorithm.name, "%s" % self.strategy)
@@ -43,21 +44,45 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 key = formatter.format_array(p)
                 if key in self.value_hash:
                     hashed = True
-                    value, mf_log = self.value_hash[key], ""
+                    if key in updated_logs:
+                        logs = updated_logs[key]
+                        updated_logs.pop(key)
+                    else:
+                        logs = ""
+                    (value, n), mf_log = self.value_hash[key], logs
+
+                    p_v = (p, value)
                 else:
                     hashed = False
                     if adaptive_selection is not None:
                         mf_parameters["N"] = adaptive_selection.get_N(best)
 
                     mf = self.minimization_function(mf_parameters)
-                    value, mf_log = mf.compute(p)
+                    result = mf.compute(p)
+                    value, mf_log = result[0], result[1]
+                    n = mf_parameters["N"]
                     mf_calls += 1
-                    self.value_hash[key] = value
+                    self.value_hash[key] = value, n
 
-                p_v = (p, value)
-                if self.comparator(best, p_v) > 0:
-                    best = p_v
-                    stagnation = -1
+                    if len(result) > 2:
+                        p_v = (p, value, result[2])
+                        if self.comparator(best, p_v) < 0 and len(best[2]) < n:
+                            ad_key = formatter.format_array(best[0])
+                            mf_copy = copy(mf_parameters)
+                            mf_copy["N"] = n - len(best[2])
+
+                            mf = self.minimization_function(mf_copy)
+                            ad_result = mf.compute(p, best[2])
+                            updated_logs[ad_key] = ad_result[1]
+
+                            best = (best[0], ad_result[0], ad_result[2])
+                            self.value_hash[key] = ad_result[0], n
+                    else:
+                        p_v = (p, value)
+
+                    if self.comparator(best, p_v) > 0:
+                        best = p_v
+                        stagnation = -1
 
                 P_v.append(p_v)
                 self.print_mf_log(hashed, key, value, mf_log)

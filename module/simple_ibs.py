@@ -97,7 +97,7 @@ class SimpleIBS:
             worker.terminated.set()
         exit(s)
 
-    def compute(self, mask):
+    def compute(self, mask, cases=None):
         case_generator = CaseGenerator(self.base_cnf, self.crypto_algorithm[0], mask)
 
         count, solved = {"N": self.N}, []
@@ -144,6 +144,9 @@ class SimpleIBS:
                 solved_lock.release()
                 open(self.log_file, "a").write(log)
 
+        if cases is not None:
+            solved.extend(cases)
+
         if self.log_file is None:
             for info in solved:
                 self.log += "%s %f\n" % info
@@ -158,14 +161,19 @@ class SimpleIBS:
 
         self.log += "main phase ended with time: %f\n" % (now() - main_start_time)
 
-        xi = float(time_stat["DETERMINATE"]) / float(self.N)
+        xi = float(time_stat["DETERMINATE"]) / float(len(solved))
         if xi != 0:
             value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
         else:
             value = (2 ** self.crypto_algorithm[0].secret_key_len) * self.time_limit
 
         self.log += "%s\n" % time_stat
-        return value, self.log
+
+        for i in range(len(solved)):
+            if solved[i][0] == "DIS":
+                solved[i] = ("SAT", solved[i][1])
+
+        return value, self.log, solved
 
     def anyAlive(self):
         return any(worker.isAlive() for worker in self.workers)

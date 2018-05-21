@@ -24,6 +24,7 @@ def mass_corrector(cases, tl):
         time_sum += it
 
     new_tl = time_sum / (n * len(det_times) + len(ind_times))
+    new_tl = max(1., new_tl)
     best_tl = __choose_best_tl(new_tl, det_times, ind_times)
 
     for i in range(len(cases)):

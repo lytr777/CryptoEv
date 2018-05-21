@@ -17,7 +17,7 @@ class AdaptiveFunction:
         self.f = self.functions[algorithm]
 
     def get_N(self, case):
-        mask, value = case
+        mask, value = case[0], case[1]
         for n in range(self.last_N, self.max_N):
             if value > self.f(n + 1):
                 self.last_N = n

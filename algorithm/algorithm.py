@@ -33,8 +33,13 @@ class MetaAlgorithm:
         with open(self.log_file, 'a') as f:
             f.write("------------------------------------------------------\n")
             if hashed:
-                f.write("mask: %s has been saved in hash\n" % key)
-                f.write("with value: %.7g\n" % value)
+                if mf_log == "":
+                    f.write("mask: %s has been saved in hash\n" % key)
+                    f.write("with value: %.7g\n" % value)
+                else:
+                    f.write("update prediction with mask: %s\n" % key)
+                    f.write(mf_log)
+                    f.write("end prediction with value: %.7g\n" % value)
             else:
                 f.write("start prediction with mask: %s\n" % key)
                 f.write(mf_log)
