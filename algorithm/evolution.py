@@ -76,7 +76,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                             updated_logs[ad_key] = ad_result[1]
 
                             best = (best[0], ad_result[0], ad_result[2])
-                            self.value_hash[key] = ad_result[0], n
+                            self.value_hash[ad_key] = ad_result[0], n
                     else:
                         p_v = (p, value)
 
