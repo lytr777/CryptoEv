@@ -72,7 +72,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                             mf_copy["N"] = n - len(best[2])
 
                             mf = self.minimization_function(mf_copy)
-                            ad_result = mf.compute(p, best[2])
+                            ad_result = mf.compute(best[0], best[2])
                             updated_logs[ad_key] = ad_result[1]
 
                             best = (best[0], ad_result[0], ad_result[2])
