@@ -3,7 +3,7 @@ from key_generators.key_generator import KeyGenerator
 sat_statuses = ["SATISFIABLE", "SAT"]
 unsat_statuses = ["UNSATISFIABLE", "UNSAT"]
 dis_statuses = ["DISCARDED", "DIS"]
-min_tl = 0.1
+min_tl = 1.
 
 
 def mass_corrector(cases, tl):
