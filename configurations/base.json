@@ -1,7 +1,7 @@
 {
   "algorithm": "ev",
   "ev_parameters": {
-    "s": 60,
+    "s": 64,
     "comparator": "max_min",
     "minimization_function": "s_ibs",
     "mutation_function": {
@@ -29,12 +29,7 @@
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
     "threads": 32,
-    "N": 500,
-    "adaptive_N": {
-      "args_description": "min_N, max_N",
-      "name": "function",
-      "args": [10, 1000]
-    },
+    "N": 1000,
     "solver_wrapper": "lingeling",
     "multi_solver": "worker",
     "time_limit": 5,
