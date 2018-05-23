@@ -121,6 +121,7 @@ multi_solvers = {
 correctors = {
     "none": None,
     "mass": corrector.mass_corrector,
+    "max":  corrector.max_corrector,
     "throw": corrector.throw_corrector,
 }
 

@@ -22,6 +22,7 @@ class TabuSearch(MetaAlgorithm):
         it_updates = 0
         mf_calls = 0
         locals_list = []
+        tabu_list = {}
 
         self.print_info(algorithm.name)
         center, value = self.__get_new_center(algorithm, mf_parameters)
@@ -29,11 +30,10 @@ class TabuSearch(MetaAlgorithm):
 
         while not self.stop_condition(it, mf_calls, len(locals_list)):
             self.print_iteration_header(it)
-            iteration_hash = {}
             updated = False
             for x in self.__get_neighbourhood(center):
                 key = formatter.format_array(x)
-                if key in iteration_hash or key in self.value_hash:
+                if key in self.value_hash:
                     hashed = True
                     value, mf_log = self.value_hash[key], ""
                 else:
@@ -42,21 +42,24 @@ class TabuSearch(MetaAlgorithm):
                     result = mf.compute(x)
                     value, mf_log = result[0], result[1]
                     mf_calls += 1
-                    iteration_hash[key] = value
+                    self.value_hash[key] = value
 
-                if not hashed and self.comparator(best, (x, value)) > 0:
-                    best = (x, value)
-                    updated = True
-                    it_updates += 1
+                if key in tabu_list:
+                    self.print_tabu_log(key, value)
+                else:
+                    if self.comparator(best, (x, value)) > 0:
+                        best = (x, value)
+                        updated = True
+                        it_updates += 1
 
-                self.print_mf_log(hashed, key, value, mf_log)
+                    self.print_mf_log(hashed, key, value, mf_log)
 
                 if self.update_count <= it_updates:
                     break
 
-            self.value_hash.update(iteration_hash)
-
             if updated:
+                center_key = formatter.format_array(best[0])
+                tabu_list[center_key] = best[1]
                 center = best[0]
             else:
                 locals_list.append(best)
@@ -72,19 +75,15 @@ class TabuSearch(MetaAlgorithm):
     def __get_new_center(self, algorithm, mf_parameters):
         center = generator.generate_mask(algorithm.secret_key_len, self.s)
         key = formatter.format_array(center)
-        it = 0
-        while key in self.value_hash:
-            if it > 20:
-                it = 0
-                self.s -= 1
-            center = generator.generate_mask(algorithm.secret_key_len, self.s)
-            key = formatter.format_array(center)
-            it += 1
 
-        mf = self.minimization_function(mf_parameters)
-        result = mf.compute(center)
-        value, mf_log = result[0], result[1]
-        self.value_hash[formatter.format_array(center)] = value
+        if key in self.value_hash:
+            value = self.value_hash[key]
+        else:
+            mf = self.minimization_function(mf_parameters)
+            result = mf.compute(center)
+            value = result[0]
+            self.value_hash[key] = value
+
         return center, value
 
     @staticmethod
@@ -96,13 +95,8 @@ class TabuSearch(MetaAlgorithm):
             new_vector[j] = not new_vector[j]
             yield new_vector
 
-    def print_mf_log(self, hashed, key, value, mf_log):
+    def print_tabu_log(self, key, value):
         with open(self.log_file, 'a') as f:
             f.write("------------------------------------------------------\n")
-            if hashed:
-                f.write("mask: %s in tabu list\n" % key)
-                f.write("with value: %.7g\n" % value)
-            else:
-                f.write("start prediction with mask: %s\n" % key)
-                f.write(mf_log)
-                f.write("end prediction with value: %.7g\n" % value)
+            f.write("mask: %s in tabu list\n" % key)
+            f.write("with value: %.7g\n" % value)

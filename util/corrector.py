@@ -35,6 +35,15 @@ def mass_corrector(cases, tl):
     return best_tl
 
 
+def max_corrector(cases, tl):
+    max_tl = min_tl
+    for case in cases:
+        if __check_sat(__get_status(case)) or __check_unsat(__get_status(case)):
+            max_tl = max(__get_time(case), max_tl)
+
+    return max_tl
+
+
 def throw_corrector(cases, tl):
     pass
 
