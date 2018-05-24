@@ -88,11 +88,9 @@ class TabuSearch(MetaAlgorithm):
 
     @staticmethod
     def __get_neighbourhood(vector):
-        n = len(vector)
-        for i in range(n):
-            j = n - i - 1
+        for i in range(len(vector)):
             new_vector = copy(vector)
-            new_vector[j] = not new_vector[j]
+            new_vector[i] = not new_vector[i]
             yield new_vector
 
     def print_tabu_log(self, key, value):

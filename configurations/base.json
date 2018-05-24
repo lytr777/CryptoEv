@@ -16,7 +16,7 @@
     },
     "stop_condition": {
       "args_description": "iterations, mf calls, locals",
-      "name": "locals",
+      "name": "mf_calls",
       "args": [1000, 1000, 100]
     },
     "stagnation_limit": 100,
