@@ -92,7 +92,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 P = self.__restart(algorithm)
                 locals_list.append(best)
                 self.print_local_info(best)
-                best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value)
+                best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value, [])
                 stagnation = 0
             else:
                 P_v.sort(cmp=self.comparator)
