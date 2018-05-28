@@ -16,8 +16,8 @@
     },
     "stop_condition": {
       "args_description": "iterations, mf calls, locals",
-      "name": "mf_calls",
-      "args": [1000, 1000, 100]
+      "name": "locals",
+      "args": [1000, 1000, 1]
     },
     "stagnation_limit": 100,
     "evolution_strategy": {
@@ -30,6 +30,11 @@
     "crypto_algorithm": "a5_1",
     "threads": 32,
     "N": 1000,
+    "adaptive_N": {
+      "args_description": "min_N, max_N",
+      "name": "function",
+      "args": [10, 1000]
+    },
     "solver_wrapper": "lingeling",
     "multi_solver": "worker",
     "time_limit": 5,
