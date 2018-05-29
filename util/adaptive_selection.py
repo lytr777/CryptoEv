@@ -4,7 +4,7 @@ import numpy as np
 class AdaptiveFunction:
     functions = {
         # "a5_1": lambda n: 1e18 / ((n / 10.) ** (2.15 * np.sqrt(np.log(np.log(n))))),
-        "a5_1": lambda n: 1e18 / ((n / 10.) ** (1.7 * np.sqrt(np.log(np.log(n)))))
+        "a5_1": lambda n: 6e+19 / ((n / 10.) ** (2.5 * np.sqrt(np.log(np.log(n)))))
     }
 
     def __init__(self, min_N, max_N):
