@@ -1,0 +1,43 @@
+{
+  "algorithm": "ev",
+  "ev_parameters": {
+    "s": 64,
+    "comparator": "max_min",
+    "minimization_function": "s_ibs",
+    "mutation_function": {
+      "args_description": "uniform scale",
+      "name": "uniform",
+      "args": [1.0]
+    },
+    "crossover_function": {
+      "args_description": "uniform p",
+      "name": "one-point",
+      "args": [0.2]
+    },
+    "stop_condition": {
+      "args_description": "iterations, mf calls, locals",
+      "name": "locals",
+      "args": [1000, 1000, 1]
+    },
+    "stagnation_limit": 300,
+    "evolution_strategy": {
+      "args_description": "mu, lambda, c",
+      "name": "plus",
+      "args": [1, 1, 4]
+    }
+  },
+  "mf_parameters": {
+    "crypto_algorithm": "a5_1",
+    "threads": 32,
+    "N": 500,
+    "solver_wrapper": "lingeling",
+    "multi_solver": "worker",
+    "time_limit": 5,
+    "corrector": "mass",
+    "decomposition": {
+      "args_description": "decomposition power, break time",
+      "name": "none",
+      "args": [2, 2]
+    }
+  }
+}
