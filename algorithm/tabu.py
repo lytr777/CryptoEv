@@ -28,7 +28,7 @@ class TabuSearch(MetaAlgorithm):
         center, value = self.__get_new_center(algorithm, mf_parameters)
         best = (center, value)
 
-        while not self.stop_condition(it, mf_calls, len(locals_list)):
+        while not self.stop_condition(it, mf_calls, len(locals_list), best[1]):
             self.print_iteration_header(it)
             updated = False
             for x in self.__get_neighbourhood(center):

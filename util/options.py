@@ -67,11 +67,12 @@ def crossover_function(args):
 
 def stop_conditions(args):
     if len(args) != 3:
-        raise Exception("Count of stop_conditions args must equals 3! [<it>, <mf calls>, <locals>]")
+        raise Exception("Count of stop_conditions args must equals 4! [<it>, <mf calls>, <locals>, <mf_value>]")
     return {
-        "iterable": lambda _1, _2, _3: _1 > args[0],
-        "mf_calls": lambda _1, _2, _3: _2 >= args[1],
-        "locals": lambda _1, _2, _3: _3 >= args[2],
+        "iterable": lambda _1, _2, _3, _4: _1 > args[0],
+        "mf_calls": lambda _1, _2, _3, _4: _2 >= args[1],
+        "locals": lambda _1, _2, _3, _4: _3 >= args[2],
+        "mf_value": lambda _1, _2, _3, _4: _4 < args[3],
     }
 
 

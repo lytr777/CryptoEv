@@ -37,7 +37,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
         self.print_info(algorithm.name, "%s" % self.strategy)
 
-        while not self.stop_condition(it, mf_calls, len(locals_list)):
+        while not self.stop_condition(it, mf_calls, len(locals_list), best[1]):
             self.print_iteration_header(it)
             P_v = []
             for p in P:
