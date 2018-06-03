@@ -37,19 +37,6 @@ with open(log_file, 'w+'):
 #     for i in range(n):
 #         parser.restore_hash(value_hash, path % (i + 1), k)
 #         print len(value_hash)
-
-# (1 + 1)
-# st: 100, file: 28.04
-# st:  50, file: 29.04
-# st:  30, file: 30.04
-# st:  20, file: 01.05
-# st: 200, file: 02.05
-#
-# (1 + 2)
-# st: 100, file: 05.05
-#
-# (1 + 5)
-# st: 100, file: 08.05
 #
 # tabu
 # file 11.05
