@@ -15,9 +15,9 @@
       "args": [0.2]
     },
     "stop_condition": {
-      "args_description": "iterations, mf calls, locals",
+      "args_description": "iterations, mf calls, locals, mf value",
       "name": "iterable",
-      "args": [3, 4, 1]
+      "args": [3, 4, 1, 1e20]
     },
     "stagnation_limit": 100,
     "evolution_strategy": {
