@@ -27,7 +27,7 @@
     }
   },
   "mf_parameters": {
-    "crypto_algorithm": "bivium",
+    "crypto_algorithm": "a5_1",
     "threads": 32,
     "N": 10,
     "solver_wrapper": "lingeling",
