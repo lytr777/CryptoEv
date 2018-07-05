@@ -31,7 +31,6 @@
     "threads": 32,
     "N": 500,
     "solver_wrapper": "lingeling",
-    "multi_solver": "worker",
     "time_limit": 5,
     "corrector": "mass",
     "decomposition": {

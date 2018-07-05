@@ -20,9 +20,6 @@ from wrapper.plingeling import PlingelingWrapper
 from wrapper.treengeling import TreengelingWrapper
 from wrapper.rokk import RokkWrapper
 
-from solvers.sleep_solver import SleepSolver
-from solvers.worker_solver import WorkerSolver
-
 from util import constant, comparator, corrector
 from util.adaptive_selection import AdaptiveFunction
 
@@ -110,11 +107,6 @@ solver_wrappers = {
     "rokk": RokkWrapper(),
 }
 
-multi_solvers = {
-    "sleep": SleepSolver,
-    "worker": WorkerSolver
-}
-
 correctors = {
     "none": None,
     "mass": corrector.mass_corrector,
@@ -143,7 +135,6 @@ matcher = {
     "crypto_algorithm": crypto_algorithms,
     "adaptive_N": adaptive_selection,
     "solver_wrapper": solver_wrappers,
-    "multi_solver": multi_solvers,
     "corrector": correctors,
     "decomposition": decompositions
 }

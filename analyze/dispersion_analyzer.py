@@ -1,5 +1,3 @@
-
-
 class DispersionFunction:
     def compute(self, lines):
         raise NotImplementedError
@@ -30,9 +28,6 @@ class RelativeDeviation(DispersionFunction):
                     av_buffs[j].append(rd)
 
                 av_rd = (sum(av_buffs[j]) / self.av_count)
-                # print "diff, original =  %.7g,  %.7g" % (diff, original[i])
-                # print "rd, av_rd = %f, %f" % (rd, av_rd)
-                # print av_buffs[j]
                 if av_rd > self.ad:
                     if i > 0:
                         j = i - 1

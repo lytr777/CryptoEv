@@ -16,7 +16,6 @@
     "threads": 32,
     "N": 1000,
     "solver_wrapper": "lingeling",
-    "multi_solver": "worker",
     "time_limit": 5,
     "corrector": "max",
     "decomposition": {
