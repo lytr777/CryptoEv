@@ -3,7 +3,7 @@
   "ev_parameters": {
     "s": 64,
     "comparator": "max_min",
-    "minimization_function": "s_ibs",
+    "predictive_function": "ibs",
     "mutation_function": {
       "args_description": "uniform scale",
       "name": "uniform",

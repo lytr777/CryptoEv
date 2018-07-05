@@ -12,6 +12,7 @@ lingeling
 minisat
 rokk
 local_tools
+obsolete
 analyze/memory
 load.sh
 test.json

@@ -4,9 +4,8 @@ from algorithm.module import mutation, crossover
 from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, Genetic
 
 from module.decomposition import Decomposition
-from module.gad_function import GADFunction
-from module.ibs_function import IBSFunction
-from module.simple_ibs import SimpleIBS
+from module.gad import GADFunction
+from module.ibs import IBSFunction
 
 from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
@@ -38,10 +37,9 @@ comparators = {
     "max_min": comparator.max_min
 }
 
-minimization_functions = {
+predictive_function = {
     "gad": GADFunction,
     "ibs": IBSFunction,
-    "s_ibs": SimpleIBS
 }
 
 
@@ -139,7 +137,7 @@ def decompositions(value_hash, args):
 # matcher
 matcher = {
     "comparator": comparators,
-    "minimization_function": minimization_functions,
+    "predictive_function": predictive_function,
     "mutation_function": mutation_function,
     "crossover_function": crossover_function,
     "stop_condition": stop_conditions,

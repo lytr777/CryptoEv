@@ -38,7 +38,7 @@ class TabuSearch(MetaAlgorithm):
                     value, mf_log = self.value_hash[key], ""
                 else:
                     hashed = False
-                    mf = self.minimization_function(mf_parameters)
+                    mf = self.predictive_function(mf_parameters)
                     result = mf.compute(x)
                     value, mf_log = result[0], result[1]
                     mf_calls += 1
@@ -79,7 +79,7 @@ class TabuSearch(MetaAlgorithm):
         if key in self.value_hash:
             value = self.value_hash[key]
         else:
-            mf = self.minimization_function(mf_parameters)
+            mf = self.predictive_function(mf_parameters)
             result = mf.compute(center)
             value = result[0]
             self.value_hash[key] = value

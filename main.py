@@ -1,6 +1,6 @@
 import sys
 
-from util import constant, conclusion, configurator, parser, plotter
+from util import constant, conclusion, configurator
 
 if len(sys.argv) < 2:
     print "USAGE: main.py <log id> [conf path]"

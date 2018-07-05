@@ -9,7 +9,7 @@ class MetaAlgorithm:
         self.locals_log_file = parameters["locals_log_file"]
         self.s = parameters["s"]
         self.comparator = parameters["comparator"]
-        self.minimization_function = parameters["minimization_function"]
+        self.predictive_function = parameters["predictive_function"]
         self.stop_condition = parameters["stop_condition"]
         self.value_hash = parameters["value_hash"]
 

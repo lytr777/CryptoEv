@@ -57,7 +57,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                     if adaptive_selection is not None:
                         mf_parameters["N"] = adaptive_selection.get_N(best)
 
-                    mf = self.minimization_function(mf_parameters)
+                    mf = self.predictive_function(mf_parameters)
                     result = mf.compute(p)
                     value, mf_log = result[0], result[1]
                     n = mf_parameters["N"]
@@ -71,7 +71,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                             mf_copy = copy(mf_parameters)
                             mf_copy["N"] = n - len(best[2])
 
-                            mf = self.minimization_function(mf_copy)
+                            mf = self.predictive_function(mf_copy)
                             ad_result = mf.compute(best[0], best[2])
                             updated_logs[ad_key] = ad_result[1]
 

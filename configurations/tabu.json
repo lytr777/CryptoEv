@@ -3,7 +3,7 @@
   "ts_parameters": {
     "s": 64,
     "comparator": "max_min",
-    "minimization_function": "s_ibs",
+    "predictive_function": "ibs",
     "stop_condition": {
       "args_description": "iterations, mf calls, locals, mf value",
       "name": "mf_calls",
