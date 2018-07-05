@@ -1,9 +1,11 @@
 *.pyc
 *.a5_1_log
 *.bivium_log
+*.trivium_64_log
 *.e0_log
 *.a5_1_true_log
 *.bivium_true_log
+*.trivium_64_true_log
 *.e0_true_log
 cnf
 lingeling
