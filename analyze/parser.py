@@ -1,6 +1,17 @@
 from util import formatter
 
 
+class Case:
+    def __init__(self, mask, times, value, cpu_time):
+        self.mask = mask
+        self.times = times
+        self.value = value
+        self.cpu_time = cpu_time
+
+    def get2(self):
+        return self.mask, self.times
+
+
 class Parser:
     def __init__(self):
         pass
@@ -46,10 +57,10 @@ class Parser:
             if not it_data[i].startswith("---"):
                 case_data.append(it_data[i])
             elif len(case_data) > 0:
-                mask, times = self.parse_case(case_data)
+                case = self.parse_case(case_data)
                 case_data = []
 
-                cases.append((mask, times))
+                cases.append(case)
 
         return cases
 
@@ -65,11 +76,19 @@ class Parser:
                 times.append((status, float(time)))
                 i += 1
 
-            return formatter.format_to_array(mask), times
+            assert case_data[i + 1].startswith("main")
+            cpu_time = float(case_data[i + 1].split(": ")[1])
+            assert case_data[i + 3].startswith("end")
+            value = float(case_data[i + 3].split(": ")[1])
+
+            return Case(formatter.format_to_array(mask), times, value, cpu_time)
         elif st_line.startswith("mask"):
             mask = st_line.split(" ")[1].split("(")[0]
 
-            return formatter.format_to_array(mask), []
+            assert case_data[1].startswith("with")
+            value = float(case_data[1].split(": ")[1])
+
+            return Case(formatter.format_to_array(mask), [], value, 0)
         else:
             raise Exception("unexpected line: %s" % st_line)
 

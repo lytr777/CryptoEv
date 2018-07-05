@@ -1,7 +1,7 @@
-import numpy as np
 from scipy.stats import mstats
-
 from util import formatter
+
+import numpy as np
 
 
 class IBSSimulation:
@@ -15,8 +15,8 @@ class IBSSimulation:
     def get_best_case(self, value_hash, cases, tl):
         best, best_i = None, None
         i = 0
-        for mask, times in cases:
-            current = (mask, self.get_value(value_hash, mask, times, tl))
+        for case in cases:
+            current = (case.mask, self.get_value(value_hash, case.mask, case.times, tl))
             if best is None or self.comparator(best, current) > 0:
                 best = current
                 best_i = i
@@ -25,13 +25,14 @@ class IBSSimulation:
         return best, best_i
 
     def compute_value(self, mask, times, tl):
-        new_tl = self.corrector(times, tl)
+        new_tl, dis_count = self.corrector(times, tl)
 
-        det_count = 0
+        det_count = -dis_count
         for status, time in times:
             if status == "UNSAT" or status == "SAT":
                 det_count += 1
 
+        assert det_count >= 0
         xi = det_count / float(len(times))
 
         if xi != 0:
@@ -103,12 +104,13 @@ class IBSSimulation:
             print "start dispersion for k = %d" % k
             changed = True
             values_hash = {}
+            tuple
 
             points = []
             lines = []
             for i in range(len(iterations)):
                 _, best_i = self.get_best_case(value_hash, iterations[i], tl)
-                mask, times = iterations[i][best_i]
+                mask, times = iterations[i][best_i].get2()
                 values, quantiles = self.dispersion_values(values_hash, mask, times, tl, k, rep, min_value)
                 points.append(values)
 
