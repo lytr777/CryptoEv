@@ -6,6 +6,35 @@ dis_statuses = ["DISCARDED", "DIS"]
 min_tl = 1.
 
 
+def coef_mass_corrector(cases, tl, coef=1):
+    det_times, ind_times = [], []
+    for case in cases:
+        if __check_sat(__get_status(case)) or __check_unsat(__get_status(case)):
+            det_times.append(__get_time(case))
+        else:
+            ind_times.append(tl)
+
+    if len(det_times) == 0:
+        return tl, 0
+
+    time_sum = 0.
+    for dt in det_times:
+        time_sum += dt * coef
+    for it in ind_times:
+        time_sum += it
+
+    new_tl = time_sum / (coef * len(det_times) + len(ind_times))
+    new_tl = max(min_tl, new_tl)
+    best_tl = __choose_best_tl(new_tl, det_times, ind_times)
+
+    dis_count = 0
+    for i in range(len(cases)):
+        if __check_sat(__get_status(cases[i])) and __get_time(cases[i]) > best_tl:
+            dis_count += 1
+
+    return best_tl, dis_count
+
+
 def mass_corrector(cases, tl):
     n = len(cases)
     det_times, ind_times = [], []
@@ -16,7 +45,7 @@ def mass_corrector(cases, tl):
             ind_times.append(tl)
 
     if len(det_times) == 0:
-        return tl
+        return tl, 0
 
     time_sum = 0.
     for dt in det_times:
@@ -28,11 +57,12 @@ def mass_corrector(cases, tl):
     new_tl = max(min_tl, new_tl)
     best_tl = __choose_best_tl(new_tl, det_times, ind_times)
 
+    dis_count = 0
     for i in range(len(cases)):
         if __check_sat(__get_status(cases[i])) and __get_time(cases[i]) > best_tl:
-            cases[i] = __change_status(cases[i])
+            dis_count += 1
 
-    return best_tl
+    return best_tl, dis_count
 
 
 def max_corrector(cases, tl):
@@ -41,7 +71,7 @@ def max_corrector(cases, tl):
         if __check_sat(__get_status(case)) or __check_unsat(__get_status(case)):
             max_tl = max(__get_time(case), max_tl)
 
-    return max_tl
+    return max_tl, 0
 
 
 def throw_corrector(cases, tl):
