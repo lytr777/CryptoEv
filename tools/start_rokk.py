@@ -29,7 +29,7 @@ def parse_out(out):
 
 
 if len(sys.argv) < 2:
-    print "USAGE: rokk_py.py <simplify?> [time limit]"
+    print "USAGE: rokk.py <simplify?> [time limit]"
     exit(1)
 
 simplify = sys.argv[1] != '0'

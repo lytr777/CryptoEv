@@ -1,5 +1,4 @@
 import warnings
-import tempfile
 
 from model.solver_report import SolverReport
 from util.constant import solver_paths
@@ -17,52 +16,28 @@ class RokkWrapper:
     def __init__(self):
         self.solver_path = solver_paths[self.tag]
 
-    def get_arguments(self, cnf, out, tl):
-        launching_args = [self.solver_path]
-        if tl is not None:
-            warnings.warn("Time limit not support in rokk", UserWarning)
+    def get_arguments(self, tl=None, workers=None, simplifying=True):
+        simplify_bit = simplifying
+        launching_args = ['python', self.solver_path, '1' if simplify_bit else '0']
 
-        launching_args.append(cnf)
-        launching_args.append(tempfile.gettempdir())
+        if tl is not None:
+            launching_args.append(str(tl))
+        if workers is not None:
+            warnings.warn("Workers not support in ROKK", UserWarning)
 
         return launching_args
 
-    def parse_out(self, out_file, output):
-        output = output.split('\n')
-        time = 0
-        i = 0
-        k = 0
-        for i in range(len(output)):
-            if output[i].startswith("c CPU time"):
-                time_str = ""
-                for s in output[i].split(':')[1]:
-                    if s.isdigit() or s == '.':
-                        time_str += s
-                time += float(time_str)
-                k += 1
-                if k == 2:
-                    break
+    def parse_out(self, output):
+        data = output.split('\n')
 
-        time = max(time, 1e-5)
-        i += 1
-        while not len(output[i]):
-            i += 1
-        status = output[i].split(' ')[1]
+        split_time = data[0].split(' ')
+        if (len(split_time) == 2) and split_time[1] == 'p':
+            report = SolverReport(data[1], float(split_time[0]))
+            report.set_flag(0, True)
+        else:
+            report = SolverReport(data[1], float(data[0]))
 
-        report = SolverReport(status, time)
-
-        if status == self.statuses["SAT"]:
-            i += 2
-            solution_line = output[i].split(' ')
-            solution = ""
-            for i in range(1, len(solution_line)):
-                solution += solution_line[i] + " "
-            solution = solution[:-1]
-
-            report.parse_solution(solution)
+        if data[1] == self.statuses['SAT']:
+            report.parse_solution(data[2])
 
         return report
-
-    def set_simplifying(self, flag):
-        pass
-

@@ -19,7 +19,6 @@ from wrapper.minisat import MinisatWrapper
 from wrapper.plingeling import PlingelingWrapper
 from wrapper.treengeling import TreengelingWrapper
 from wrapper.rokk import RokkWrapper
-from wrapper.rokk_py import RokkPyWrapper
 
 from solvers.sleep_solver import SleepSolver
 from solvers.worker_solver import WorkerSolver
@@ -97,7 +96,7 @@ crypto_algorithms = {
 
 def adaptive_selection(args):
     if len(args) != 2:
-        raise Exception("Count of evolution_strategy args must equals 3! [<min_N>, <max_N>]")
+        raise Exception("Count of evolution_strategy args must equals 2! [<min_N>, <max_N>]")
     return {
         "function": AdaptiveFunction(args[0], args[1])
     }
@@ -109,7 +108,6 @@ solver_wrappers = {
     "plingeling": PlingelingWrapper(),
     "treengeling": TreengelingWrapper(),
     "rokk": RokkWrapper(),
-    "rokk_py": RokkPyWrapper(),
 }
 
 multi_solvers = {
