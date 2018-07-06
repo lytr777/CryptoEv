@@ -1,26 +1,32 @@
-from parser import parse_out
+from parse_utils.log_parser import LogParser
 from formatter import format_array
 
 
-def add_conclusion(filename, k, comparator, locals_list=None):
+def add_conclusion(path, comparator, locals_list=None):
     if locals_list is None:
-        steps, stat = parse_out(filename, k)
-        print stat
+        parser = LogParser()
+        info, its = parser.parse_for_path(path)
+        print info
 
-        if len(steps) == 0:
+        if len(its) == 0:
             return
 
-        print steps
-        last_step = steps[0]
         locals_list = []
-        for step in steps:
-            if comparator(last_step, step) < 0:
-                locals_list.append(last_step)
+        previous = its[0][0].get_case()
+        for cases in its:
+            best = cases[0].get_case()
+            for case in cases:
+                current = case.get_case()
+                if comparator(best, current) > 0:
+                    best = current
 
-            last_step = step
+            if comparator(best, previous) > 0:
+                locals_list.append(previous)
+
+            previous = best
 
         if len(locals_list) == 0:
-            locals_list.append(last_step)
+            locals_list.append(previous)
 
     conclusion = "------------------------------------------------------\n"
     conclusion += "------------------------------------------------------\n"
@@ -41,7 +47,7 @@ def add_conclusion(filename, k, comparator, locals_list=None):
     else:
         conclusion += "best locals not found\n"
 
-    with open(filename, 'a') as f:
+    with open(path, 'a') as f:
         f.write(conclusion)
 
 

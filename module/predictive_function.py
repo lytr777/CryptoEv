@@ -2,8 +2,8 @@ import signal
 import threading
 from time import sleep, time as now
 
+from parse_utils.cnf_parser import CnfParser
 from util import caser
-from util import parser
 
 
 class TaskGenerator:
@@ -32,18 +32,18 @@ class InitTaskGenerator(TaskGenerator):
 
 class PredictiveFunction:
     def __init__(self, parameters):
-        self.crypto_algorithm = parameters["crypto_algorithm"]
+        self.algorithm, self.cnf_path = parameters["crypto_algorithm"]
         self.N = parameters["N"]
         self.solver_wrapper = parameters["solver_wrapper"]
 
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
 
-        self.base_cnf = parser.parse_cnf(self.crypto_algorithm[1])
+        self.base_cnf = CnfParser().parse_for_path(self.cnf_path)
         self.sleep_time = 2
         self.task_generator_args = {
             "base_cnf": self.base_cnf,
-            "algorithm": self.crypto_algorithm[0],
+            "algorithm": self.algorithm,
             "solver_wrapper": self.solver_wrapper
         }
         self.worker_args = {}

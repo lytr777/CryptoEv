@@ -1,4 +1,5 @@
 from util import formatter
+from parser import Parser
 
 
 class Case:
@@ -11,21 +12,15 @@ class Case:
     def get2(self):
         return self.mask, self.times
 
+    def get_case(self):
+        return self.mask, self.value
 
-class Parser:
+
+class LogParser(Parser):
     def __init__(self):
-        pass
+        Parser.__init__(self)
 
-    def __read(self, path):
-        with open(path) as f:
-            lines = f.readlines()
-            data = [str(x).split("\n")[0] for x in lines]
-
-            return data
-
-    def parse(self, path):
-        data = self.__read(path)
-
+    def parse(self, data):
         i = 0
         info_data = []
         while not data[i].startswith("---"):
@@ -38,15 +33,19 @@ class Parser:
         iterations = []
         it_data = []
         for j in range(i, len(data)):
-            if not data[j].startswith("iteration"):
-                it_data.append(data[j])
-            elif data[j].startswith("best"):
+            if data[j].startswith("best"):
                 break
+            elif not data[j].startswith("iteration"):
+                it_data.append(data[j])
             elif len(it_data) > 0:
                 cases = self.parse_iteration(it_data)
                 it_data = []
 
                 iterations.append(cases)
+
+        if len(it_data) > 0:
+            cases = self.parse_iteration(it_data)
+            iterations.append(cases)
 
         return info, iterations
 

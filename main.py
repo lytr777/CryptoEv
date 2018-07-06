@@ -25,4 +25,4 @@ with open(log_file, 'w+'):
 
 alg = alg(meta_p)
 locals_list = alg.start(mf_p)
-conclusion.add_conclusion(log_file, alg.get_iteration_size(), alg.comparator, locals_list=locals_list)
+conclusion.add_conclusion(log_file, alg.comparator, locals_list=locals_list)

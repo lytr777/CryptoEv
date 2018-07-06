@@ -94,7 +94,7 @@ class IBSFunction(PredictiveFunction):
         if xi != 0:
             value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
         else:
-            value = (2 ** self.crypto_algorithm[0].secret_key_len) * self.time_limit
+            value = (2 ** self.algorithm.secret_key_len) * self.time_limit
 
         log += "%s\n" % time_stat
         return value, log, solved

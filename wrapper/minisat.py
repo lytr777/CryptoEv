@@ -1,7 +1,5 @@
 from model.solver_report import SolverReport
 from util.constant import solver_paths
-from util.parser import parse_solution_file
-
 
 class MinisatWrapper:
     statuses = {
@@ -43,7 +41,12 @@ class MinisatWrapper:
             i += 1
         status = output[i]
 
-        solution = parse_solution_file(out_file)
+        with open(out_file) as f:
+            lines = f.readlines()
+            if lines[0] == "SAT\n":
+                solution = lines[1][:-1]
+            else:
+                solution = ""
 
         report = SolverReport(status, time)
         if status == self.statuses["SAT"]:
