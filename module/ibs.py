@@ -53,14 +53,18 @@ class IBSWorker(threading.Thread):
         init_args, init_case = self.init_task_generator.get()
 
         init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = init_sp.communicate(init_case.get_cnf())[0]
+        output, err = init_sp.communicate(init_case.get_cnf())
+        if len(err) != 0:
+            raise Exception(err)
         init_case.mark_solved(self.init_task_generator.get_report(output))
 
         # main
         main_args, case = self.main_task_generator.get(init_case)
 
         main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = main_sp.communicate(case.get_cnf())[0]
+        output, err = main_sp.communicate(case.get_cnf())
+        if len(err) != 0:
+            raise Exception(err)
         case.mark_solved(self.main_task_generator.get_report(output))
 
         self.locks[1].acquire()

@@ -51,7 +51,9 @@ class GADWorker(threading.Thread):
         l_args, case = self.task_generator.get()
 
         main_sp = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output = main_sp.communicate(case.get_cnf())[0]
+        output, err = main_sp.communicate(case.get_cnf())
+        if len(err) != 0:
+            raise Exception(err)
         case.mark_solved(self.task_generator.get_report(output))
 
         self.locks[1].acquire()
