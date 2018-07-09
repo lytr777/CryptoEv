@@ -2,10 +2,10 @@ import re
 import warnings
 
 from model.solver_report import SolverReport
-from util.constant import solver_paths
+from wrapper import Wrapper
 
 
-class TreengelingWrapper:
+class TreengelingWrapper(Wrapper):
     statuses = {
         "SATISFIABLE": "SATISFIABLE",
         "UNSATISFIABLE": "UNSATISFIABLE",
@@ -13,10 +13,14 @@ class TreengelingWrapper:
     }
 
     min_time = 0.001
-    tag = "treengeling"
 
-    def __init__(self, ):
-        self.solver_path = solver_paths[self.tag]
+    def __init__(self):
+        info = {
+            "tag": "treengeling",
+            "dir": "lingeling",
+            "script": "./untar_ling.sh"
+        }
+        Wrapper.__init__(self, info)
         self.time_regexp = re.compile('[\t ]+')
 
     def get_arguments(self, tl=None, workers=None, simplifying=True):

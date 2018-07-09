@@ -1,20 +1,23 @@
 import warnings
 
 from model.solver_report import SolverReport
-from util.constant import solver_paths
+from wrapper import Wrapper
 
 
-class RokkWrapper:
+class RokkWrapper(Wrapper):
     statuses = {
         "SAT": "SATISFIABLE",
         "UNSAT": "UNSATISFIABLE",
         "INDET": "INDETERMINATE"
     }
 
-    tag = "rokk"
-
     def __init__(self):
-        self.solver_path = solver_paths[self.tag]
+        info = {
+            "tag": "rokk",
+            "dir": "rokk",
+            "script": "./untar_rokk.sh"
+        }
+        Wrapper.__init__(self, info)
 
     def get_arguments(self, tl=None, workers=None, simplifying=True):
         simplify_bit = simplifying

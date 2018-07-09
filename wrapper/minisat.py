@@ -1,6 +1,7 @@
 from model.solver_report import SolverReport
 from util.constant import solver_paths
 
+
 class MinisatWrapper:
     statuses = {
         "SAT": "SATISFIABLE",

@@ -20,6 +20,8 @@ meta_p["log_file"] = log_file
 meta_p["locals_log_file"] = locals_log_file
 meta_p["value_hash"] = value_hash
 
+mf_p["solver_wrapper"].check_installation()
+
 with open(log_file, 'w+'):
     pass
 
