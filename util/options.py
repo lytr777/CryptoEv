@@ -19,6 +19,7 @@ from wrapper.minisat import MinisatWrapper
 from wrapper.plingeling import PlingelingWrapper
 from wrapper.treengeling import TreengelingWrapper
 from wrapper.rokk import RokkWrapper
+from wrapper.cryptominisat import CryptoMinisatWrapper
 
 from util import constant, comparator, corrector
 from util.adaptive_selection import AdaptiveFunction
@@ -105,6 +106,7 @@ solver_wrappers = {
     "plingeling": PlingelingWrapper(),
     "treengeling": TreengelingWrapper(),
     "rokk": RokkWrapper(),
+    "cryptominisat": CryptoMinisatWrapper(),
 }
 
 correctors = {

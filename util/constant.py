@@ -16,7 +16,8 @@ solver_paths = {
     "lingeling": "./lingeling/lingeling",
     "treengeling": "./lingeling/treengeling",
     "plingeling": "./lingeling/plingeling",
-    "rokk": "./rokk/binary/rokk.py"
+    "rokk": "./rokk/binary/rokk.py",
+    "cryptominisat": "./cryptominisat/build/cryptominisat5"
 }
 
 a5_1_cnf = "./templates/A5_1.cnf"
