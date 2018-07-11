@@ -1,10 +1,10 @@
 import numpy as np
 
 
-def format_array(array):
+def format_array(array, mask=()):
     s = ""
-    for a in array:
-        s += "%d" % a
+    for i in range(len(array)):
+        s += "_" if len(mask) > i and mask[i] == 0 else "%d" % array[i]
     s += "(%d)" % np.count_nonzero(array)
     return s
 

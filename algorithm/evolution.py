@@ -1,4 +1,5 @@
 from algorithm import MetaAlgorithm
+from parse_utils.cnf_parser import CnfParser
 from util import formatter, generator
 import numpy as np
 from copy import copy
@@ -18,7 +19,10 @@ class EvolutionAlgorithm(MetaAlgorithm):
         return self.strategy.get_population_size()
 
     def start(self, mf_parameters):
-        algorithm = mf_parameters["crypto_algorithm"][0]
+        algorithm, cnf_path = mf_parameters["crypto_algorithm"]
+        cnf = CnfParser().parse_for_path(cnf_path)
+        mf_parameters["crypto_algorithm"] = (algorithm, cnf)
+
         max_value = 2 ** algorithm.secret_key_len
         it = 1
         mf_calls = 0

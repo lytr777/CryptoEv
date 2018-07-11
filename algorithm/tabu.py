@@ -1,6 +1,7 @@
 from copy import copy
 
 from algorithm import MetaAlgorithm
+from parse_utils.cnf_parser import CnfParser
 from util import generator, formatter
 
 
@@ -16,7 +17,10 @@ class TabuSearch(MetaAlgorithm):
         return self.iteration_size
 
     def start(self, mf_parameters):
-        algorithm = mf_parameters["crypto_algorithm"][0]
+        algorithm, cnf_path = mf_parameters["crypto_algorithm"]
+        cnf = CnfParser().parse_for_path(cnf_path)
+        mf_parameters["crypto_algorithm"] = (algorithm, cnf)
+
         self.iteration_size = algorithm.secret_key_len
         it = 1
         it_updates = 0

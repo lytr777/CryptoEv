@@ -36,6 +36,7 @@ def load(path, value_hash):
     # meta
     meta_parameters = data[meta_name + "_parameters"]
     __substitution(meta_parameters, value_hash)
+    meta_parameters["value_hash"] = value_hash
 
     # mf
     mf_parameters = data["mf_parameters"]
