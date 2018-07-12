@@ -55,6 +55,7 @@ class IBSWorker(threading.Thread):
         case_log += "generating init case\n"
         init_args, init_case = self.init_task_generator.get()
 
+        case_log += "init args: %s\n" % init_args
         case_log += "solving init case with secret key: %s\n" % formatter.format_array(init_case.secret_key)
         init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = init_sp.communicate(init_case.get_cnf())
@@ -64,17 +65,19 @@ class IBSWorker(threading.Thread):
             raise Exception(err)
 
         init_case.mark_solved(self.init_task_generator.get_report(output))
-        case_log += "case has been solved with key stream: %s\n" %\
+        case_log += "case has been solved with key stream: %s\n" % \
                     formatter.format_array(init_case.get_solution_key_stream())
 
         # main
         case_log += "generating main case\n"
         main_args, main_case = self.main_task_generator.get(init_case)
 
-        case_log += "solving main case with secret key: %s and key stream: %s\n" % (
-            formatter.format_array(main_case.secret_key, main_case.secret_mask),
-            formatter.format_array(main_case.key_stream)
+        case_log += "main args: %s\n" % main_args
+        case_log += "solving main case with secret key: %s\n" % formatter.format_array(
+            main_case.secret_key,
+            main_case.secret_mask
         )
+        case_log += "and key stream: %s\n" % formatter.format_array(main_case.key_stream)
         main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = main_sp.communicate(main_case.get_cnf())
         if len(err) != 0:

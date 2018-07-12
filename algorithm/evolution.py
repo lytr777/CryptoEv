@@ -23,7 +23,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
         cnf = CnfParser().parse_for_path(cnf_path)
         mf_parameters["crypto_algorithm"] = (algorithm, cnf)
 
-        max_value = 2 ** algorithm.secret_key_len
+        max_value = float("inf")
         it = 1
         mf_calls = 0
         stagnation = 0
