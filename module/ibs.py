@@ -22,7 +22,7 @@ class IBSTaskGenerator(TaskGenerator):
             "key_stream": init_case.get_solution_key_stream()
         }
 
-        args = self.solver_wrapper.get_arguments(tl=self.tl)
+        args = self.solver_wrapper.get_timelimit_arguments(tl=self.tl)
         case = caser.create_case(self.base_cnf, parameters, self.algorithm)
         return args, case
 
@@ -61,22 +61,23 @@ class IBSWorker(threading.Thread):
         self.debugger.write(3, 2, "%s generate init case" % (threading.Thread.getName(self)))
         init_args, init_case = self.init_task_generator.get()
 
-        self.debugger.write(3, 2, "%s start solving init case with secret key: %s" % (
-            threading.Thread.getName(self),
-            formatter.format_array(init_case.secret_key)
-        ))
-        init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, err = init_sp.communicate(init_case.get_cnf())
-        if len(err) != 0:
-            self.debugger.write(3, 2, "%s didn't solve init case:\n%s" % (threading.Thread.getName(self), err))
-            raise Exception(err)
+        while init_case.status != "SATISFIABLE":
+            self.debugger.write(3, 2, "%s start solving init case with secret key: %s" % (
+                threading.Thread.getName(self),
+                formatter.format_array(init_case.secret_key)
+            ))
+            init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, err = init_sp.communicate(init_case.get_cnf())
+            if len(err) != 0 and not err.startswith("timelimit"):
+                self.debugger.write(3, 2, "%s didn't solve init case:\n%s" % (threading.Thread.getName(self), err))
+                raise Exception(err)
 
-        report = self.init_task_generator.get_report(output)
-        self.debugger.write(3, 2, "%s solved init case with status: %s" % (
-            threading.Thread.getName(self),
-            report.status
-        ))
-        init_case.mark_solved(report)
+            report = self.init_task_generator.get_report(output)
+            self.debugger.write(3, 2, "%s solved init case with status: %s" % (
+                threading.Thread.getName(self),
+                report.status
+            ))
+            init_case.mark_solved(report)
 
         # main
         self.debugger.write(3, 2, "%s generate main case" % (threading.Thread.getName(self)))
@@ -88,7 +89,7 @@ class IBSWorker(threading.Thread):
         ))
         main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = main_sp.communicate(main_case.get_cnf())
-        if len(err) != 0:
+        if len(err) != 0 and not err.startswith("timelimit"):
             self.debugger.write(3, 2, "%s didn't solve main case:\n%s" % (threading.Thread.getName(self), err))
             raise Exception(err)
 

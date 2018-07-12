@@ -34,6 +34,13 @@ class LingelingWrapper(Wrapper):
 
         return launching_args
 
+    def get_timelimit_arguments(self, tl, workers=None, simplifying=True):
+        launching_args = ["timelimit", "-t%d" % tl, self.solver_path]
+        if workers is not None:
+            warnings.warn("Workers not support in lingeling", UserWarning)
+
+        return launching_args
+
     def parse_out(self, output):
         output = output.split('\n')
         solution = ""

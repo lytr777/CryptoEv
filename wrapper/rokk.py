@@ -20,13 +20,19 @@ class RokkWrapper(Wrapper):
         Wrapper.__init__(self, info)
 
     def get_arguments(self, tl=None, workers=None, simplifying=True):
-        simplify_bit = simplifying
-        launching_args = ['python', self.solver_path, '1' if simplify_bit else '0']
+        launching_args = ['python', self.solver_path, '1' if simplifying else '0']
 
         if tl is not None:
             launching_args.append(str(tl))
         if workers is not None:
             warnings.warn("Workers not support in ROKK", UserWarning)
+
+        return launching_args
+
+    def get_timelimit_arguments(self, tl, workers=None, simplifying=True):
+        launching_args = ["timelimit", "-t%d" % tl, 'python', self.solver_path, '1' if simplifying else '0']
+        if workers is not None:
+            warnings.warn("Workers not support in lingeling", UserWarning)
 
         return launching_args
 

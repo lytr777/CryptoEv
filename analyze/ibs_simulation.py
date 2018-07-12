@@ -98,13 +98,11 @@ class IBSSimulation:
         changed = False
         for k in ks:
             if k in chunk:
-                print "dispersion for k = %d already counted" % k
                 continue
 
             print "start dispersion for k = %d" % k
             changed = True
             values_hash = {}
-            tuple
 
             points = []
             lines = []

@@ -18,3 +18,4 @@ analyze/memory
 load.sh
 test.json
 minisat.zip
+start_after_30.05.sh
