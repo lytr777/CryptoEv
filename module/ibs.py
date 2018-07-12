@@ -40,54 +40,65 @@ class IBSWorker(threading.Thread):
 
     def run(self):
         while self.need and not self.terminated.isSet():
+            self.debugger.write(3, 2, "%s wait lock 0" % threading.Thread.getName(self))
             self.locks[0].acquire()
             if self.data[0]["N"] > 0:
                 self.data[0]["N"] -= 1
+                left = self.data[0]["N"]
                 self.locks[0].release()
+                self.debugger.write(3, 2, "%s acquire and release lock 0 and get new case, left: %d" % (
+                    threading.Thread.getName(self),
+                    left
+                ))
                 self.solve()
             else:
                 self.locks[0].release()
+                self.debugger.write(3, 2, "left 0 cases, %s terminating..." % (threading.Thread.getName(self)))
                 self.need = False
 
     def solve(self):
         # init
-        case_log = "%s log\n" % threading.Thread.getName(self)
-        case_log += "generating init case\n"
+        self.debugger.write(3, 2, "%s generate init case" % (threading.Thread.getName(self)))
         init_args, init_case = self.init_task_generator.get()
 
-        case_log += "init args: %s\n" % init_args
-        case_log += "solving init case with secret key: %s\n" % formatter.format_array(init_case.secret_key)
+        self.debugger.write(3, 2, "%s start solving init case with secret key: %s" % (
+            threading.Thread.getName(self),
+            formatter.format_array(init_case.secret_key)
+        ))
         init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = init_sp.communicate(init_case.get_cnf())
         if len(err) != 0:
-            case_log += "case wasn't solved:\n%s" % err
-            self.debugger.write(3, 2, case_log)
+            self.debugger.write(3, 2, "%s didn't solve init case:\n%s" % (threading.Thread.getName(self), err))
             raise Exception(err)
 
-        init_case.mark_solved(self.init_task_generator.get_report(output))
-        case_log += "case has been solved with key stream: %s\n" % \
-                    formatter.format_array(init_case.get_solution_key_stream())
+        report = self.init_task_generator.get_report(output)
+        self.debugger.write(3, 2, "%s solved init case with status: %s" % (
+            threading.Thread.getName(self),
+            report.status
+        ))
+        init_case.mark_solved(report)
 
         # main
-        case_log += "generating main case\n"
+        self.debugger.write(3, 2, "%s generate main case" % (threading.Thread.getName(self)))
         main_args, main_case = self.main_task_generator.get(init_case)
 
-        case_log += "main args: %s\n" % main_args
-        case_log += "solving main case with secret key: %s\n" % formatter.format_array(
-            main_case.secret_key,
-            main_case.secret_mask
-        )
-        case_log += "and key stream: %s\n" % formatter.format_array(main_case.key_stream)
+        self.debugger.write(3, 2, "%s get main args: %s" % (threading.Thread.getName(self), main_args))
+        self.debugger.write(3, 2, "%s start solving main case with secret key: %s" % (
+            threading.Thread.getName(self), formatter.format_array(main_case.secret_key, main_case.secret_mask)
+        ))
         main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = main_sp.communicate(main_case.get_cnf())
         if len(err) != 0:
-            case_log += "case wasn't solved:\n%s" % err
-            self.debugger.write(3, 2, case_log)
+            self.debugger.write(3, 2, "%s didn't solve main case:\n%s" % (threading.Thread.getName(self), err))
             raise Exception(err)
 
-        main_case.mark_solved(self.main_task_generator.get_report(output))
-        case_log += "case has been solved with status: %s and time: %f" % (main_case.get_status(), main_case.time)
-        self.debugger.write(3, 2, case_log)
+        report = self.main_task_generator.get_report(output)
+        self.debugger.write(3, 2, "%s solved main case with status: %s and time: %f" % (
+            threading.Thread.getName(self),
+            report.status,
+            report.time
+        ))
+        main_case.mark_solved(report)
 
         self.locks[1].acquire()
         self.data[1].append((main_case.get_status(short=True), main_case.time))
