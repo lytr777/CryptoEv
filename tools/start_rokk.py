@@ -28,50 +28,60 @@ def parse_out(out):
     return t, st, s, c
 
 
-if len(sys.argv) < 2:
-    print "USAGE: rokk.py <simplify?> [time limit]"
+if len(sys.argv) < 3:
+    print "USAGE: rokk.py <simplify?> <timelimit?> [tl]"
     exit(1)
 
 simplify = sys.argv[1] != '0'
-time_limit = None
-if len(sys.argv) > 2:
-    time_limit = int(sys.argv[2])
+timelimit = sys.argv[2] != '0'
+
+if timelimit and len(sys.argv) < 4:
+    raise Exception("timelimit util only work with tl")
+
+tl = None
+if len(sys.argv) >= 4:
+    tl = int(sys.argv[3])
 
 elite_path = './rokk/binary/SatELite_release'
 solver_path = './rokk/binary/rokk_static'
 
+
+def get_args():
+    if timelimit:
+        l_args = ["timelimit", "-t%d" % tl, solver_path]
+    else:
+        l_args = [solver_path]
+        if tl is not None:
+            l_args.append('-cpu-lim=%d' % tl)
+
+    return l_args
+
+
 if not simplify:
-    l_args = [solver_path]
-    if time_limit is not None:
-        l_args.append('-cpu-lim=' + str(time_limit))
+    p = subprocess.Popen(get_args(), stdin=sys.stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = p.communicate()
+    if len(err) != 0 and not err.startswith("timelimit"):
+        raise Exception(err)
 
-    p = subprocess.Popen(l_args, stdin=sys.stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output = p.communicate()[0]
     time, status, solution, _ = parse_out(output)
-
-    print str(time)
-    print status
-    print solution
+    print "%f\n%s\n%s\n" % (time, status, solution)
     exit(0)
 
 p = subprocess.Popen([elite_path], stdin=sys.stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-output = p.communicate()[0]
+output, err = p.communicate()
+if len(err) != 0:
+    raise Exception(err)
 
 elite_time, status, solution, cnf = parse_out(output)
-
 if status == 'SATISFIABLE' or status == 'UNSATISFIABLE':
-    print str(elite_time) + ' p'
-    print status
-    print solution
+    print "%fp\n%s\n%s\n" % (elite_time, status, solution)
 elif cnf != '':
-    l_args = [solver_path]
-    if time_limit is not None:
-        l_args.append('-cpu-lim=' + str(time_limit))
+    p = subprocess.Popen(get_args(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = p.communicate(cnf)
+    if len(err) != 0 and not err.startswith("timelimit"):
+        raise Exception(err)
 
-    p = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output = p.communicate(cnf)[0]
     time, status, solution, _ = parse_out(output)
-
-    print str(elite_time + time)
-    print status
-    print solution
+    print "%f\n%s\n%s\n" % (time + elite_time, status, solution)
+else:
+    raise Exception("cnf not specified")
