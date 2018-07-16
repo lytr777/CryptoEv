@@ -11,11 +11,12 @@ class MinisatWrapper:
 
     tag = "minisat"
 
-    def __init__(self):
+    def __init__(self, tl_util):
         self.solver_path = solver_paths[self.tag]
 
     def get_arguments(self, cnf, out, tl):
         launching_args = [self.solver_path]
+
         if tl is not None:
             launching_args.append("-cpu-lim=" + str(tl))
 

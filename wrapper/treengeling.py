@@ -14,19 +14,29 @@ class TreengelingWrapper(Wrapper):
 
     min_time = 0.001
 
-    def __init__(self):
+    def __init__(self, tl_util):
         info = {
             "tag": "treengeling",
             "dir": "lingeling",
             "script": "./untar_ling.sh"
         }
-        Wrapper.__init__(self, info)
+        Wrapper.__init__(self, info, tl_util)
         self.time_regexp = re.compile('[\t ]+')
 
-    def get_arguments(self, tl=None, workers=None, simplifying=True):
+    def get_common_arguments(self, tl, workers, simplifying):
         launching_args = [self.solver_path]
+
         if tl is not None:
             warnings.warn("Time limit not support in treengeling", UserWarning)
+        if workers is not None:
+            launching_args.append("-t")
+            launching_args.append(str(workers))
+
+        return launching_args
+
+    def get_timelimit_arguments(self, tl, workers, simplifying):
+        launching_args = ["timelimit", "-t%d" % tl, self.solver_path]
+
         if workers is not None:
             launching_args.append("-t")
             launching_args.append(str(workers))

@@ -23,7 +23,7 @@ class InitTaskGenerator(TaskGenerator):
         TaskGenerator.__init__(self, args)
 
     def get(self, case=None):
-        init_args = self.solver_wrapper.get_timelimit_arguments(tl=1, simplifying=False)
+        init_args = self.solver_wrapper.get_arguments(tl=1, simplifying=False)
         init_case = caser.create_init_case(self.base_cnf, self.algorithm)
 
         return init_args, init_case
@@ -49,9 +49,8 @@ class PredictiveFunction:
         self.workers = []
 
     def __signal_handler(self, s, f):
-        if self.workers is not None:
-            for worker in self.workers:
-                worker.terminated.set()
+        for worker in self.workers:
+            worker.terminated.set()
         exit(s)
 
     def compute(self, mask, cases):

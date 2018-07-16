@@ -11,15 +11,15 @@ class RokkWrapper(Wrapper):
         "INDET": "INDETERMINATE"
     }
 
-    def __init__(self):
+    def __init__(self, tl_util):
         info = {
             "tag": "rokk",
             "dir": "rokk",
             "script": "./untar_rokk.sh"
         }
-        Wrapper.__init__(self, info)
+        Wrapper.__init__(self, info, tl_util)
 
-    def get_arguments(self, tl=None, workers=None, simplifying=True):
+    def get_common_arguments(self, tl, workers, simplifying):
         launching_args = ['python', self.solver_path, '1' if simplifying else '0', '0']
 
         if tl is not None:
@@ -29,10 +29,11 @@ class RokkWrapper(Wrapper):
 
         return launching_args
 
-    def get_timelimit_arguments(self, tl, workers=None, simplifying=True):
+    def get_timelimit_arguments(self, tl, workers, simplifying):
         launching_args = ['python', self.solver_path, '1' if simplifying else '0', '1', str(tl)]
+
         if workers is not None:
-            warnings.warn("Workers not support in lingeling", UserWarning)
+            warnings.warn("Workers not support in ROKK", UserWarning)
 
         return launching_args
 

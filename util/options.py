@@ -94,25 +94,28 @@ crypto_algorithms = {
 
 def adaptive_selection(args):
     if len(args) != 2:
-        raise Exception("Count of evolution_strategy args must equals 2! [<min_N>, <max_N>]")
+        raise Exception("Count of adaptive_selection args must equals 2! [<min_N>, <max_N>]")
     return {
         "function": AdaptiveFunction(args[0], args[1])
     }
 
 
-solver_wrappers = {
-    "minisat": MinisatWrapper(),
-    "lingeling": LingelingWrapper(),
-    "plingeling": PlingelingWrapper(),
-    "treengeling": TreengelingWrapper(),
-    "rokk": RokkWrapper(),
-    "cryptominisat": CryptoMinisatWrapper(),
-}
+def solver_wrapper(args):
+    if len(args) != 1:
+        raise Exception("Count of evolution_strategy args must equals 1! [<timelimit?>]")
+    return {
+        "minisat": MinisatWrapper(args[0]),
+        "lingeling": LingelingWrapper(args[0]),
+        "plingeling": PlingelingWrapper(args[0]),
+        "treengeling": TreengelingWrapper(args[0]),
+        "rokk": RokkWrapper(args[0]),
+        "cryptominisat": CryptoMinisatWrapper(args[0]),
+    }
 
 correctors = {
     "none": None,
     "mass": corrector.mass_corrector,
-    "max":  corrector.max_corrector,
+    "max": corrector.max_corrector,
     "throw": corrector.throw_corrector,
 }
 
@@ -136,7 +139,7 @@ matcher = {
     "evolution_strategy": evolution_strategy,
     "crypto_algorithm": crypto_algorithms,
     "adaptive_N": adaptive_selection,
-    "solver_wrapper": solver_wrappers,
+    "solver_wrapper": solver_wrapper,
     "corrector": correctors,
     "decomposition": decompositions
 }

@@ -30,7 +30,11 @@
     "crypto_algorithm": "a5_1",
     "threads": 32,
     "N": 500,
-    "solver_wrapper": "lingeling",
+    "solver_wrapper": {
+      "args_description": "use timelimit util?",
+      "name": "lingeling",
+      "args": [0]
+    },
     "time_limit": 5,
     "corrector": "mass",
     "decomposition": {

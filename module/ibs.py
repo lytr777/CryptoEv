@@ -22,7 +22,7 @@ class IBSTaskGenerator(TaskGenerator):
             "key_stream": init_case.get_solution_key_stream()
         }
 
-        args = self.solver_wrapper.get_timelimit_arguments(tl=self.tl)
+        args = self.solver_wrapper.get_arguments(tl=self.tl)
         case = caser.create_case(self.base_cnf, parameters, self.algorithm)
         return args, case
 
