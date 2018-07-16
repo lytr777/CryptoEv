@@ -74,7 +74,7 @@ if len(err) != 0:
 
 elite_time, status, solution, cnf = parse_out(output)
 if status == 'SATISFIABLE' or status == 'UNSATISFIABLE':
-    print "%fp\n%s\n%s\n" % (elite_time, status, solution)
+    print "%f p\n%s\n%s\n" % (elite_time, status, solution)
 elif cnf != '':
     p = subprocess.Popen(get_args(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, err = p.communicate(cnf)
