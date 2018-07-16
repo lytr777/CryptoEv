@@ -18,7 +18,7 @@
     "solver_wrapper": {
       "args_description": "use timelimit util?",
       "name": "lingeling",
-      "args": [0]
+      "args": [false]
     },
     "time_limit": 5,
     "corrector": "max",
