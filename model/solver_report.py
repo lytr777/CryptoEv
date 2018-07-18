@@ -1,3 +1,4 @@
+import re
 from util import formatter
 
 
@@ -10,20 +11,16 @@ class SolverReport:
             False  # preprocessing
         ]
 
-    def parse_solution(self, solution_str):
+    def parse_solution(self, solution_str, spaces=re.compile('[\t ]+')):
         solution_str = solution_str.strip()
-        data = solution_str.split(" ")
+        data = spaces.split(solution_str)
 
         for var in data:
-            try:
-                num_int = int(var)
-                if num_int < 0:
-                    self.solution.append(0)
-                elif num_int > 0:
-                    self.solution.append(1)
-            except ValueError:
-                with open('out/parse_errors', 'a') as f:
-                    f.write("%s\n--\n" % solution_str)
+            num_int = int(var)
+            if num_int < 0:
+                self.solution.append(0)
+            elif num_int > 0:
+                self.solution.append(1)
 
     def set_flag(self, i, value):
         self.flags[i] = value

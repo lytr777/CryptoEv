@@ -63,6 +63,6 @@ class PlingelingWrapper(Wrapper):
 
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
-            report.parse_solution(solution)
+            report.parse_solution(solution, self.time_regexp)
 
         return report
