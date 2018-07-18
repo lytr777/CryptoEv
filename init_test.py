@@ -1,7 +1,7 @@
 import subprocess
 
-from key_generators.a5_1 import A5_1
 from parse_utils.cnf_parser import CnfParser
+from key_generators.a5_1 import A5_1
 from util import caser
 from wrapper.cryptominisat import CryptoMinisatWrapper
 from wrapper.lingeling import LingelingWrapper
