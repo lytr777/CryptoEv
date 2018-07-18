@@ -44,6 +44,7 @@ class CryptoMinisatWrapper(Wrapper):
         return launching_args
 
     def parse_out(self, output):
+        save_output = output
         output = output.split('\n')
         solution = ""
         status = ""
@@ -61,6 +62,11 @@ class CryptoMinisatWrapper(Wrapper):
                 time = max(float(str_time), self.min_time)
 
         solution = solution[:-1]
+
+        try:
+            true_status = self.statuses[status]
+        except KeyError:
+            print save_output
 
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
