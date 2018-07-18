@@ -95,7 +95,7 @@ class IBSWorker(threading.Thread):
             raise Exception(err)
 
         try:
-            report = self.init_task_generator.get_report(output)
+            report = self.main_task_generator.get_report(output)
         except KeyError:
             self.debugger.write(3, 2, "%s error while parsing" % threading.Thread.getName(self))
             report = SolverReport("INDETERMINATE", 5.)
