@@ -100,3 +100,6 @@ while anyAlive():
 
 print "cpu time: %f" % (now() - start_work_time)
 print "solved %d/%d with time: %f" % (len(times), N, sum(times) / len(times))
+
+
+# 49198/50000 ~ 98.4%

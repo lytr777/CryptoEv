@@ -23,7 +23,7 @@ class InitTaskGenerator(TaskGenerator):
         TaskGenerator.__init__(self, args)
 
     def get(self, case=None):
-        init_args = self.solver_wrapper.get_arguments(tl=5, simplifying=False)
+        init_args = self.solver_wrapper.get_arguments(simplifying=False)
         init_case = caser.create_init_case(self.base_cnf, self.algorithm)
 
         return init_args, init_case

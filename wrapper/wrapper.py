@@ -16,10 +16,8 @@ class Wrapper:
 
     def get_arguments(self, tl=None, workers=None, simplifying=True):
         if self.tl_util:
-            if tl is not None:
-                return self.get_timelimit_arguments(tl, workers, simplifying)
-            else:
-                raise Exception("timelimit util only work with tl")
+            tl = 1 if tl is None else tl
+            return self.get_timelimit_arguments(tl, workers, simplifying)
         else:
             return self.get_common_arguments(tl, workers, simplifying)
 

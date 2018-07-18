@@ -90,4 +90,8 @@ class KeyGenerator:
         if len(self.solution) == 0:
             raise Exception("Solution is not specified")
 
+        true_solution_len = self.key_stream_start + self.key_stream_len - 1
+        if len(self.solution) != true_solution_len:
+            raise Exception("Solution not corrected")
+
         return self.solution[start:end]

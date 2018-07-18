@@ -6,6 +6,7 @@ from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, G
 from module.decomposition import Decomposition
 from module.gad import GADFunction
 from module.ibs import IBSFunction
+from module.pool_ibs import PoolIBSFunction
 
 from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
@@ -37,6 +38,7 @@ comparators = {
 predictive_function = {
     "gad": GADFunction,
     "ibs": IBSFunction,
+    "pool_ibs": PoolIBSFunction,
 }
 
 
@@ -111,6 +113,7 @@ def solver_wrapper(args):
         "rokk": RokkWrapper(args[0]),
         "cryptominisat": CryptoMinisatWrapper(args[0]),
     }
+
 
 correctors = {
     "none": None,

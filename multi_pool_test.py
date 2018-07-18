@@ -37,12 +37,12 @@ print "start multi pool test"
 print "N = %d" % N
 print "threads = %d" % threads
 
+start_work_time = now()
+
 times = []
 for time in pool.map(solve, range(N)):
     if time is not None:
         times.append(time)
-
-start_work_time = now()
 
 print "cpu time: %f" % (now() - start_work_time)
 print "solved %d/%d with time: %f" % (len(times), N, sum(times) / len(times))
