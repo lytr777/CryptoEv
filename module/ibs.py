@@ -2,6 +2,7 @@ import subprocess
 import threading
 import numpy as np
 
+from model.solver_report import SolverReport
 from predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator
 from util import caser, formatter
 
@@ -93,8 +94,12 @@ class IBSWorker(threading.Thread):
             self.debugger.write(3, 2, "%s didn't solve main case:\n%s" % (threading.Thread.getName(self), err))
             raise Exception(err)
 
-        report = self.main_task_generator.get_report(output)
-        self.debugger.write(3, 2, "%s solved main case with status: %s and time: %f" % (
+        try:
+            report = self.init_task_generator.get_report(output)
+        except KeyError:
+            self.debugger.write(3, 2, "%s error while parsing" % threading.Thread.getName(self))
+            report = SolverReport("INDETERMINATE", 5.)
+        self.debugger.write(1, 2, "%s solved main case with status: %s and time: %f" % (
             threading.Thread.getName(self),
             report.status,
             report.time
