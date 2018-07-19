@@ -108,7 +108,7 @@ class IBSSimulation:
             lines = []
             for i in range(len(iterations)):
                 _, best_i = self.get_best_case(value_hash, iterations[i], tl)
-                mask, times = iterations[i][best_i].get2()
+                mask, times = iterations[i][best_i].mt()
                 values, quantiles = self.dispersion_values(values_hash, mask, times, tl, k, rep, min_value)
                 points.append(values)
 

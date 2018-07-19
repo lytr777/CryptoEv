@@ -1,30 +1,6 @@
 from util import formatter
 from parser import Parser
-
-
-class TrueCase:
-    def __init__(self, mask, times, value, cpu_time):
-        self.mask = mask
-        self.times = times
-        self.value = value
-        self.cpu_time = cpu_time
-
-    def get2(self):
-        return self.mask, self.times
-
-    def get_statistic(self):
-        statistic = {
-            "DETERMINATE": 0,
-            "INDETERMINATE": 0
-        }
-
-        for status, _ in self.times:
-            if status == "SAT" or status == "UNSAT":
-                statistic["DETERMINATE"] += 1
-            else:
-                statistic["INDETERMINATE"] += 1
-
-        return statistic
+from model.case import Case
 
 
 class TrueLogParser(Parser):
@@ -74,7 +50,7 @@ class TrueLogParser(Parser):
         assert case_data[i + 2].startswith("true")
         value = float(case_data[i + 2].split(": ")[1])
 
-        return TrueCase(formatter.format_to_array(mask), times, value, cpu_time)
+        return Case(formatter.format_to_array(mask), times, value, cpu_time)
 
     @staticmethod
     def parse_info(info_data):

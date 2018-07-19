@@ -1,19 +1,6 @@
 from util import formatter
 from parser import Parser
-
-
-class Case:
-    def __init__(self, mask, times, value, cpu_time):
-        self.mask = mask
-        self.times = times
-        self.value = value
-        self.cpu_time = cpu_time
-
-    def get2(self):
-        return self.mask, self.times
-
-    def get_case(self):
-        return self.mask, self.value
+from model.case import Case
 
 
 class LogParser(Parser):

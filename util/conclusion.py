@@ -1,22 +1,21 @@
 from parse_utils.log_parser import LogParser
-from formatter import format_array
+from util.formatter import format_array
 
 
 def add_conclusion(path, comparator, locals_list=None):
     if locals_list is None:
         parser = LogParser()
         info, its = parser.parse_for_path(path)
-        print info
 
         if len(its) == 0:
             return
 
         locals_list = []
-        previous = its[0][0].get_case()
+        previous = its[0][0].mv()
         for cases in its:
-            best = cases[0].get_case()
+            best = cases[0].mv()
             for case in cases:
-                current = case.get_case()
+                current = case.mv()
                 if comparator(best, current) > 0:
                     best = current
 
