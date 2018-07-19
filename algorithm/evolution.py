@@ -21,7 +21,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
     def start(self, mf_parameters):
         algorithm, cnf_path = mf_parameters["crypto_algorithm"]
         cnf = CnfParser().parse_for_path(cnf_path)
-        mf_parameters["crypto_algorithm"] = (algorithm, cnf)
+        mf_parameters["crypto_algorithm"] = (algorithm, cnf, cnf_path)
 
         max_value = float("inf")
         it = 1

@@ -85,12 +85,12 @@ def evolution_strategy(args):
 
 # mf
 crypto_algorithms = {
-    "a5_1": (A5_1, constant.a5_1_cnf),
-    "bivium": (Bivium, constant.bivium_cnf),
-    "trivium_64": (Trivium_64, constant.trivium_64_cnf),
-    "e0": (E0, constant.e0_cnf),
-    "volfram": (Volfram, constant.volfram_cnf),
-    "geffe": (Geffe, constant.geffe_cnf)
+    "a5_1": (A5_1, constant.cnfs["a5_1"]),
+    "bivium": (Bivium, constant.cnfs["bivium"]),
+    "trivium_64": (Trivium_64, constant.cnfs["trivium_64"]),
+    "e0": (E0, constant.cnfs["e0"]),
+    "volfram": (Volfram, constant.cnfs["volfram"]),
+    "geffe": (Geffe, constant.cnfs["geffe"])
 }
 
 

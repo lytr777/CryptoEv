@@ -1,4 +1,7 @@
+# Python Byte-compiled
 *.pyc
+
+# Log files
 *.a5_1_log
 *.bivium_log
 *.trivium_64_log
@@ -7,17 +10,27 @@
 *.bivium_true_log
 *.trivium_64_true_log
 *.e0_true_log
-cnf
+out/**/README
+
+# Solvers
 lingeling
 minisat
 cryptominisat
 rokk
+
+# Samples cnf
+cnf
+
+# Local scripts
 local_tools
 obsolete
-analyze/memory
+analyze/main.py
 load.sh
+start_after_30.05.sh
+
+# Dump files
+analyze/memory
+
+# Other
 test.json
 minisat.zip
-start_after_30.05.sh
-analyze/main.py
-out/**/README

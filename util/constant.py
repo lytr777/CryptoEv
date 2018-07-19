@@ -20,13 +20,12 @@ solver_paths = {
     "cryptominisat": "./cryptominisat/build/cryptominisat5"
 }
 
-a5_1_cnf = "./templates/A5_1.cnf"
-a5_toy_cnf = "./templates/A5_toy.cnf"
-trivium_64_cnf = "./templates/Trivium_64.cnf"
-bivium_cnf = "./templates/Bivium.cnf"
-e0_cnf = "./templates/E0.cnf"
-volfram_cnf = "./templates/Volfram.cnf"
-geffe_cnf = "./templates/Geffe.cnf"
+alias = {
+    "alias_path": "./alias/bin/alias_ls",
+    "settings_path": "./alias_tools/settings.json",
+    "gad_script": "./alias_tools/bin/gad.py",
+    "ibs_script": "./alias_tools/bin/ibs.py"
+}
 
 log_path = './out/new_log_'
 locals_log_path = './out/new_locals_log_'
