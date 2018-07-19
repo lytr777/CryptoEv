@@ -4,7 +4,7 @@ from multiprocessing import Pool
 from time import time as now
 
 from model.solver_report import SolverReport
-from predictive_function import PredictiveFunction, TaskGenerator
+from predictive_function import TaskGenerator
 from util import caser
 
 
