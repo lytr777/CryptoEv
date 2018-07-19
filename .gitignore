@@ -19,3 +19,5 @@ load.sh
 test.json
 minisat.zip
 start_after_30.05.sh
+analyze/main.py
+out/**/README
