@@ -3,6 +3,8 @@ import numpy as np
 from multiprocessing import Pool
 from time import time as now
 
+import signal
+
 from model.solver_report import SolverReport
 from predictive_function import TaskGenerator
 from util import caser, formatter
@@ -76,8 +78,17 @@ class PoolIBSFunction:
         self.debugger = parameters["debugger"] if ("debugger" in parameters) else None
 
         self.time_limit = parameters["time_limit"]
+        self.pool = None
+
+    def __signal_handler(self, s, f):
+        if self.pool is not None:
+            self.pool.terminate()
+            exit(s)
 
     def compute(self, mask, cases=()):
+        self.debugger.write(1, 1, "init signal handler")
+        signal.signal(signal.SIGINT, self.__signal_handler)
+
         task_generator_args = {
             "base_cnf": self.base_cnf,
             "algorithm": self.algorithm,
@@ -85,6 +96,7 @@ class PoolIBSFunction:
             "mask": mask,
             "time_limit": self.time_limit
         }
+        cases = list(cases)
         self.debugger.deferred_write(1, 0, "compute for mask: %s" % formatter.format_array(mask))
         self.debugger.deferred_write(1, 0, "set time limit: %s" % self.time_limit)
 
@@ -92,21 +104,23 @@ class PoolIBSFunction:
         task_generator = PoolIBSTaskGenerator(task_generator_args)
         tread_count = min(self.N, self.thread_count)
         self.debugger.write(1, 0, "init pool with %d threads" % tread_count)
-        pool = Pool(processes=tread_count)
+        self.pool = Pool(processes=tread_count)
         start_work_time = now()
 
         self.debugger.write(1, 0, "solving...")
-        solved = pool.map(solve, [task_generator] * self.N)
+        result = self.pool.map_async(solve, [task_generator] * self.N)
+        self.pool.close()
+        self.pool.join()
+        cases.extend(result.get())
         self.debugger.deferred_write(1, 0, "has been solved")
-        solved.extend(cases)
         time = now() - start_work_time
         self.debugger.write(1, 0, "counting time stat...")
-        time_stat, log = self.get_time_stat(solved)
+        time_stat, log = self.get_time_stat(cases)
         self.debugger.deferred_write(1, 0, "time stat: %s" % time_stat)
 
         if self.corrector is not None:
             self.debugger.write(1, 0, "correcting time limit...")
-            self.time_limit, dis_count = self.corrector(solved, self.time_limit)
+            self.time_limit, dis_count = self.corrector(cases, self.time_limit)
             log += "time limit has been corrected: %f\n" % self.time_limit
             self.debugger.deferred_write(1, 0, "new time limit: %f" % self.time_limit)
 
@@ -117,7 +131,7 @@ class PoolIBSFunction:
 
         log += "main phase ended with time: %f\n" % time
         self.debugger.write(1, 0, "calculating value...")
-        xi = float(time_stat["DETERMINATE"]) / float(len(solved))
+        xi = float(time_stat["DETERMINATE"]) / float(len(cases))
         if xi != 0:
             value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
         else:
@@ -125,7 +139,7 @@ class PoolIBSFunction:
         self.debugger.write(1, 0, "value: %.7g\n" % value)
 
         log += "%s\n" % time_stat
-        return value, log, solved
+        return value, log, cases
 
     def get_time_stat(self, cases):
         time_stat = {
