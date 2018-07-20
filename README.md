@@ -20,7 +20,7 @@ python main.py id [-cp file/path] [-v 0] [-d file/path]
 main.sh id [-cp file/path] [-v 0] [-d file/path]
 ```
 Обязательные аргументы:
-* id – префикс для файлов логов (будет создан файл по следующему пути: ./out/new_log_%id)
+* id – суффикс для файлов логов (будет создан файл по следующему пути: ./out/new_log_%id)
 
 Дополнительные аргументы:
 * -cp file/path – путь к файлу конфигурации (по умолчанию ./configurations/base.json)
