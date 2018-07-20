@@ -66,7 +66,8 @@ class PoolIBSTaskGenerator(TaskGenerator):
 
 class PoolIBSFunction:
     def __init__(self, parameters):
-        self.algorithm, self.base_cnf = parameters["crypto_algorithm"]
+        self.algorithm = parameters["crypto_algorithm"][0]
+        self.base_cnf = parameters["crypto_algorithm"][1]
         self.N = parameters["N"]
         self.solver_wrapper = parameters["solver_wrapper"]
 
