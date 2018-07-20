@@ -31,11 +31,18 @@ def show_dispersion(ks, k_tuples, configuration=111):
     plt.show()
 
 
-def show_value_dependency(ks, lines):
+def show_value_dependency(ks, lines, my_line=None):
     figure = plt.figure()
     for label, line in lines:
         ax = figure.add_subplot(111)
         ax.semilogy(ks, line, label=label)
+        ax.legend()
+
+    if my_line is not None:
+        kss = range(10, 1001)
+        ys = [my_line(k) for k in kss]
+        ax = figure.add_subplot(111)
+        ax.semilogy(kss, ys, label="my")
         ax.legend()
 
     plt.show()

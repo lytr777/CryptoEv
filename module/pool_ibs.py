@@ -5,7 +5,7 @@ from time import time as now
 
 from model.solver_report import SolverReport
 from predictive_function import TaskGenerator
-from util import caser
+from util import caser, formatter
 
 
 def solve(task_generator):
@@ -73,6 +73,7 @@ class PoolIBSFunction:
 
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
+        self.debugger = parameters["debugger"] if ("debugger" in parameters) else None
 
         self.time_limit = parameters["time_limit"]
 
@@ -84,30 +85,44 @@ class PoolIBSFunction:
             "mask": mask,
             "time_limit": self.time_limit
         }
+        self.debugger.deferred_write(1, 0, "compute for mask: %s" % formatter.format_array(mask))
+        self.debugger.deferred_write(1, 0, "set time limit: %s" % self.time_limit)
 
+        self.debugger.write(1, 0, "creating task generators")
         task_generator = PoolIBSTaskGenerator(task_generator_args)
         tread_count = min(self.N, self.thread_count)
+        self.debugger.write(1, 0, "init pool with %d threads" % tread_count)
         pool = Pool(processes=tread_count)
         start_work_time = now()
 
+        self.debugger.write(1, 0, "solving...")
         solved = pool.map(solve, [task_generator] * self.N)
+        self.debugger.deferred_write(1, 0, "has been solved")
         solved.extend(cases)
         time = now() - start_work_time
+        self.debugger.write(1, 0, "counting time stat...")
         time_stat, log = self.get_time_stat(solved)
+        self.debugger.deferred_write(1, 0, "time stat: %s" % time_stat)
 
         if self.corrector is not None:
+            self.debugger.write(1, 0, "correcting time limit...")
             self.time_limit, dis_count = self.corrector(solved, self.time_limit)
             log += "time limit has been corrected: %f\n" % self.time_limit
+            self.debugger.deferred_write(1, 0, "new time limit: %f" % self.time_limit)
 
+            self.debugger.write(1, 0, "correcting time stat...")
             time_stat["DISCARDED"] = dis_count
             time_stat["DETERMINATE"] -= dis_count
+            self.debugger.deferred_write(1, 0, "new time stat: %s" % time_stat)
 
         log += "main phase ended with time: %f\n" % time
+        self.debugger.write(1, 0, "calculating value...")
         xi = float(time_stat["DETERMINATE"]) / float(len(solved))
         if xi != 0:
             value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
         else:
             value = (2 ** self.algorithm.secret_key_len) * self.time_limit
+        self.debugger.write(1, 0, "value: %.7g\n" % value)
 
         log += "%s\n" % time_stat
         return value, log, solved

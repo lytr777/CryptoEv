@@ -58,8 +58,8 @@ class PredictiveFunction:
         raise NotImplementedError
 
     def solve(self, worker_constructor, cases):
+        self.debugger.write(1, 1, "init signal handler")
         signal.signal(signal.SIGINT, self.__signal_handler)
-        self.debugger.deferred_write(1, 1, "init signal handler")
 
         counter, solved = {"N": self.N}, list(cases)
         self.worker_args["data"] = (counter, solved)
@@ -67,15 +67,15 @@ class PredictiveFunction:
         self.debugger.deferred_write(1, 1, "defining data %s and locks" % str(self.worker_args["data"]))
 
         worker_count = min(self.N, self.thread_count)
-        self.debugger.deferred_write(1, 1, "updating worker count: %d" % worker_count)
+        self.debugger.write(1, 1, "updating worker count: %d" % worker_count)
         for i in range(worker_count):
             self.workers.append(worker_constructor(self.worker_args))
-        self.debugger.write(1, 1, "create %d workers" % len(self.workers))
+        self.debugger.deferred_write(1, 1, "create %d workers" % len(self.workers))
 
         self.debugger.write(1, 1, "starting workers...")
         for worker in self.workers:
             worker.start()
-            self.debugger.deferred_write(2, 1, "%s started" % worker.getName())
+            self.debugger.write(2, 1, "%s started" % worker.getName())
         self.debugger.write(1, 1, "has started %d workers" % len(self.workers))
 
         start_work_time = now()
