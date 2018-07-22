@@ -1,6 +1,7 @@
 import re
 
 import sys
+import warnings
 
 from util import formatter
 
@@ -16,6 +17,11 @@ class SolverReport:
 
     def parse_solution(self, solution_str, spaces=re.compile('[\t ]+')):
         solution_str = solution_str.strip()
+        if len(solution_str) == 0:
+            self.status = "BROKEN"
+            warnings.warn("Solution string is empty", UserWarning)
+            return
+
         data = spaces.split(solution_str)
 
         try:
@@ -25,16 +31,15 @@ class SolverReport:
                     self.solution.append(0)
                 elif num_int > 0:
                     self.solution.append(1)
-        except Exception:
-            with open("out/solution_error_log", "w+") as f:
-                f.write("Solution: %s\n" % formatter.format_array(self.solution))
-                f.write("Solution len: %d\n\n" % len(self.solution))
-                f.write(solution_str)
-                f.write(str(data))
-            # raise ValueError(sys.exc_info()[0])
+        except ValueError:
+            self.status = "BROKEN"
+            warnings.warn("Error while parse solution", UserWarning)
 
     def set_flag(self, i, value):
         self.flags[i] = value
+
+    def check(self):
+        return self.status == "BROKEN"
 
     def __str__(self):
         return "%s (%f) solution: %s" % (self.status, self.time, formatter.format_array(self.solution))

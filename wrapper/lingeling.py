@@ -66,12 +66,13 @@ class LingelingWrapper(Wrapper):
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
             report.parse_solution(solution, self.time_regexp)
-            solution_len = algorithm.key_stream_start + algorithm.key_stream_len - 1
-            if len(report.solution) != solution_len:
-                with open("out/wrapper_error_log", "w+") as f:
-                    for o in output:
-                        f.write("%s\n" % o)
 
-                raise Exception("Solution length error: %d != %d" % (len(report.solution), solution_len))
+            # solution_len = algorithm.key_stream_start + algorithm.key_stream_len - 1
+            # if len(report.solution) != solution_len:
+            #     with open("out/wrapper_error_log", "w+") as f:
+            #         for o in output:
+            #             f.write("%s\n" % o)
+            #
+            #     raise Exception("Solution length error: %d != %d" % (len(report.solution), solution_len))
 
         return report

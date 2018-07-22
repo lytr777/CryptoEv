@@ -14,27 +14,45 @@ def solve(task_generator):
     # init
     init_args, init_case = task_generator.get_init()
 
-    init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, err = init_sp.communicate(init_case.get_cnf())
-    if len(err) != 0 and not err.startswith("timelimit"):
-        raise Exception(err)
+    init_report = None
+    tries = 5
+    for i in range(tries):
+        if init_report is None or init_report.check():
+            init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, err = init_sp.communicate(init_case.get_cnf())
+            if len(err) != 0 and not err.startswith("timelimit"):
+                raise Exception(err)
 
-    report = task_generator.get_report(output)
-    init_case.mark_solved(report)
+            init_report = task_generator.get_report(output)
+        else:
+            break
+
+    if init_report.check():
+        raise Exception("All %d times init case hasn't been solved")
+    init_case.mark_solved(init_report)
 
     # main
     main_args, main_case = task_generator.get(init_case)
 
-    main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, err = main_sp.communicate(main_case.get_cnf())
-    if len(err) != 0 and not err.startswith("timelimit"):
-        raise Exception(err)
+    main_report = None
+    tries = 5
+    for i in range(tries):
+        if main_report is None or main_report.check():
+            main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, err = main_sp.communicate(main_case.get_cnf())
+            if len(err) != 0 and not err.startswith("timelimit"):
+                raise Exception(err)
 
-    try:
-        report = task_generator.get_report(output)
-    except KeyError:
-        report = SolverReport("INDETERMINATE", 5.)
-    main_case.mark_solved(report)
+            try:
+                main_report = task_generator.get_report(output)
+            except KeyError:
+                main_report = SolverReport("INDETERMINATE", 5.)
+        else:
+            break
+
+    if main_report.check():
+        raise Exception("All %d times main case hasn't been solved")
+    main_case.mark_solved(main_report)
 
     return main_case.get_status(short=True), main_case.time
 
