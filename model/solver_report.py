@@ -25,13 +25,12 @@ class SolverReport:
                     self.solution.append(0)
                 elif num_int > 0:
                     self.solution.append(1)
-        except ValueError:
+        except Exception:
             with open("out/solution_error_log", "w+") as f:
                 f.write("Solution: %s\n" % formatter.format_array(self.solution))
                 f.write("Solution len: %d\n\n" % len(self.solution))
-                f.write(sys.exc_info()[0])
-                f.write("\n\n")
                 f.write(solution_str)
+                f.write(str(data))
             # raise ValueError(sys.exc_info()[0])
 
     def set_flag(self, i, value):
