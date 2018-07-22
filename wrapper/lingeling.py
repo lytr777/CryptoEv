@@ -42,7 +42,7 @@ class LingelingWrapper(Wrapper):
 
         return launching_args
 
-    def parse_out(self, output):
+    def parse_out(self, output, algorithm):
         output = output.split('\n')
         solution = ""
         status = ""
@@ -64,5 +64,10 @@ class LingelingWrapper(Wrapper):
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
             report.parse_solution(solution, self.time_regexp)
+            if len(report.solution) != algorithm.secret_key_len:
+                with open("out/wrapper_error_log", "w+") as f:
+                    f.write("Output:\n")
+                    for o in output:
+                        f.write("%s\n" % o)
 
         return report

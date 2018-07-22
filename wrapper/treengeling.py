@@ -43,7 +43,7 @@ class TreengelingWrapper(Wrapper):
 
         return launching_args
 
-    def parse_out(self, output):
+    def parse_out(self, output, algorithm):
         output = output.split('\n')
         solution = ""
         status = ""

@@ -15,7 +15,7 @@ class TaskGenerator:
         raise NotImplementedError
 
     def get_report(self, output):
-        return self.solver_wrapper.parse_out(output)
+        return self.solver_wrapper.parse_out(output, self.algorithm)
 
 
 class InitTaskGenerator(TaskGenerator):

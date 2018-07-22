@@ -32,7 +32,7 @@ class SolverReport:
                 f.write(sys.exc_info()[0])
                 f.write("\n\n")
                 f.write(solution_str)
-            raise ValueError(sys.exc_info()[0])
+            # raise ValueError(sys.exc_info()[0])
 
     def set_flag(self, i, value):
         self.flags[i] = value
