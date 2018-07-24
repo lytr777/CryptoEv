@@ -11,6 +11,7 @@ from module.pool_ibs import PoolIBSFunction
 from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
 from key_generators.trivium_64 import Trivium_64
+from key_generators.trivium_96 import Trivium_96
 from key_generators.bivium import Bivium
 from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
@@ -88,6 +89,7 @@ crypto_algorithms = {
     "a5_1": (A5_1, constant.cnfs["a5_1"]),
     "bivium": (Bivium, constant.cnfs["bivium"]),
     "trivium_64": (Trivium_64, constant.cnfs["trivium_64"]),
+    "trivium_96": (Trivium_96, constant.cnfs["trivium_96"]),
     "e0": (E0, constant.cnfs["e0"]),
     "volfram": (Volfram, constant.cnfs["volfram"]),
     "geffe": (Geffe, constant.cnfs["geffe"])

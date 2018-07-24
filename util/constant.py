@@ -5,6 +5,7 @@ cnfs = {
     "a5_1": "./templates/A5_1.cnf",
     "a5_toy": "./templates/A5_toy.cnf",
     "trivium_64": "./templates/Trivium_64.cnf",
+    "trivium_96":  "./templates/Trivium_96.cnf",
     "bivium": "./templates/Bivium.cnf",
     "e0": "./templates/E0.cnf",
     "volfram": "./templates/Volfram.cnf",
