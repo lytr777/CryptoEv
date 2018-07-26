@@ -28,7 +28,7 @@ python2.7 main.py id [-cp file/path] [-v 0] [-d file/path]
 
 ## MPI Запуск
 ```
-mpiexec -n **node_count** python2.7 mpi_main.py id [-cp file/path]
+mpiexec -n node_count python2.7 mpi_main.py id [-cp file/path]
 ```
 * node_count – число узлов, выделенных для рассчета
 
