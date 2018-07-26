@@ -27,11 +27,14 @@ def load_base(value_hash):
     return load(base_conf_path, value_hash)
 
 
-def load(path, value_hash):
-    data = json.load(open(path))
+def load(path, value_hash, mpi=False):
+    data = json.load(open(path, 'r'))
 
     meta_name = data["algorithm"]
-    algorithm = algorithms[meta_name]
+    if mpi:
+        algorithm = algorithms["mpi_%s" % meta_name]
+    else:
+        algorithm = algorithms[meta_name]
 
     # meta
     meta_parameters = data[meta_name + "_parameters"]

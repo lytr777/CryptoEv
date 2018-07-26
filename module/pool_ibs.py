@@ -94,6 +94,7 @@ class PoolIBSFunction:
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
         self.debugger = parameters["debugger"] if ("debugger" in parameters) else None
+        self.mpi_call = parameters["mpi_call"] if ("mpi_call" in parameters) else False
 
         self.time_limit = parameters["time_limit"]
         self.pool = None
@@ -131,7 +132,15 @@ class PoolIBSFunction:
         self.pool.join()
         cases.extend(result.get())
         self.debugger.deferred_write(1, 0, "has been solved")
+
+        if self.mpi_call:
+            return None, "", np.array(cases)
+
         time = now() - start_work_time
+
+        return self.handle_cases(mask, cases, time)
+
+    def handle_cases(self, mask, cases, time):
         self.debugger.write(1, 0, "counting time stat...")
         time_stat, log = self.get_time_stat(cases)
         self.debugger.deferred_write(1, 0, "time stat: %s" % time_stat)
@@ -166,7 +175,7 @@ class PoolIBSFunction:
         }
         cases_log = "times:\n"
         for info in cases:
-            cases_log += "%s %f\n" % info
+            cases_log += "%s %s\n" % (info[0], info[1])
             self.__update_time_statistic(time_stat, info[0])
 
         return time_stat, cases_log

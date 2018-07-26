@@ -25,7 +25,7 @@ class EvolutionStrategy:
     def get_population_size(self):
         raise NotImplementedError
 
-    def get_next_population(self, mutation_f, sorted_P_v):
+    def get_next_population(self, mc_f, sorted_P_v):
         raise NotImplementedError
 
     def get_roulette(self, sorted_P_v):

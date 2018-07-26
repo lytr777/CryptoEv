@@ -13,9 +13,6 @@ class TabuSearch(MetaAlgorithm):
         self.iteration_size = None
         self.update_count = ts_parameters["update_count"]
 
-    def get_iteration_size(self):
-        return self.iteration_size
-
     def start(self, mf_parameters):
         algorithm, cnf_path = mf_parameters["crypto_algorithm"]
         cnf = CnfParser().parse_for_path(cnf_path)

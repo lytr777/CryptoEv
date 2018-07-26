@@ -1,4 +1,5 @@
 from algorithm.evolution import EvolutionAlgorithm
+from algorithm.mpi_evolution import MPIEvolutionAlgorithm
 from algorithm.tabu import TabuSearch
 from algorithm.module import mutation, crossover
 from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, Genetic
@@ -28,6 +29,7 @@ from util.adaptive_selection import AdaptiveFunction
 
 algorithms = {
     "ev": EvolutionAlgorithm,
+    "mpi_ev": MPIEvolutionAlgorithm,
     "ts": TabuSearch
 }
 

@@ -15,9 +15,6 @@ class EvolutionAlgorithm(MetaAlgorithm):
         self.stagnation_limit = ev_parameters["stagnation_limit"]
         self.strategy = ev_parameters["evolution_strategy"]
 
-    def get_iteration_size(self):
-        return self.strategy.get_population_size()
-
     def start(self, mf_parameters):
         algorithm, cnf_path = mf_parameters["crypto_algorithm"]
         cnf = CnfParser().parse_for_path(cnf_path)
