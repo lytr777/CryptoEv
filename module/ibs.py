@@ -62,49 +62,68 @@ class IBSWorker(threading.Thread):
         self.debugger.write(3, 2, "%s generate init case" % (threading.Thread.getName(self)))
         init_args, init_case = self.init_task_generator.get()
 
-        while init_case.status != "SATISFIABLE":
-            self.debugger.write(3, 2, "%s start solving init case with secret key: %s" % (
-                threading.Thread.getName(self),
-                formatter.format_array(init_case.secret_key)
-            ))
-            init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            output, err = init_sp.communicate(init_case.get_cnf())
-            if len(err) != 0 and not err.startswith("timelimit"):
-                self.debugger.write(3, 2, "%s didn't solve init case:\n%s" % (threading.Thread.getName(self), err))
-                raise Exception(err)
+        init_report = None
+        tries = 5
+        for i in range(tries):
+            if init_report is None or init_report.check():
+                self.debugger.write(3, 2, "%s start solving init case with secret key: %s" % (
+                    threading.Thread.getName(self),
+                    formatter.format_array(init_case.secret_key)
+                ))
+                init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
+                output, err = init_sp.communicate(init_case.get_cnf())
+                if len(err) != 0 and not err.startswith("timelimit"):
+                    self.debugger.write(3, 2, "%s didn't solve init case:\n%s" % (threading.Thread.getName(self), err))
+                    raise Exception(err)
 
-            report = self.init_task_generator.get_report(output)
-            self.debugger.write(3, 2, "%s solved init case with status: %s" % (
-                threading.Thread.getName(self),
-                report.status
-            ))
-            init_case.mark_solved(report)
+                init_report = self.init_task_generator.get_report(output)
+                self.debugger.write(3, 2, "%s solved init case with status: %s" % (
+                    threading.Thread.getName(self),
+                    init_report.status
+                ))
+            else:
+                break
+
+        if init_report.check():
+            raise Exception("All %d times init case hasn't been solved" % tries)
+        init_case.mark_solved(init_report)
 
         # main
         self.debugger.write(3, 2, "%s generate main case" % (threading.Thread.getName(self)))
         main_args, main_case = self.main_task_generator.get(init_case)
-
         self.debugger.deferred_write(3, 2, "%s get main args: %s" % (threading.Thread.getName(self), main_args))
-        self.debugger.write(3, 2, "%s start solving main case with secret key: %s" % (
-            threading.Thread.getName(self), formatter.format_array(main_case.secret_key, main_case.secret_mask)
-        ))
-        main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, err = main_sp.communicate(main_case.get_cnf())
-        if len(err) != 0 and not err.startswith("timelimit"):
-            self.debugger.write(3, 2, "%s didn't solve main case:\n%s" % (threading.Thread.getName(self), err))
-            raise Exception(err)
 
-        try:
-            report = self.main_task_generator.get_report(output)
-        except KeyError:
-            self.debugger.write(3, 2, "%s error while parsing" % threading.Thread.getName(self))
-            report = SolverReport("INDETERMINATE", 5.)
-        self.debugger.write(1, 2, "%s solved main case with status: %s and time: %f" % (
-            threading.Thread.getName(self),
-            report.status,
-            report.time
-        ))
-        main_case.mark_solved(report)
+        main_report = None
+        tries = 5
+        for i in range(tries):
+            if main_report is None or main_report.check():
+                self.debugger.write(3, 2, "%s start solving main case with secret key: %s" % (
+                    threading.Thread.getName(self), formatter.format_array(main_case.secret_key, main_case.secret_mask)
+                ))
+                main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
+                output, err = main_sp.communicate(main_case.get_cnf())
+                if len(err) != 0 and not err.startswith("timelimit"):
+                    self.debugger.write(3, 2, "%s didn't solve main case:\n%s" % (threading.Thread.getName(self), err))
+                    raise Exception(err)
+
+                try:
+                    main_report = self.main_task_generator.get_report(output)
+                except KeyError:
+                    self.debugger.write(3, 2, "%s error while parsing" % threading.Thread.getName(self))
+                    main_report = SolverReport("INDETERMINATE", 5.)
+                self.debugger.write(1, 2, "%s solved main case with status: %s and time: %f" % (
+                    threading.Thread.getName(self),
+                    main_report.status,
+                    main_report.time
+                ))
+            else:
+                break
+
+        if main_report.check():
+            raise Exception("All %d times main case hasn't been solved" % tries)
+        main_case.mark_solved(main_report)
 
         self.locks[1].acquire()
         self.data[1].append((main_case.get_status(short=True), main_case.time))

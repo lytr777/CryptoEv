@@ -19,7 +19,7 @@ def add_conclusion(path, comparator, locals_list=None):
                 if comparator(best, current) > 0:
                     best = current
 
-            if comparator(best, previous) > 0:
+            if comparator(best, previous) > 0 and str(best[0]) != str(previous[0]):
                 locals_list.append(previous)
 
             previous = best

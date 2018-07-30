@@ -28,7 +28,7 @@ def solve(task_generator):
             break
 
     if init_report.check():
-        raise Exception("All %d times init case hasn't been solved")
+        raise Exception("All %d times init case hasn't been solved" % tries)
     init_case.mark_solved(init_report)
 
     # main
@@ -51,7 +51,7 @@ def solve(task_generator):
             break
 
     if main_report.check():
-        raise Exception("All %d times main case hasn't been solved")
+        raise Exception("All %d times main case hasn't been solved" % tries)
     main_case.mark_solved(main_report)
 
     return main_case.get_status(short=True), main_case.time
