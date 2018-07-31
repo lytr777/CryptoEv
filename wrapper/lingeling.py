@@ -27,7 +27,7 @@ class LingelingWrapper(Wrapper):
         launching_args = [self.solver_path]
 
         if tl is not None:
-            launching_args.append("-t")
+            launching_args.append("-T")
             launching_args.append(str(tl))
         if workers is not None:
             warnings.warn("Workers not support in lingeling", UserWarning)
