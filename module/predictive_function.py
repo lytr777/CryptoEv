@@ -1,8 +1,46 @@
 import signal
+import subprocess
 import threading
 from time import sleep, time as now
 
-from util import caser
+from model.solver_report import SolverReport
+from util import caser, formatter
+
+
+class SubprocessHelper:
+    def __init__(self, tries, debugger):
+        self.tries = tries
+        self.debugger = debugger
+
+    def run(self, parameters):
+        name = parameters["name"]
+        args = parameters["args"]
+        case = parameters["case"]
+        output_parser = parameters["output_parser"]
+        thread_name = parameters["thread_name"]
+        report = None
+
+        for i in range(self.tries):
+            if report is None or report.check():
+                self.debugger.write(3, 2, "%s start solving %s case with secret key: %s" % (
+                    thread_name, name, formatter.format_array(case.secret_key)
+                ))
+                init_sp = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                output, err = init_sp.communicate(case.get_cnf())
+                if len(err) != 0 and not err.startswith("timelimit"):
+                    self.debugger.write(1, 2, "%s didn't solve %s case:\n%s" % (thread_name, name, err))
+                    raise Exception(err)
+
+                try:
+                    report = output_parser(output)
+                except KeyError:
+                    self.debugger.write(1, 2, "%s error while parsing %s case" % (thread_name, name))
+                    report = SolverReport("INDETERMINATE", 5.)
+                self.debugger.write(3, 2, "%s solved %s case with status: %s" % (thread_name, name, report.status))
+            else:
+                break
+
+        return report
 
 
 class TaskGenerator:
@@ -115,4 +153,3 @@ class PredictiveFunction:
             time_stat["DETERMINATE"] += 1
         else:
             time_stat["INDETERMINATE"] += 1
-

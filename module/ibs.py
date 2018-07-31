@@ -3,7 +3,7 @@ import threading
 import numpy as np
 
 from model.solver_report import SolverReport
-from predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator
+from predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator, SubprocessHelper
 from util import caser, formatter
 
 
@@ -38,6 +38,7 @@ class IBSWorker(threading.Thread):
         self.data = args["data"]
         self.locks = args["locks"]
         self.need = True
+        self.sp_helper = SubprocessHelper(5, self.debugger)
 
     def run(self):
         while self.need and not self.terminated.isSet():
@@ -62,6 +63,14 @@ class IBSWorker(threading.Thread):
         self.debugger.write(3, 2, "%s generate init case" % (threading.Thread.getName(self)))
         init_args, init_case = self.init_task_generator.get()
 
+        # init_report = self.sp_helper.run({
+        #     "name",
+        #     "args",
+        #     "case",
+        #     "output_parser",
+        #     "thread_name"
+        # })
+
         init_report = None
         tries = 5
         for i in range(tries):
@@ -74,7 +83,7 @@ class IBSWorker(threading.Thread):
                                            stderr=subprocess.PIPE)
                 output, err = init_sp.communicate(init_case.get_cnf())
                 if len(err) != 0 and not err.startswith("timelimit"):
-                    self.debugger.write(3, 2, "%s didn't solve init case:\n%s" % (threading.Thread.getName(self), err))
+                    self.debugger.write(1, 2, "%s didn't solve init case:\n%s" % (threading.Thread.getName(self), err))
                     raise Exception(err)
 
                 init_report = self.init_task_generator.get_report(output)
@@ -105,15 +114,15 @@ class IBSWorker(threading.Thread):
                                            stderr=subprocess.PIPE)
                 output, err = main_sp.communicate(main_case.get_cnf())
                 if len(err) != 0 and not err.startswith("timelimit"):
-                    self.debugger.write(3, 2, "%s didn't solve main case:\n%s" % (threading.Thread.getName(self), err))
+                    self.debugger.write(1, 2, "%s didn't solve main case:\n%s" % (threading.Thread.getName(self), err))
                     raise Exception(err)
 
                 try:
                     main_report = self.main_task_generator.get_report(output)
                 except KeyError:
-                    self.debugger.write(3, 2, "%s error while parsing" % threading.Thread.getName(self))
+                    self.debugger.write(1, 2, "%s error while parsing" % threading.Thread.getName(self))
                     main_report = SolverReport("INDETERMINATE", 5.)
-                self.debugger.write(1, 2, "%s solved main case with status: %s and time: %f" % (
+                self.debugger.write(3, 2, "%s solved main case with status: %s and time: %f" % (
                     threading.Thread.getName(self),
                     main_report.status,
                     main_report.time

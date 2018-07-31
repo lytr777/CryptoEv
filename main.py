@@ -9,6 +9,7 @@ parser.add_argument('-cp', metavar='file/path', type=str, default="configuration
                     help='path to configuration file')
 parser.add_argument('-v', metavar='0', type=int, default=0, help='[0-3] verbosity level')
 parser.add_argument('-d', metavar='file/path', type=str, help='path to debug file')
+# parser.add_argument('-r', '--restore', help="try to restore by logs", action="store_true")
 
 args = parser.parse_args()
 alg, meta_p, mf_p = configurator.load(args.cp, {})
@@ -22,6 +23,8 @@ if args.d is not None:
 
 mf_p["solver_wrapper"].check_installation()
 open(meta_p["log_file"], 'w+').close()
+
+# if args.restore:
 
 alg = alg(meta_p)
 locals_list = alg.start(mf_p)
