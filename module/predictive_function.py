@@ -40,6 +40,8 @@ class SubprocessHelper:
             else:
                 break
 
+        if report.check():
+            raise Exception("All %d times main case hasn't been solved" % self.tries)
         return report
 
 
@@ -95,11 +97,11 @@ class PredictiveFunction:
     def compute(self, mask, cases):
         raise NotImplementedError
 
-    def solve(self, worker_constructor, cases):
+    def solve(self, worker_constructor):
         self.debugger.write(1, 1, "init signal handler")
         signal.signal(signal.SIGINT, self.__signal_handler)
 
-        counter, solved = {"N": self.N}, list(cases)
+        counter, solved = {"N": self.N}, []
         self.worker_args["data"] = (counter, solved)
         self.worker_args["locks"] = (threading.Lock(), threading.Lock())
         self.debugger.deferred_write(1, 1, "defining data %s and locks" % str(self.worker_args["data"]))

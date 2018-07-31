@@ -63,39 +63,13 @@ class IBSWorker(threading.Thread):
         self.debugger.write(3, 2, "%s generate init case" % (threading.Thread.getName(self)))
         init_args, init_case = self.init_task_generator.get()
 
-        # init_report = self.sp_helper.run({
-        #     "name",
-        #     "args",
-        #     "case",
-        #     "output_parser",
-        #     "thread_name"
-        # })
-
-        init_report = None
-        tries = 5
-        for i in range(tries):
-            if init_report is None or init_report.check():
-                self.debugger.write(3, 2, "%s start solving init case with secret key: %s" % (
-                    threading.Thread.getName(self),
-                    formatter.format_array(init_case.secret_key)
-                ))
-                init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
-                output, err = init_sp.communicate(init_case.get_cnf())
-                if len(err) != 0 and not err.startswith("timelimit"):
-                    self.debugger.write(1, 2, "%s didn't solve init case:\n%s" % (threading.Thread.getName(self), err))
-                    raise Exception(err)
-
-                init_report = self.init_task_generator.get_report(output)
-                self.debugger.write(3, 2, "%s solved init case with status: %s" % (
-                    threading.Thread.getName(self),
-                    init_report.status
-                ))
-            else:
-                break
-
-        if init_report.check():
-            raise Exception("All %d times init case hasn't been solved" % tries)
+        init_report = self.sp_helper.run({
+            "name": "init",
+            "args": init_args,
+            "case": init_case,
+            "output_parser": self.init_task_generator.get_report,
+            "thread_name": threading.Thread.getName(self)
+        })
         init_case.mark_solved(init_report)
 
         # main
@@ -103,35 +77,13 @@ class IBSWorker(threading.Thread):
         main_args, main_case = self.main_task_generator.get(init_case)
         self.debugger.deferred_write(3, 2, "%s get main args: %s" % (threading.Thread.getName(self), main_args))
 
-        main_report = None
-        tries = 5
-        for i in range(tries):
-            if main_report is None or main_report.check():
-                self.debugger.write(3, 2, "%s start solving main case with secret key: %s" % (
-                    threading.Thread.getName(self), formatter.format_array(main_case.secret_key, main_case.secret_mask)
-                ))
-                main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
-                output, err = main_sp.communicate(main_case.get_cnf())
-                if len(err) != 0 and not err.startswith("timelimit"):
-                    self.debugger.write(1, 2, "%s didn't solve main case:\n%s" % (threading.Thread.getName(self), err))
-                    raise Exception(err)
-
-                try:
-                    main_report = self.main_task_generator.get_report(output)
-                except KeyError:
-                    self.debugger.write(1, 2, "%s error while parsing" % threading.Thread.getName(self))
-                    main_report = SolverReport("INDETERMINATE", 5.)
-                self.debugger.write(3, 2, "%s solved main case with status: %s and time: %f" % (
-                    threading.Thread.getName(self),
-                    main_report.status,
-                    main_report.time
-                ))
-            else:
-                break
-
-        if main_report.check():
-            raise Exception("All %d times main case hasn't been solved" % tries)
+        main_report = self.sp_helper.run({
+            "name": "main",
+            "args": main_args,
+            "case": main_case,
+            "output_parser": self.main_task_generator.get_report,
+            "thread_name": threading.Thread.getName(self)
+        })
         main_case.mark_solved(main_report)
 
         self.locks[1].acquire()
@@ -145,6 +97,7 @@ class IBSFunction(PredictiveFunction):
         self.time_limit = parameters["time_limit"]
 
     def compute(self, mask, cases=()):
+        cases = list(cases)
         self.task_generator_args["mask"] = mask
         self.debugger.deferred_write(1, 0, "compute for mask: %s" % formatter.format_array(mask))
         self.task_generator_args["time_limit"] = self.time_limit
@@ -155,15 +108,21 @@ class IBSFunction(PredictiveFunction):
         self.worker_args["main_task_generator"] = IBSTaskGenerator(self.task_generator_args)
 
         self.debugger.write(1, 0, "solving...")
-        solved, time = PredictiveFunction.solve(self, IBSWorker, cases)
-        self.debugger.deferred_write(1, 0, "has been solved")
+        solved, time = PredictiveFunction.solve(self, IBSWorker)
+        cases.extend(solved)
+        self.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
+        self.debugger.write(1, 0, "spent time: %f" % time)
+
+        return self.handle_cases(mask, cases, time)
+
+    def handle_cases(self, mask, cases, time):
         self.debugger.write(1, 0, "counting time stat...")
-        time_stat, log = PredictiveFunction.get_time_stat(self, solved)
+        time_stat, log = self.get_time_stat(cases)
         self.debugger.deferred_write(1, 0, "time stat: %s" % time_stat)
 
         if self.corrector is not None:
             self.debugger.write(1, 0, "correcting time limit...")
-            self.time_limit, dis_count = self.corrector(solved, self.time_limit)
+            self.time_limit, dis_count = self.corrector(cases, self.time_limit)
             log += "time limit has been corrected: %f\n" % self.time_limit
             self.debugger.deferred_write(1, 0, "new time limit: %f" % self.time_limit)
 
@@ -174,7 +133,7 @@ class IBSFunction(PredictiveFunction):
 
         log += "main phase ended with time: %f\n" % time
         self.debugger.write(1, 0, "calculating value...")
-        xi = float(time_stat["DETERMINATE"]) / float(len(solved))
+        xi = float(time_stat["DETERMINATE"]) / float(len(cases))
         if xi != 0:
             value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
         else:
@@ -182,4 +141,4 @@ class IBSFunction(PredictiveFunction):
         self.debugger.write(1, 0, "value: %.7g\n" % value)
 
         log += "%s\n" % time_stat
-        return value, log, solved
+        return value, log, cases

@@ -2,7 +2,7 @@ import subprocess
 import threading
 import numpy as np
 
-from module.predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator
+from module.predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator, SubprocessHelper
 from util import caser, generator, formatter
 
 
@@ -32,9 +32,11 @@ class GADWorker(threading.Thread):
         threading.Thread.__init__(self)
         self.terminated = threading.Event()
         self.task_generator = args["task_generator"]
+        self.debugger = args["debugger"]
         self.data = args["data"]
         self.locks = args["locks"]
         self.need = True
+        self.sp_helper = SubprocessHelper(5, self.debugger)
 
     def run(self):
         while self.need and not self.terminated.isSet():
@@ -50,11 +52,14 @@ class GADWorker(threading.Thread):
     def solve(self):
         l_args, case = self.task_generator.get()
 
-        main_sp = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, err = main_sp.communicate(case.get_cnf())
-        if len(err) != 0:
-            raise Exception(err)
-        case.mark_solved(self.task_generator.get_report(output))
+        main_report = self.sp_helper.run({
+            "name": "main",
+            "args": l_args,
+            "case": case,
+            "output_parser": self.task_generator.get_report,
+            "thread_name": threading.Thread.getName(self)
+        })
+        case.mark_solved(main_report)
 
         self.locks[1].acquire()
         self.data[1].append((case.get_status(short=True), case.time))
@@ -80,17 +85,19 @@ class GADFunction(PredictiveFunction):
         init_case = self.solve_init()
         log = self.__get_info(init_case)
 
+        cases = list(cases)
         self.task_generator_args["mask"] = mask
         self.task_generator_args["init_case"] = init_case
         self.worker_args["task_generator"] = GADTaskGenerator(self.task_generator_args)
 
-        solved, time = PredictiveFunction.solve(self, GADWorker, cases)
-        time_stat, cases_log = PredictiveFunction.get_time_stat(self, solved)
+        solved, time = PredictiveFunction.solve(self, GADWorker)
+        cases.extend(solved)
+        time_stat, cases_log = PredictiveFunction.get_time_stat(self, cases)
         log += cases_log
-        log += "main phase ended with time: %f\n" % time
+        log += "spent time: %f" % time
 
         times_sum = 0
-        for _, time in solved:
+        for _, time in cases:
             times_sum += time
 
         partially_value = (2 ** np.count_nonzero(mask)) * times_sum
@@ -99,7 +106,7 @@ class GADFunction(PredictiveFunction):
         #
 
         log += "%s\n" % time_stat
-        return partially_value / len(solved), log, solved
+        return partially_value / len(cases), log, cases
 
     @staticmethod
     def __get_info(case):

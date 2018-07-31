@@ -105,7 +105,7 @@ class PoolIBSFunction:
             exit(s)
 
     def compute(self, mask, cases=()):
-        self.debugger.write(1, 1, "init signal handler")
+        self.debugger.write(1, 0, "init signal handler")
         signal.signal(signal.SIGINT, self.__signal_handler)
 
         task_generator_args = {
@@ -130,13 +130,13 @@ class PoolIBSFunction:
         result = self.pool.map_async(solve, [task_generator] * self.N)
         self.pool.close()
         self.pool.join()
-        cases.extend(result.get())
-        self.debugger.deferred_write(1, 0, "has been solved")
+        solved, time = result.get(), now() - start_work_time
+        cases.extend(solved)
+        self.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
+        self.debugger.write(1, 0, "spent time: %f" % time)
 
         if self.mpi_call:
             return None, "", np.array(cases)
-
-        time = now() - start_work_time
 
         return self.handle_cases(mask, cases, time)
 
