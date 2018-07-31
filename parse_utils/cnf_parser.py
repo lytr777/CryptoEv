@@ -1,5 +1,5 @@
 from model.cnf_model import Cnf, Clause, Var
-from parser import Parser
+from parse_utils.parser import Parser
 
 
 class CnfParser(Parser):

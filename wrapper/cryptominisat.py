@@ -1,7 +1,7 @@
 import re
 
 from model.solver_report import SolverReport
-from wrapper import Wrapper
+from wrapper.wrapper import Wrapper
 
 
 class CryptoMinisatWrapper(Wrapper):

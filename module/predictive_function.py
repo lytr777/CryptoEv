@@ -4,7 +4,6 @@ from time import sleep, time as now
 
 from util import caser
 
-
 class TaskGenerator:
     def __init__(self, args):
         self.base_cnf = args["base_cnf"]
@@ -115,4 +114,3 @@ class PredictiveFunction:
             time_stat["DETERMINATE"] += 1
         else:
             time_stat["INDETERMINATE"] += 1
-

@@ -1,10 +1,8 @@
 import re
 import warnings
 
-import sys
-
 from model.solver_report import SolverReport
-from wrapper import Wrapper
+from wrapper.wrapper import Wrapper
 
 
 class LingelingWrapper(Wrapper):
@@ -29,7 +27,7 @@ class LingelingWrapper(Wrapper):
         launching_args = [self.solver_path]
 
         if tl is not None:
-            launching_args.append("-T")
+            launching_args.append("-t")
             launching_args.append(str(tl))
         if workers is not None:
             warnings.warn("Workers not support in lingeling", UserWarning)
@@ -66,13 +64,5 @@ class LingelingWrapper(Wrapper):
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
             report.parse_solution(solution, self.time_regexp)
-
-            # solution_len = algorithm.key_stream_start + algorithm.key_stream_len - 1
-            # if len(report.solution) != solution_len:
-            #     with open("out/wrapper_error_log", "w+") as f:
-            #         for o in output:
-            #             f.write("%s\n" % o)
-            #
-            #     raise Exception("Solution length error: %d != %d" % (len(report.solution), solution_len))
 
         return report

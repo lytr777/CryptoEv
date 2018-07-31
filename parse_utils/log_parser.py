@@ -1,5 +1,5 @@
 from util import formatter
-from parser import Parser
+from parse_utils.parser import Parser
 from model.case import Case
 
 

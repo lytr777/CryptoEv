@@ -1,8 +1,7 @@
-import codecs
 import json
 
-from constant import base_conf_path
-from options import matcher, algorithms
+from util.constant import base_conf_path
+from util.options import matcher, algorithms
 
 
 def __get_option(key):
@@ -12,7 +11,7 @@ def __get_option(key):
 def __substitution(parameters, value_hash):
     for key in parameters.keys():
         value = parameters[key]
-        if isinstance(value, unicode) or isinstance(value, str):
+        if isinstance(value, str):
             parameters[key] = __get_option(key)[value]
         elif isinstance(value, dict):
             name, args = value["name"], value["args"]

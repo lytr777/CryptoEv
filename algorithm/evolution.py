@@ -1,4 +1,6 @@
-from algorithm import MetaAlgorithm
+import functools
+
+from algorithm.algorithm import MetaAlgorithm
 from parse_utils.cnf_parser import CnfParser
 from util import formatter, generator
 import numpy as np
@@ -96,7 +98,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value, [])
                 stagnation = 0
             else:
-                P_v.sort(cmp=self.comparator)
+                P_v.sort(key=functools.cmp_to_key(self.comparator))
                 P = self.strategy.get_next_population((self.mutation_f, self.crossover_f), P_v)
             it += 1
 

@@ -1,6 +1,4 @@
 import re
-
-import sys
 import warnings
 
 from util import formatter

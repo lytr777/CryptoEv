@@ -1,7 +1,9 @@
+import functools
+
 import numpy as np
 from time import time as now
 
-from algorithm import MetaAlgorithm
+from algorithm.algorithm import MetaAlgorithm
 from parse_utils.cnf_parser import CnfParser
 from util import formatter, generator
 
@@ -85,7 +87,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                     best = (np.zeros(algorithm.secret_key_len, dtype=np.int), max_value, [])
                     stagnation = 0
                 else:
-                    P_v.sort(cmp=self.comparator)
+                    P_v.sort(key=functools.cmp_to_key(self.comparator))
                     P = self.strategy.get_next_population((self.mutation_f, self.crossover_f), P_v)
                 it += 1
 

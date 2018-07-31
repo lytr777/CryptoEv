@@ -19,15 +19,22 @@ if "adaptive_N" in mf_p:
 meta_p["log_file"] = constant.log_path + args.id
 meta_p["locals_log_file"] = constant.locals_log_path + args.id
 
-mf_p["debugger"] = Debugger(args.d, args.v)
-if args.d is not None:
-    open(args.d, 'w+').close()
-
-mf_p["solver_wrapper"].check_installation()
-open(meta_p["log_file"], 'w+').close()
+if args.v > 0 and args.d is None:
+    raise Exception("MPI version support debug only with file")
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
+
+if args.d is None:
+    mf_p["debugger"] = Debugger(verb=args.v)
+else:
+    rank_debug_file = "%s_%d" % (args.d, rank)
+    mf_p["debugger"] = Debugger(rank_debug_file, args.v)
+    open(rank_debug_file, 'w+').close()
+
+mf_p["solver_wrapper"].check_installation()
+if rank == 0:
+    open(meta_p["log_file"], 'w+').close()
 
 alg = alg(meta_p, comm)
 locals_list = alg.start(mf_p)

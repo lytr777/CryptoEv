@@ -1,12 +1,8 @@
 from algorithm.evolution import EvolutionAlgorithm
 from algorithm.mpi_evolution import MPIEvolutionAlgorithm
-from algorithm.tabu import TabuSearch
 from algorithm.module import mutation, crossover
 from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, Genetic
 
-from module.decomposition import Decomposition
-from module.gad import GADFunction
-from module.ibs import IBSFunction
 from module.pool_ibs import PoolIBSFunction
 
 from key_generators.a5_1 import A5_1
@@ -18,19 +14,16 @@ from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
 
 from wrapper.lingeling import LingelingWrapper
-from wrapper.minisat import MinisatWrapper
 from wrapper.plingeling import PlingelingWrapper
 from wrapper.treengeling import TreengelingWrapper
 from wrapper.rokk import RokkWrapper
 from wrapper.cryptominisat import CryptoMinisatWrapper
 
 from util import constant, comparator, corrector
-from util.adaptive_selection import AdaptiveFunction
 
 algorithms = {
     "ev": EvolutionAlgorithm,
     "mpi_ev": MPIEvolutionAlgorithm,
-    "ts": TabuSearch
 }
 
 # meta
@@ -39,8 +32,6 @@ comparators = {
 }
 
 predictive_function = {
-    "gad": GADFunction,
-    "ibs": IBSFunction,
     "pool_ibs": PoolIBSFunction,
 }
 
@@ -98,19 +89,18 @@ crypto_algorithms = {
 }
 
 
-def adaptive_selection(args):
-    if len(args) != 2:
-        raise Exception("Count of adaptive_selection args must equals 2! [<min_N>, <max_N>]")
-    return {
-        "function": AdaptiveFunction(args[0], args[1])
-    }
+# def adaptive_selection(args):
+#     if len(args) != 2:
+#         raise Exception("Count of adaptive_selection args must equals 2! [<min_N>, <max_N>]")
+#     return {
+#         "function": AdaptiveFunction(args[0], args[1])
+#     }
 
 
 def solver_wrapper(args):
     if len(args) != 1:
         raise Exception("Count of evolution_strategy args must equals 1! [<timelimit?>]")
     return {
-        "minisat": MinisatWrapper(args[0]),
         "lingeling": LingelingWrapper(args[0]),
         "plingeling": PlingelingWrapper(args[0]),
         "treengeling": TreengelingWrapper(args[0]),
@@ -132,7 +122,6 @@ def decompositions(value_hash, args):
         raise Exception("Count of decomposition args must equals 2! [<decomposition power>, <break time>]")
     return {
         "none": None,
-        "base": Decomposition(value_hash, args[0], args[1])
     }
 
 
@@ -145,7 +134,7 @@ matcher = {
     "stop_condition": stop_conditions,
     "evolution_strategy": evolution_strategy,
     "crypto_algorithm": crypto_algorithms,
-    "adaptive_N": adaptive_selection,
+    # "adaptive_N": adaptive_selection,
     "solver_wrapper": solver_wrapper,
     "corrector": correctors,
     "decomposition": decompositions

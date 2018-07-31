@@ -1,6 +1,6 @@
 import numpy as np
 
-from key_generator import KeyGenerator
+from key_generators.key_generator import KeyGenerator
 
 
 class A5_toy(KeyGenerator):

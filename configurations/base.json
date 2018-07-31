@@ -3,7 +3,7 @@
   "ev_parameters": {
     "s": 64,
     "comparator": "max_min",
-    "predictive_function": "ibs",
+    "predictive_function": "pool_ibs",
     "mutation_function": {
       "args_description": "uniform scale",
       "name": "uniform",
@@ -17,7 +17,7 @@
     "stop_condition": {
       "args_description": "iterations, mf calls, locals, mf value",
       "name": "locals",
-      "args": [1000, 1000, 1, 1e20]
+      "args": [100, 1000, 1, 1e20]
     },
     "stagnation_limit": 100,
     "evolution_strategy": {
@@ -28,8 +28,8 @@
   },
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
-    "threads": 32,
-    "N": 1000,
+    "threads": 2,
+    "N": 40,
     "solver_wrapper": {
       "args_description": "use timelimit util?",
       "name": "lingeling",

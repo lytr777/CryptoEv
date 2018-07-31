@@ -6,7 +6,7 @@ from time import time as now
 import signal
 
 from model.solver_report import SolverReport
-from predictive_function import TaskGenerator
+from module.predictive_function import TaskGenerator
 from util import caser, formatter
 
 
@@ -19,16 +19,17 @@ def solve(task_generator):
     for i in range(tries):
         if init_report is None or init_report.check():
             init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            output, err = init_sp.communicate(init_case.get_cnf())
-            if len(err) != 0 and not err.startswith("timelimit"):
+            init_sp_input = init_case.get_cnf().encode()
+            output, err = init_sp.communicate(init_sp_input)
+            if len(err) != 0 and not err.startswith(b"timelimit"):
                 raise Exception(err)
 
-            init_report = task_generator.get_report(output)
+            init_report = task_generator.get_report(output.decode())
         else:
             break
 
     if init_report.check():
-        raise Exception("All %d times init case hasn't been solved")
+        raise Exception("All %d times init case hasn't been solved" % tries)
     init_case.mark_solved(init_report)
 
     # main
@@ -39,19 +40,20 @@ def solve(task_generator):
     for i in range(tries):
         if main_report is None or main_report.check():
             main_sp = subprocess.Popen(main_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            output, err = main_sp.communicate(main_case.get_cnf())
-            if len(err) != 0 and not err.startswith("timelimit"):
+            main_sp_input = main_case.get_cnf().encode()
+            output, err = main_sp.communicate(main_sp_input)
+            if len(err) != 0 and not err.startswith(b"timelimit"):
                 raise Exception(err)
 
             try:
-                main_report = task_generator.get_report(output)
+                main_report = task_generator.get_report(output.decode())
             except KeyError:
                 main_report = SolverReport("INDETERMINATE", 5.)
         else:
             break
 
     if main_report.check():
-        raise Exception("All %d times main case hasn't been solved")
+        raise Exception("All %d times main case hasn't been solved" % tries)
     main_case.mark_solved(main_report)
 
     return main_case.get_status(short=True), main_case.time
