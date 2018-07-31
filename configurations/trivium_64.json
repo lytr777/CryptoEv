@@ -28,8 +28,8 @@
   },
   "mf_parameters": {
     "crypto_algorithm": "trivium_64",
-    "threads": 4,
-    "N": 40,
+    "threads": 32,
+    "N": 500,
     "solver_wrapper": {
       "args_description": "use timelimit util?",
       "name": "lingeling",
