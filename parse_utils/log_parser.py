@@ -84,7 +84,7 @@ class LogParser(Parser):
 
         i = 1
         if info["algorithm"] == "Evolution":
-            st_args = info_data[i].split(" ", 3)
+            st_args = info_data[i].split(" ", 2)
             info["strategy"] = {
                 "type": st_args[1],
                 "param": st_args[2]

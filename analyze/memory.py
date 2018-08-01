@@ -5,7 +5,7 @@ import pickle
 class Memory:
     def __init__(self):
         self.buf_size = 65536
-        self.dir = "./memory/"
+        self.dir = "./analyze/memory/"
 
     def get_hash(self, path):
         md5 = hashlib.md5()

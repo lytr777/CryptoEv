@@ -51,4 +51,5 @@ class DispersionAnalyzer:
         for key in keys:
             _, lines = k_tuples[key]
             values.append(self.f.compute(lines))
+
         return values
