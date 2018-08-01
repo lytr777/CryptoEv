@@ -1,7 +1,10 @@
 import argparse
 from mpi4py import MPI
+
+from configuration import configurator
 from util.debugger import Debugger
-from util import constant, conclusion, configurator
+from util import constant, conclusion
+
 
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('id', type=str, help='suffix for log file')
