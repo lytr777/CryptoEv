@@ -1,8 +1,7 @@
-import codecs
 import json
 
-from constant import base_conf_path
-from options import matcher, algorithms
+from configuration_map import get_path
+from util.options import matcher, algorithms
 
 
 def __get_option(key):
@@ -24,10 +23,13 @@ def __substitution(parameters, value_hash):
 
 
 def load_base(value_hash):
-    return load(base_conf_path, value_hash)
+    return load(get_path("base"), value_hash)
 
 
 def load(path, value_hash, mpi=False):
+    if not path.endswith(".json"):
+        path = get_path(path)
+
     data = json.load(open(path, 'r'))
 
     meta_name = data["algorithm"]
@@ -45,4 +47,5 @@ def load(path, value_hash, mpi=False):
     mf_parameters = data["mf_parameters"]
     __substitution(mf_parameters, value_hash)
 
+    print "Load configuration: %s" % path
     return algorithm, meta_parameters, mf_parameters

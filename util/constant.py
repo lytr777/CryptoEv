@@ -21,15 +21,6 @@ solver_paths = {
     "cryptominisat": "./cryptominisat/build/cryptominisat5"
 }
 
-alias = {
-    "alias_path": "./alias/bin/alias_ls",
-    "settings_path": "./alias_tools/settings.json",
-    "gad_script": "./alias_tools/bin/gad.py",
-    "ibs_script": "./alias_tools/bin/ibs.py"
-}
-
 log_path = './out/new_log_'
 locals_log_path = './out/new_locals_log_'
 true_log_path = './out/true_log'
-
-base_conf_path = 'configurations/base.json'

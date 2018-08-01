@@ -8,6 +8,9 @@ class KeyGenerator:
     secret_key_start = None
     secret_key_len = None
 
+    name = None
+    tag = None
+
     short_statuses = {
         "SATISFIABLE": "SAT",
         "UNSATISFIABLE": "UNSAT",
@@ -26,6 +29,9 @@ class KeyGenerator:
         self.status = None
         self.flags = []
         self.solution = []
+
+    def __str__(self):
+        return self.name
 
     def set_key_stream(self, key):
         if self.key_stream_len != len(key):

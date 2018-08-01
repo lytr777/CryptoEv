@@ -1,6 +1,7 @@
 {
   "algorithm": "ev",
   "ev_parameters": {
+    "predictive_function": "ibs"
   },
   "mf_parameters": {
     "crypto_algorithm": "a5_1",
