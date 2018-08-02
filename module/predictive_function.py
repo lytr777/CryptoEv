@@ -132,7 +132,7 @@ class PredictiveFunction:
         }
         cases_log = "times:\n"
         for info in cases:
-            cases_log += "%s %f\n" % info
+            cases_log += "%s %s\n" % (info[0], info[1])
             self.__update_time_statistic(time_stat, info[0])
 
         return time_stat, cases_log

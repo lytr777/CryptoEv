@@ -1,3 +1,5 @@
+import numpy as np
+
 from key_generators.key_generator import KeyGenerator
 
 sat_statuses = ["SATISFIABLE", "SAT"]
@@ -95,6 +97,8 @@ def __check_unsat(status):
 def __get_status(case):
     if isinstance(case, tuple):
         return case[0]
+    elif isinstance(case, np.ndarray) or isinstance(case, list):
+        return case[0]
     elif isinstance(case, KeyGenerator):
         return case.status
 
@@ -110,6 +114,8 @@ def __change_status(case):
 def __get_time(case):
     if isinstance(case, tuple):
         return case[1]
+    elif isinstance(case, np.ndarray) or isinstance(case, list):
+        return float(case[1])
     elif isinstance(case, KeyGenerator):
         return case.time
 

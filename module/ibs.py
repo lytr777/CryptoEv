@@ -95,6 +95,7 @@ class IBSFunction(PredictiveFunction):
     def __init__(self, parameters):
         PredictiveFunction.__init__(self, parameters)
         self.time_limit = parameters["time_limit"]
+        self.mpi_call = parameters["mpi_call"] if ("mpi_call" in parameters) else False
 
     def compute(self, mask, cases=()):
         cases = list(cases)
@@ -112,6 +113,9 @@ class IBSFunction(PredictiveFunction):
         cases.extend(solved)
         self.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
         self.debugger.write(1, 0, "spent time: %f" % time)
+
+        if self.mpi_call:
+            return None, "", np.array(cases)
 
         return self.handle_cases(mask, cases, time)
 
