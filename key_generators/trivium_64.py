@@ -1,9 +1,9 @@
 import numpy as np
 
-from key_generator import KeyGenerator
+from stream_cipher import StreamCipher
 
 
-class Trivium_64(KeyGenerator):
+class Trivium_64(StreamCipher):
     key_stream_start = 398
     key_stream_len = 75
 
@@ -14,10 +14,10 @@ class Trivium_64(KeyGenerator):
     tag = "trivium_64"
 
     def __init__(self, cnf):
-        KeyGenerator.__init__(self, cnf)
+        StreamCipher.__init__(self, cnf)
 
     def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        KeyGenerator.set_secret_key(self, key, mask)
+        StreamCipher.set_secret_key(self, key, mask)
 
     def __copy__(self):
         copy_tr_64 = Trivium_64(self.cnf)

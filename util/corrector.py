@@ -106,6 +106,10 @@ def __get_status(case):
 def __change_status(case):
     if isinstance(case, tuple):
         return dis_statuses[1], case[1]
+    elif isinstance(case, list):
+        return [dis_statuses[1], case[1]]
+    elif isinstance(case, np.ndarray):
+        raise Exception("NdArray can't be changed")
     elif isinstance(case, KeyGenerator):
         case.status = dis_statuses[0]
         return case

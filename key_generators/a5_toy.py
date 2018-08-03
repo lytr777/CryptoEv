@@ -1,9 +1,9 @@
 import numpy as np
 
-from key_generator import KeyGenerator
+from stream_cipher import StreamCipher
 
 
-class A5_toy(KeyGenerator):
+class A5_toy(StreamCipher):
     key_stream_start = 3931
     key_stream_len = 80
 
@@ -14,10 +14,10 @@ class A5_toy(KeyGenerator):
     tag = "a5_1 48"
 
     def __init__(self, cnf):
-        KeyGenerator.__init__(self, cnf)
+        StreamCipher.__init__(self, cnf)
 
     def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        KeyGenerator.set_secret_key(self, key, mask)
+        StreamCipher.set_secret_key(self, key, mask)
 
     def __copy__(self):
         copy_a5_toy = A5_toy(self.cnf)

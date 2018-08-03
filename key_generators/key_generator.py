@@ -58,17 +58,17 @@ class KeyGenerator:
             if self.secret_mask[i]:
                 self.substitution.substitute(self.secret_key_start + i, not self.secret_key[i])
 
+    def get_cnf(self):
+        if self.key_stream is not None:
+            KeyGenerator.__substitute_key_stream(self)
+        if self.secret_key is not None:
+            KeyGenerator.__substitute_secret_key(self)
+
+        return self.cnf.to_str(self.substitution)
+
     def write_to(self, file_path):
         with open(file_path, 'w') as f:
             f.write(self.get_cnf())
-
-    def get_cnf(self):
-        if self.key_stream is not None:
-            self.__substitute_key_stream()
-        if self.secret_key is not None:
-            self.__substitute_secret_key()
-
-        return self.cnf.to_str(self.substitution)
 
     def mark_solved(self, report):
         self.time = report.time

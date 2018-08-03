@@ -1,9 +1,9 @@
 import numpy as np
 
-from key_generator import KeyGenerator
+from stream_cipher import StreamCipher
 
 
-class Bivium(KeyGenerator):
+class Bivium(StreamCipher):
     key_stream_start = 443
     key_stream_len = 200
 
@@ -14,10 +14,10 @@ class Bivium(KeyGenerator):
     tag = "bivium"
 
     def __init__(self, cnf):
-        KeyGenerator.__init__(self, cnf)
+        StreamCipher.__init__(self, cnf)
 
     def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        KeyGenerator.set_secret_key(self, key, mask)
+        StreamCipher.set_secret_key(self, key, mask)
 
     def __copy__(self):
         copy_bivium = Bivium(self.cnf)

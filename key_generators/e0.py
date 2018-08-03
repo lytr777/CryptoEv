@@ -1,9 +1,9 @@
 import numpy as np
 
-from key_generator import KeyGenerator
+from stream_cipher import StreamCipher
 
 
-class E0(KeyGenerator):
+class E0(StreamCipher):
     key_stream_start = 1785
     key_stream_len = 128
 
@@ -14,10 +14,10 @@ class E0(KeyGenerator):
     tag = "e0"
 
     def __init__(self, cnf):
-        KeyGenerator.__init__(self, cnf)
+        StreamCipher.__init__(self, cnf)
 
     def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        KeyGenerator.set_secret_key(self, key, mask)
+        StreamCipher.set_secret_key(self, key, mask)
 
     def __copy__(self):
         copy_e0 = E0(self.cnf)
