@@ -28,4 +28,8 @@ open(meta_p["log_file"], 'w+').close()
 
 alg = alg(meta_p)
 locals_list = alg.start(mf_p)
-conclusion.add_conclusion(meta_p["log_file"], alg.comparator, locals_list=locals_list)
+conclusion.add_conclusion({
+    "path": meta_p["log_file"],
+    "comparator": alg.comparator,
+    "locals_list": locals_list
+})

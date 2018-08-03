@@ -2,9 +2,15 @@ from parse_utils.log_parser import LogParser
 from util.formatter import format_array
 
 
-def add_conclusion(path, comparator, locals_list=None):
-    if locals_list is None:
-        parser = LogParser()
+def add_conclusion(parameters):
+    comparator = parameters["comparator"]
+    path = parameters["path"]
+
+    if "locals_list" in parameters:
+        locals_list = parameters["locals_list"]
+    elif "function_type" in parameters:
+        function_type = parameters["function_type"]
+        parser = LogParser(function_type)
         info, its = parser.parse_for_path(path)
 
         if len(its) == 0:
@@ -26,6 +32,8 @@ def add_conclusion(path, comparator, locals_list=None):
 
         if len(locals_list) == 0:
             locals_list.append(previous)
+    else:
+        raise Exception("add locals_list or function_type in parameters map")
 
     conclusion = "------------------------------------------------------\n"
     conclusion += "------------------------------------------------------\n"

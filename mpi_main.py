@@ -41,4 +41,8 @@ if rank == 0:
 alg = alg(meta_p, comm)
 locals_list = alg.start(mf_p)
 if rank == 0:
-    conclusion.add_conclusion(meta_p["log_file"], alg.comparator, locals_list=locals_list)
+    conclusion.add_conclusion({
+        "path": meta_p["log_file"],
+        "comparator": alg.comparator,
+        "locals_list": locals_list
+    })
