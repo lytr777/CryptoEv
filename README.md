@@ -1,7 +1,7 @@
 # CryptoEv
 
 ## Подготовка
-Установить numpy
+Установка пакетов
 ```
 pip install numpy
 pip install mpi4py (для MPI)
@@ -22,9 +22,9 @@ python2.7 main.py id [-cp file/path] [-v 0] [-d file/path]
 * id – суффикс для файлов логов (будет создан файл по следующему пути: ./out/new_log_%id)
 
 Дополнительные аргументы:
-* -cp file/path – путь к файлу конфигурации (по умолчанию ./configurations/base.json)
+* -cp tag/path – тег или путь к файлу конфигурации (по умолчанию base)
 * -v 0 - [0-3] подробность логов отладки (verbosity)
-* -d file/path – путь к файлу логов для отладки (по умолчанию пишутся в stdout)
+* -d path – путь к файлу логов для отладки (по умолчанию пишутся в stdout)
 
 ## MPI Запуск
 ```
@@ -82,7 +82,13 @@ mpiexec -n node_count python2.7 mpi_main.py id [-cp file/path]
   - *max* – выбор максимального
 
 ## Пример
-```
-python2.7 main.py trivium_64 -cp configurations/trivium_64.json
-```
 Запуск алгоритма для поиска **backdoor** множества для шифра Trivium 64
+```
+python2.7 main.py trivium_64 -cp trivium_64
+```
+Необходимая конфигурация будет найдена по тегу, которому сопоставлен путь к соответсвующему файлу (./configuration/examples/trivium_64.json)
+Также можно указать полный путь
+```
+python2.7 main.py trivium_64 -cp ./configuration/examples/trivium_64.json
+```
+Список тегов находится в файле ./configuration/configuration_map.py

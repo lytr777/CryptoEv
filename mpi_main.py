@@ -8,10 +8,9 @@ from util import constant, conclusion
 
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('id', type=str, help='suffix for log file')
-parser.add_argument('-cp', metavar='file/path', type=str, default="base",
-                    help='path to configuration file')
+parser.add_argument('-cp', metavar='tag/path', type=str, default="base", help='tag or path to configuration file')
 parser.add_argument('-v', metavar='0', type=int, default=0, help='[0-3] verbosity level')
-parser.add_argument('-d', metavar='file/path', type=str, help='path to debug file')
+parser.add_argument('-d', metavar='path', type=str, help='path to debug file')
 
 args = parser.parse_args()
 alg, meta_p, mf_p = configurator.load(args.cp, {}, True)
