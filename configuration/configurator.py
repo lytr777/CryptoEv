@@ -1,7 +1,7 @@
 import json
 
 from configuration_map import get_path
-from util.options import matcher, algorithms
+from options import matcher, algorithms
 
 
 def __get_option(key):
