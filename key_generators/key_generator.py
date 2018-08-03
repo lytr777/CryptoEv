@@ -35,16 +35,16 @@ class KeyGenerator:
 
     def set_key_stream(self, key):
         if self.key_stream_len != len(key):
-            raise Exception("Key stream must contain %d bits" % self.key_stream_len)
+            raise Exception("Key stream must contain %d bits instead %d" % (self.key_stream_len, len(key)))
 
         self.key_stream = key
 
     def set_secret_key(self, key, mask):
         if self.secret_key_len != len(key):
-            raise Exception("Secret key must contain %d bits" % self.secret_key_len)
+            raise Exception("Secret key must contain %d bits instead %d" % (self.secret_key_len, len(key)))
 
         if len(mask) != len(key):
-            raise Exception("Secret mask must contain %d bits" % self.secret_key_len)
+            raise Exception("Secret mask must contain %d bits instead %d" % (self.secret_key_len, len(mask)))
 
         self.secret_key = key
         self.secret_mask = mask

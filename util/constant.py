@@ -25,4 +25,4 @@ solver_paths = {
 
 log_path = './out/new_log_'
 locals_log_path = './out/new_locals_log_'
-true_log_path = './out/true_log'
+true_log_path = './out/true_log_'

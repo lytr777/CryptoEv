@@ -11,7 +11,7 @@ class BlockCipher(KeyGenerator):
 
     def set_public_key(self, key):
         if self.public_key_len != len(key):
-            raise Exception("Public key must contain %d bits" % self.public_key_len)
+            raise Exception("Public key must contain %d bits instead %d" % (self.public_key_len, len(key)))
 
         self.public_key = key
 
