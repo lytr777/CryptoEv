@@ -5,6 +5,7 @@ from time import time as now
 
 import signal
 
+from key_generators.block_cipher import BlockCipher
 from model.solver_report import SolverReport
 from predictive_function import TaskGenerator
 from util import caser, formatter
@@ -78,6 +79,8 @@ class PoolIBSTaskGenerator(TaskGenerator):
             "secret_key": init_case.get_solution_secret_key(),
             "key_stream": init_case.get_solution_key_stream()
         }
+        if isinstance(init_case, BlockCipher):
+            parameters["public_key"] = init_case.get_solution_public_key()
 
         args = self.solver_wrapper.get_arguments(tl=self.tl)
         case = caser.create_case(self.base_cnf, parameters, self.algorithm)

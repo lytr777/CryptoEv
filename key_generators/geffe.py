@@ -18,7 +18,6 @@ class Geffe(StreamCipher):
 
     def set_secret_key(self, key, mask=np.ones(secret_key_len)):
         StreamCipher.set_secret_key(self, key, mask)
-        self.__substitute_secret_key()
 
     def __copy__(self):
         copy_geffe = Geffe(self.cnf)

@@ -85,14 +85,14 @@ class KeyGenerator:
     def get_solution_secret_key(self):
         start = self.secret_key_start - 1
         end = start + self.secret_key_len
-        return self.__get_key(start, end)
+        return self.get_key(start, end)
 
     def get_solution_key_stream(self):
         start = self.key_stream_start - 1
         end = start + self.key_stream_len
-        return self.__get_key(start, end)
+        return self.get_key(start, end)
 
-    def __get_key(self, start, end):
+    def get_key(self, start, end):
         if len(self.solution) == 0:
             raise Exception("Solution is not specified")
 

@@ -28,4 +28,4 @@ class BlockCipher(KeyGenerator):
     def get_solution_public_key(self):
         start = self.public_key_start - 1
         end = start + self.public_key_len
-        return self.__get_key(start, end)
+        return self.get_key(start, end)

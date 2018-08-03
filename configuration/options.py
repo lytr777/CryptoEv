@@ -11,9 +11,12 @@ from module.pool_ibs import PoolIBSFunction
 
 from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
+from key_generators.bivium import Bivium
 from key_generators.trivium_64 import Trivium_64
 from key_generators.trivium_96 import Trivium_96
-from key_generators.bivium import Bivium
+from key_generators.present_5_2kp import Present_5_2KP
+from key_generators.present_6_1kp import Present_6_1KP
+from key_generators.present_6_2kp import Present_6_2KP
 from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
 
@@ -89,10 +92,16 @@ def evolution_strategy(args):
 # mf
 crypto_algorithms = {
     "a5_1": (A5_1, constant.cnfs["a5_1"]),
+    "e0": (E0, constant.cnfs["e0"]),
+    # Trivium
     "bivium": (Bivium, constant.cnfs["bivium"]),
     "trivium_64": (Trivium_64, constant.cnfs["trivium_64"]),
     "trivium_96": (Trivium_96, constant.cnfs["trivium_96"]),
-    "e0": (E0, constant.cnfs["e0"]),
+    # Present
+    "present_5_2kp": (Present_5_2KP, constant.cnfs["present_5_2kp"]),
+    "present_6_1kp": (Present_6_1KP, constant.cnfs["present_6_1kp"]),
+    "present_6_2kp": (Present_6_2KP, constant.cnfs["present_6_2kp"]),
+    # Other
     "volfram": (Volfram, constant.cnfs["volfram"]),
     "geffe": (Geffe, constant.cnfs["geffe"])
 }

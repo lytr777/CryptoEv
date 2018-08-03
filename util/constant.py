@@ -3,11 +3,13 @@ out_suffix = ".out"
 
 cnfs = {
     "a5_1": "./templates/A5_1.cnf",
-    "a5_toy": "./templates/A5_toy.cnf",
-    "trivium_64": "./templates/Trivium_64.cnf",
-    "trivium_96":  "./templates/Trivium_96.cnf",
-    "bivium": "./templates/Bivium.cnf",
     "e0": "./templates/E0.cnf",
+    "trivium_64": "./templates/Trivium_64.cnf",
+    "trivium_96": "./templates/Trivium_96.cnf",
+    "bivium": "./templates/Bivium.cnf",
+    "present_5_2kp": "./templates/Present_5_2KP.cnf",
+    "present_6_1kp": "./templates/Present_6_1KP.cnf",
+    "present_6_2kp": "./templates/Present_6_2KP.cnf",
     "volfram": "./templates/Volfram.cnf",
     "geffe": "./templates/Geffe.cnf"
 }

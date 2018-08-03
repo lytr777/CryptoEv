@@ -2,6 +2,7 @@ import subprocess
 import threading
 import numpy as np
 
+from key_generators.block_cipher import BlockCipher
 from module.predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator, SubprocessHelper
 from util import caser, generator, formatter
 
@@ -21,6 +22,8 @@ class GADTaskGenerator(TaskGenerator):
             "secret_key": generator.generate_key(self.algorithm.secret_key_len),
             "key_stream": self.init_case.get_solution_key_stream(),
         }
+        if isinstance(self.init_case, BlockCipher):
+            parameters["public_key"] = self.init_case.get_solution_public_key()
 
         args = self.solver_wrapper.get_arguments()
         case = caser.create_case(self.base_cnf, parameters, self.algorithm)

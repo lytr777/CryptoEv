@@ -3,6 +3,7 @@ import subprocess
 import threading
 from time import sleep, time as now
 
+from key_generators.block_cipher import BlockCipher
 from model.solver_report import SolverReport
 from util import caser, formatter
 
@@ -22,9 +23,13 @@ class SubprocessHelper:
 
         for i in range(self.tries):
             if report is None or report.check():
-                self.debugger.write(3, 2, "%s start solving %s case with secret key: %s" % (
+                start_solving_str = "%s start solving %s case with secret key: %s" % (
                     thread_name, name, formatter.format_array(case.secret_key)
-                ))
+                )
+                if isinstance(case, BlockCipher):
+                    start_solving_str += "\n%s and public key: %s" % (thread_name, formatter.format_array(case.public_key))
+                self.debugger.write(3, 2, start_solving_str)
+
                 init_sp = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output, err = init_sp.communicate(case.get_cnf())
                 if len(err) != 0 and not err.startswith("timelimit"):
