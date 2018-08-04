@@ -4,15 +4,15 @@
     "predictive_function": "ibs"
   },
   "mf_parameters": {
-    "crypto_algorithm": "a5_1",
+    "crypto_algorithm": "present_5_2kp",
     "threads": 32,
-    "N": 50000,
+    "N": 1000,
     "solver_wrapper": {
       "args_description": "use timelimit util?",
       "name": "lingeling",
       "args": [false]
     },
-    "time_limit": 5,
+    "time_limit": 100,
     "corrector": "mass",
     "decomposition": {
       "args_description": "decomposition power, break time",
