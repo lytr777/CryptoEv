@@ -6,10 +6,6 @@ from parse_utils.cnf_parser import CnfParser
 from util import formatter, constant
 from util.debugger import Debugger
 
-cases = [
-    formatter.format_to_array("1110111111010000100011110001111111011000100101001110010000100000(32)")
-]
-
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('id', type=str, help='suffix for log file')
 parser.add_argument('backdoor', help='load backdoor from specified file')
@@ -41,8 +37,6 @@ with open(true_log_file, 'w+') as f:
     f.write("-- Key Generator: %s\n" % mf_p["crypto_algorithm"][0](''))
     f.write("-- N = %d\n" % mf_p["N"])
     f.write("------------------------------------------------------\n")
-
-with open(true_log_file, 'a') as f:
     f.write("start with mask: %s\n" % formatter.format_array(case))
 
 mf = m_function(mf_p)
