@@ -2,31 +2,19 @@ import subprocess
 import threading
 import numpy as np
 
-from key_generators.block_cipher import BlockCipher
 from module.predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator, SubprocessHelper
-from util import caser, generator, formatter
+from util import formatter
 
 
 class GADTaskGenerator(TaskGenerator):
     def __init__(self, args):
         TaskGenerator.__init__(self, args)
         self.init_case = args["init_case"]
-        self.mask = args["mask"]
 
     def get(self, case=None):
-        if self.init_case.status is None:
-            raise Exception("init case didn't solve")
-
-        parameters = {
-            "secret_mask": self.mask,
-            "secret_key": generator.generate_key(self.algorithm.secret_key_len),
-            "key_stream": self.init_case.get_solution_key_stream(),
-        }
-        if isinstance(self.init_case, BlockCipher):
-            parameters["public_key"] = self.init_case.get_solution_public_key()
-
         args = self.solver_wrapper.get_arguments()
-        case = caser.create_case(self.base_cnf, parameters, self.algorithm)
+        case = self.cg.generate(self.init_case.solution)
+
         return args, case
 
 
@@ -81,20 +69,25 @@ class GADFunction(PredictiveFunction):
         init_sp = subprocess.Popen(init_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = init_sp.communicate(init_case.get_cnf())[0]
         init_case.mark_solved(init_task_generator.get_report(output))
+        init_case.check_solution()
 
         return init_case
 
-    def compute(self, mask, cases=()):
+    def compute(self, cg, cases=()):
         init_case = self.solve_init()
         log = self.__get_info(init_case)
 
         cases = list(cases)
-        self.task_generator_args["mask"] = mask
+        self.task_generator_args["case_generator"] = cg
         self.task_generator_args["init_case"] = init_case
         self.worker_args["task_generator"] = GADTaskGenerator(self.task_generator_args)
 
         solved, time = PredictiveFunction.solve(self, GADWorker)
         cases.extend(solved)
+
+        if self.mpi_call:
+            return None, "", np.array(cases)
+
         time_stat, cases_log = PredictiveFunction.get_time_stat(self, cases)
         log += cases_log
         log += "spent time: %f" % time
@@ -103,7 +96,7 @@ class GADFunction(PredictiveFunction):
         for _, time in cases:
             times_sum += time
 
-        partially_value = (2 ** np.count_nonzero(mask)) * times_sum
+        partially_value = (2 ** len(cg.backdoor)) * times_sum
 
         # additional decomposition?
         #
@@ -113,7 +106,7 @@ class GADFunction(PredictiveFunction):
 
     @staticmethod
     def __get_info(case):
-        s = "init key stream: %s\n" % formatter.format_array(case.get_solution_key_stream())
-        s += "init secret key: %s\n" % formatter.format_array(case.get_solution_secret_key())
+        s = "init secret key: %s\n" % formatter.format_array(case.get_solution_secret_key())
+        s += "init key stream: %s\n" % formatter.format_array(case.get_solution_key_stream())
         s += "init info: (%s, %f)\n" % (case.get_status(short=True), case.time)
         return s

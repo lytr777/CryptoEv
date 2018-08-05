@@ -1,19 +1,4 @@
-import numpy as np
 from copy import copy
-
-
-def generate_key(n):
-    return np.random.randint(2, size=n)
-
-
-def generate_mask(n, k):
-    mask = np.zeros(n, dtype=np.int)
-
-    choice = np.random.choice(n, k, replace=False)
-    for e in choice:
-        mask[e] = 1
-
-    return mask
 
 
 def generate_decomposition_key_set(base_key, indices):

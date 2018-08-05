@@ -4,7 +4,7 @@
     "predictive_function": "ibs"
   },
   "mf_parameters": {
-    "crypto_algorithm": "present_5_2kp",
+    "key_generator": "present_5_2kp",
     "threads": 32,
     "N": 1000,
     "solver_wrapper": {

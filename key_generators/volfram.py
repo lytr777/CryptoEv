@@ -16,15 +16,8 @@ class Volfram(StreamCipher):
     def __init__(self, cnf):
         StreamCipher.__init__(self, cnf)
 
-    def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        StreamCipher.set_secret_key(self, key, mask)
-
     def __copy__(self):
         copy_volfram = Volfram(self.cnf)
-
-        copy_volfram.substitution = self.substitution
-        copy_volfram.key_stream = self.key_stream
-        copy_volfram.secret_key = self.secret_key
-        copy_volfram.secret_mask = self.secret_mask
+        copy_volfram.substitution = self.substitutions
 
         return copy_volfram

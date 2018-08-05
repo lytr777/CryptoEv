@@ -43,7 +43,7 @@ class PlingelingWrapper(Wrapper):
 
         return launching_args
 
-    def parse_out(self, output, algorithm):
+    def parse_out(self, output):
         output = output.split('\n')
         solution = ""
         status = ""

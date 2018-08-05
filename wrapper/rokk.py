@@ -37,7 +37,7 @@ class RokkWrapper(Wrapper):
 
         return launching_args
 
-    def parse_out(self, output, algorithm):
+    def parse_out(self, output):
         data = output.split('\n')
 
         split_time = data[0].split(' ')

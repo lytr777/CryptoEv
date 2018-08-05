@@ -19,16 +19,8 @@ class Present_5_2KP(BlockCipher):
     def __init__(self, cnf):
         BlockCipher.__init__(self, cnf)
 
-    def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        BlockCipher.set_secret_key(self, key, mask)
-
     def __copy__(self):
         copy_present = Present_5_2KP(self.cnf)
-
-        copy_present.substitution = self.substitution
-        copy_present.key_stream = self.key_stream
-        copy_present.secret_key = self.secret_key
-        copy_present.public_key = self.public_key
-        copy_present.secret_mask = self.secret_mask
+        copy_present.substitution = self.substitutions
 
         return copy_present

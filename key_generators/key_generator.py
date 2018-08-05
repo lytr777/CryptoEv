@@ -19,11 +19,7 @@ class KeyGenerator:
 
     def __init__(self, cnf):
         self.cnf = cnf
-        self.substitution = CnfSubstitution()
-
-        self.key_stream = None
-        self.secret_key = None
-        self.secret_mask = None
+        self.substitutions = []
 
         self.time = None
         self.status = None
@@ -33,38 +29,12 @@ class KeyGenerator:
     def __str__(self):
         return self.name
 
-    def set_key_stream(self, key):
-        if self.key_stream_len != len(key):
-            raise Exception("Key stream must contain %d bits instead %d" % (self.key_stream_len, len(key)))
-
-        self.key_stream = key
-
-    def set_secret_key(self, key, mask):
-        if self.secret_key_len != len(key):
-            raise Exception("Secret key must contain %d bits instead %d" % (self.secret_key_len, len(key)))
-
-        if len(mask) != len(key):
-            raise Exception("Secret mask must contain %d bits instead %d" % (self.secret_key_len, len(mask)))
-
-        self.secret_key = key
-        self.secret_mask = mask
-
-    def __substitute_key_stream(self):
-        for i in range(len(self.key_stream)):
-            self.substitution.substitute(self.key_stream_start + i, not self.key_stream[i])
-
-    def __substitute_secret_key(self):
-        for i in range(len(self.secret_key)):
-            if self.secret_mask[i]:
-                self.substitution.substitute(self.secret_key_start + i, not self.secret_key[i])
+    def add_substitution(self, name, substitution):
+        self.substitutions.append(substitution)
+        # print "add substitution for %s" % name
 
     def get_cnf(self):
-        if self.key_stream is not None:
-            KeyGenerator.__substitute_key_stream(self)
-        if self.secret_key is not None:
-            KeyGenerator.__substitute_secret_key(self)
-
-        return self.cnf.to_str(self.substitution)
+        return self.cnf.to_str(self.substitutions)
 
     def write_to(self, file_path):
         with open(file_path, 'w') as f:
@@ -76,23 +46,7 @@ class KeyGenerator:
         self.flags = report.flags
         self.solution = report.solution
 
-    def get_status(self, short=False):
-        if short:
-            return self.short_statuses[self.status]
-        else:
-            return self.status
-
-    def get_solution_secret_key(self):
-        start = self.secret_key_start - 1
-        end = start + self.secret_key_len
-        return self.get_key(start, end)
-
-    def get_solution_key_stream(self):
-        start = self.key_stream_start - 1
-        end = start + self.key_stream_len
-        return self.get_key(start, end)
-
-    def get_key(self, start, end):
+    def check_solution(self):
         if len(self.solution) == 0:
             raise Exception("Solution is not specified")
 
@@ -100,4 +54,5 @@ class KeyGenerator:
         if len(self.solution) != true_solution_len:
             raise Exception("Solution not corrected")
 
-        return self.solution[start:end]
+    def get_status(self, short=False):
+        return self.short_statuses[self.status] if short else self.status

@@ -16,15 +16,8 @@ class A5_1(StreamCipher):
     def __init__(self, cnf):
         StreamCipher.__init__(self, cnf)
 
-    def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        StreamCipher.set_secret_key(self, key, mask)
-
     def __copy__(self):
         copy_a5_1 = A5_1(self.cnf)
-
-        copy_a5_1.substitution = self.substitution
-        copy_a5_1.key_stream = self.key_stream
-        copy_a5_1.secret_key = self.secret_key
-        copy_a5_1.secret_mask = self.secret_mask
+        copy_a5_1.substitution = self.substitutions
 
         return copy_a5_1

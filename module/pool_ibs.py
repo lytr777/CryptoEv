@@ -1,14 +1,11 @@
+import signal
 import subprocess
 import numpy as np
 from multiprocessing import Pool
 from time import time as now
 
-import signal
-
-from key_generators.block_cipher import BlockCipher
 from model.solver_report import SolverReport
 from predictive_function import TaskGenerator
-from util import caser, formatter
 
 
 def solve(task_generator):
@@ -62,35 +59,22 @@ class PoolIBSTaskGenerator(TaskGenerator):
     def __init__(self, args):
         TaskGenerator.__init__(self, args)
         self.tl = args["time_limit"]
-        self.mask = args["mask"]
 
     def get_init(self):
         init_args = self.solver_wrapper.get_arguments(simplifying=False)
-        init_case = caser.create_init_case(self.base_cnf, self.algorithm)
+        init_case = self.cg.generate_init()
 
         return init_args, init_case
 
     def get(self, init_case):
-        if init_case.status is None or init_case.status != "SATISFIABLE":
-            raise Exception("init case not solved")
-
-        parameters = {
-            "secret_mask": self.mask,
-            "secret_key": init_case.get_solution_secret_key(),
-            "key_stream": init_case.get_solution_key_stream()
-        }
-        if isinstance(init_case, BlockCipher):
-            parameters["public_key"] = init_case.get_solution_public_key()
-
         args = self.solver_wrapper.get_arguments(tl=self.tl)
-        case = caser.create_case(self.base_cnf, parameters, self.algorithm)
+        case = self.cg.generate(init_case.solution)
+
         return args, case
 
 
 class PoolIBSFunction:
     def __init__(self, parameters):
-        self.algorithm = parameters["crypto_algorithm"][0]
-        self.base_cnf = parameters["crypto_algorithm"][1]
         self.N = parameters["N"]
         self.solver_wrapper = parameters["solver_wrapper"]
 
@@ -107,19 +91,17 @@ class PoolIBSFunction:
             self.pool.terminate()
             exit(s)
 
-    def compute(self, mask, cases=()):
+    def compute(self, cg, cases=()):
         self.debugger.write(1, 0, "init signal handler")
         signal.signal(signal.SIGINT, self.__signal_handler)
 
         task_generator_args = {
-            "base_cnf": self.base_cnf,
-            "algorithm": self.algorithm,
             "solver_wrapper": self.solver_wrapper,
-            "mask": mask,
+            "case_generator": cg,
             "time_limit": self.time_limit
         }
         cases = list(cases)
-        self.debugger.deferred_write(1, 0, "compute for mask: %s" % formatter.format_array(mask))
+        self.debugger.deferred_write(1, 0, "compute for backdoor: %s" % cg.backdoor)
         self.debugger.deferred_write(1, 0, "set time limit: %s" % self.time_limit)
 
         self.debugger.write(1, 0, "creating task generators")
@@ -141,9 +123,9 @@ class PoolIBSFunction:
         if self.mpi_call:
             return None, "", np.array(cases)
 
-        return self.handle_cases(mask, cases, time)
+        return self.handle_cases(cg, cases, time)
 
-    def handle_cases(self, mask, cases, time):
+    def handle_cases(self, cg, cases, time):
         self.debugger.write(1, 0, "counting time stat...")
         time_stat, log = self.get_time_stat(cases)
         self.debugger.deferred_write(1, 0, "time stat: %s" % time_stat)
@@ -163,9 +145,9 @@ class PoolIBSFunction:
         self.debugger.write(1, 0, "calculating value...")
         xi = float(time_stat["DETERMINATE"]) / float(len(cases))
         if xi != 0:
-            value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
+            value = (2 ** len(cg.backdoor)) * self.time_limit * (3 / xi)
         else:
-            value = (2 ** self.algorithm.secret_key_len) * self.time_limit
+            value = (2 ** cg.algorithm.secret_key_len) * self.time_limit
         self.debugger.write(1, 0, "value: %.7g\n" % value)
 
         log += "%s\n" % time_stat

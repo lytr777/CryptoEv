@@ -7,7 +7,8 @@ class MetaAlgorithm:
     def __init__(self, parameters):
         self.log_file = parameters["log_file"]
         self.locals_log_file = parameters["locals_log_file"]
-        self.s = parameters["s"]
+
+        self.init_backdoor = parameters["init_backdoor"]
         self.comparator = parameters["comparator"]
         self.predictive_function = parameters["predictive_function"]
         self.stop_condition = parameters["stop_condition"]
@@ -21,7 +22,7 @@ class MetaAlgorithm:
             f.write("-- %s\n" % self.name)
             if info is not None:
                 f.write("-- %s\n" % info)
-            f.write("-- Start with s = %d\n" % self.s)
+            f.write("-- Start with backdoor: %s\n" % self.init_backdoor)
             f.write("-- Key Generator: %s\n" % alg_name)
 
     def print_iteration_header(self, it):

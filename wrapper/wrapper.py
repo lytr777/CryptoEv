@@ -27,5 +27,5 @@ class Wrapper:
     def get_timelimit_arguments(self, tl, workers, simplifying):
         raise NotImplementedError
 
-    def parse_out(self, output, algorithm):
+    def parse_out(self, output):
         raise NotImplementedError

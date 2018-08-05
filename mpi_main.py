@@ -2,6 +2,7 @@ import argparse
 from mpi4py import MPI
 
 from configuration import configurator
+from model.variable_set import SecretKey, Backdoor
 from util.debugger import Debugger
 from util import constant, conclusion
 
@@ -11,6 +12,7 @@ parser.add_argument('id', type=str, help='suffix for log file')
 parser.add_argument('-cp', metavar='tag/path', type=str, default="base", help='tag or path to configuration file')
 parser.add_argument('-v', metavar='0', type=int, default=0, help='[0-3] verbosity level')
 parser.add_argument('-d', metavar='path', type=str, help='path to debug file')
+parser.add_argument('-b', '--backdoor', metavar='path', type=str, help='load backdoor from specified file')
 
 args = parser.parse_args()
 alg, meta_p, mf_p = configurator.load(args.cp, {}, True)
@@ -23,6 +25,11 @@ meta_p["locals_log_file"] = constant.locals_log_path + args.id
 
 if args.v > 0 and args.d is None:
     raise Exception("MPI version support debug only with file")
+
+if args.backdoor is None:
+    meta_p["init_backdoor"] = SecretKey(mf_p["key_generator"])
+else:
+    meta_p["init_backdoor"] = Backdoor.load(args.b, mf_p["key_generator"])
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()

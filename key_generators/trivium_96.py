@@ -16,15 +16,8 @@ class Trivium_96(StreamCipher):
     def __init__(self, cnf):
         StreamCipher.__init__(self, cnf)
 
-    def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        StreamCipher.set_secret_key(self, key, mask)
-
     def __copy__(self):
         copy_tr_96 = Trivium_96(self.cnf)
-
-        copy_tr_96.substitution = self.substitution
-        copy_tr_96.key_stream = self.key_stream
-        copy_tr_96.secret_key = self.secret_key
-        copy_tr_96.secret_mask = self.secret_mask
+        copy_tr_96.substitution = self.substitutions
 
         return copy_tr_96

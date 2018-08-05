@@ -16,15 +16,8 @@ class Bivium(StreamCipher):
     def __init__(self, cnf):
         StreamCipher.__init__(self, cnf)
 
-    def set_secret_key(self, key, mask=np.ones(secret_key_len)):
-        StreamCipher.set_secret_key(self, key, mask)
-
     def __copy__(self):
         copy_bivium = Bivium(self.cnf)
-
-        copy_bivium.substitution = self.substitution
-        copy_bivium.key_stream = self.key_stream
-        copy_bivium.secret_key = self.secret_key
-        copy_bivium.secret_mask = self.secret_mask
+        copy_bivium.substitution = self.substitutions
 
         return copy_bivium

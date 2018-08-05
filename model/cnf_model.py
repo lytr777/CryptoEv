@@ -54,11 +54,17 @@ class Cnf:
             self.__update_str()
         return "%s%s" % (header, self.str)
 
-    def to_str(self, substitution):
-        header = "p cnf %d %d\n" % (self.var_count, len(self.clauses) + len(substitution))
+    def to_str(self, substitutions):
+        sub_len, sub_str = 0, ""
+        for substitution in substitutions:
+            sub_len += len(substitution)
+            sub_str += str(substitution)
+
+        header = "p cnf %d %d\n" % (self.var_count, len(self.clauses) + sub_len)
         if self.edited:
             self.__update_str()
-        return "%s%s%s" % (header, self.str, substitution)
+
+        return "%s%s%s" % (header, self.str, sub_str)
 
     def __copy__(self):
         copy_cnf = Cnf()

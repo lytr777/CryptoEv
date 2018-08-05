@@ -27,7 +27,7 @@ from wrapper.treengeling import TreengelingWrapper
 from wrapper.rokk import RokkWrapper
 from wrapper.cryptominisat import CryptoMinisatWrapper
 
-from util import constant, comparator, corrector
+from util import comparator, corrector
 from util.adaptive_selection import AdaptiveFunction
 
 algorithms = {
@@ -41,7 +41,7 @@ comparators = {
     "max_min": comparator.max_min
 }
 
-predictive_function = {
+predictive_functions = {
     "gad": GADFunction,
     "ibs": IBSFunction,
     "pool_ibs": PoolIBSFunction,
@@ -68,7 +68,7 @@ def crossover_function(args):
     }
 
 
-def stop_conditions(args):
+def stop_condition(args):
     if len(args) != 4:
         raise Exception("Count of stop_conditions args must equals 4! [<it>, <mf calls>, <locals>, <mf_value>]")
     return {
@@ -90,20 +90,20 @@ def evolution_strategy(args):
 
 
 # mf
-crypto_algorithms = {
-    "a5_1": (A5_1, constant.cnfs["a5_1"]),
-    "e0": (E0, constant.cnfs["e0"]),
+key_generators = {
+    "a5_1": A5_1,
+    "e0": E0,
     # Trivium
-    "bivium": (Bivium, constant.cnfs["bivium"]),
-    "trivium_64": (Trivium_64, constant.cnfs["trivium_64"]),
-    "trivium_96": (Trivium_96, constant.cnfs["trivium_96"]),
+    "bivium": Bivium,
+    "trivium_64": Trivium_64,
+    "trivium_96": Trivium_96,
     # Present
-    "present_5_2kp": (Present_5_2KP, constant.cnfs["present_5_2kp"]),
-    "present_6_1kp": (Present_6_1KP, constant.cnfs["present_6_1kp"]),
-    "present_6_2kp": (Present_6_2KP, constant.cnfs["present_6_2kp"]),
+    "present_5_2kp": Present_5_2KP,
+    "present_6_1kp": Present_6_1KP,
+    "present_6_2kp": Present_6_2KP,
     # Other
-    "volfram": (Volfram, constant.cnfs["volfram"]),
-    "geffe": (Geffe, constant.cnfs["geffe"])
+    "volfram": Volfram,
+    "geffe": Geffe
 }
 
 
@@ -136,7 +136,7 @@ correctors = {
 }
 
 
-def decompositions(value_hash, args):
+def decomposition(value_hash, args):
     if len(args) != 2:
         raise Exception("Count of decomposition args must equals 2! [<decomposition power>, <break time>]")
     return {
@@ -148,14 +148,14 @@ def decompositions(value_hash, args):
 # matcher
 matcher = {
     "comparator": comparators,
-    "predictive_function": predictive_function,
+    "predictive_function": predictive_functions,
     "mutation_function": mutation_function,
     "crossover_function": crossover_function,
-    "stop_condition": stop_conditions,
+    "stop_condition": stop_condition,
     "evolution_strategy": evolution_strategy,
-    "crypto_algorithm": crypto_algorithms,
+    "key_generator": key_generators,
     "adaptive_N": adaptive_selection,
     "solver_wrapper": solver_wrapper,
     "corrector": correctors,
-    "decomposition": decompositions
+    "decomposition": decomposition
 }

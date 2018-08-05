@@ -1,33 +1,18 @@
-import subprocess
 import threading
 import numpy as np
 
-from key_generators.block_cipher import BlockCipher
-from model.solver_report import SolverReport
 from predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator, SubprocessHelper
-from util import caser, formatter
 
 
 class IBSTaskGenerator(TaskGenerator):
     def __init__(self, args):
         TaskGenerator.__init__(self, args)
         self.tl = args["time_limit"]
-        self.mask = args["mask"]
 
     def get(self, init_case):
-        if init_case.status is None:
-            raise Exception("init case didn't solve")
-
-        parameters = {
-            "secret_mask": self.mask,
-            "secret_key": init_case.get_solution_secret_key(),
-            "key_stream": init_case.get_solution_key_stream()
-        }
-        if isinstance(init_case, BlockCipher):
-            parameters["public_key"] = init_case.get_solution_public_key()
-
         args = self.solver_wrapper.get_arguments(tl=self.tl)
-        case = caser.create_case(self.base_cnf, parameters, self.algorithm)
+        case = self.cg.generate(init_case.solution)
+
         return args, case
 
 
@@ -74,6 +59,7 @@ class IBSWorker(threading.Thread):
             "thread_name": threading.Thread.getName(self)
         })
         init_case.mark_solved(init_report)
+        init_case.check_solution()
 
         # main
         self.debugger.write(3, 2, "%s generate main case" % (threading.Thread.getName(self)))
@@ -98,12 +84,11 @@ class IBSFunction(PredictiveFunction):
     def __init__(self, parameters):
         PredictiveFunction.__init__(self, parameters)
         self.time_limit = parameters["time_limit"]
-        self.mpi_call = parameters["mpi_call"] if ("mpi_call" in parameters) else False
 
-    def compute(self, mask, cases=()):
+    def compute(self, cg, cases=()):
         cases = list(cases)
-        self.task_generator_args["mask"] = mask
-        self.debugger.deferred_write(1, 0, "compute for mask: %s" % formatter.format_array(mask))
+        self.task_generator_args["case_generator"] = cg
+        self.debugger.deferred_write(1, 0, "compute for backdoor: %s" % cg.backdoor)
         self.task_generator_args["time_limit"] = self.time_limit
         self.debugger.deferred_write(1, 0, "set time limit: %s" % self.time_limit)
 
@@ -120,9 +105,9 @@ class IBSFunction(PredictiveFunction):
         if self.mpi_call:
             return None, "", np.array(cases)
 
-        return self.handle_cases(mask, cases, time)
+        return self.handle_cases(cg, cases, time)
 
-    def handle_cases(self, mask, cases, time):
+    def handle_cases(self, cg, cases, time):
         self.debugger.write(1, 0, "counting time stat...")
         time_stat, log = self.get_time_stat(cases)
         self.debugger.deferred_write(1, 0, "time stat: %s" % time_stat)
@@ -142,9 +127,9 @@ class IBSFunction(PredictiveFunction):
         self.debugger.write(1, 0, "calculating value...")
         xi = float(time_stat["DETERMINATE"]) / float(len(cases))
         if xi != 0:
-            value = (2 ** np.count_nonzero(mask)) * self.time_limit * (3 / xi)
+            value = (2 ** len(cg.backdoor)) * self.time_limit * (3 / xi)
         else:
-            value = (2 ** self.algorithm.secret_key_len) * self.time_limit
+            value = (2 ** cg.algorithm.secret_key_len) * self.time_limit
         self.debugger.write(1, 0, "value: %.7g\n" % value)
 
         log += "%s\n" % time_stat

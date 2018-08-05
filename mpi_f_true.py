@@ -4,6 +4,8 @@ from mpi4py import MPI
 from time import time as now
 
 from configuration import configurator
+from model.case_generator import CaseGenerator
+from model.variable_set import Backdoor
 from parse_utils.cnf_parser import CnfParser
 from util import formatter, constant
 from util.debugger import Debugger
@@ -21,15 +23,13 @@ m_function = meta_p["predictive_function"]
 
 true_log_file = constant.true_log_path + args.id
 
-algorithm, cnf_path = mf_p["crypto_algorithm"]
+algorithm = mf_p["key_generator"]
+cnf_path = constant.cnfs[algorithm.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
-mf_p["crypto_algorithm"] = (algorithm, cnf, cnf_path)
+cg = CaseGenerator(algorithm, cnf)
 
-case = np.zeros(algorithm.secret_key_len)
-with open(args.backdoor, 'r') as f:
-    var_list = f.readline().split(' ')
-    for var in var_list:
-        case[int(var) - 1] = 1
+backdoor = Backdoor.load(args.backdoor, algorithm)
+cg.set_backdoor(backdoor)
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -45,10 +45,10 @@ else:
 mf_p["solver_wrapper"].check_installation()
 if rank == 0:
     with open(true_log_file, 'w+') as f:
-        f.write("-- Key Generator: %s\n" % mf_p["crypto_algorithm"][0](''))
+        f.write("-- Key Generator: %s\n" % algorithm(''))
         f.write("-- N = %d\n" % mf_p["N"])
         f.write("------------------------------------------------------\n")
-        f.write("start with mask: %s\n" % formatter.format_array(case))
+        f.write("start with mask: %s\n" % backdoor)
 
 mf_p["mpi_call"] = True
 
@@ -62,19 +62,19 @@ if rank == 0:
     start_work_time = now()
 
     mf = m_function(mf_p)
-    result = mf.compute(case)
+    result = mf.compute(cg)
 
     cases = comm.gather(result[2], root=0)
     cases = np.concatenate(cases)
 
     time = now() - start_work_time
-    final_result = mf.handle_cases(case, cases, time)
+    final_result = mf.handle_cases(cg, cases, time)
     value, mf_log = final_result[0], final_result[1]
 
     with open(true_log_file, 'a') as f:
         f.write(mf_log + "true value: %.7g\n" % value)
 else:
     mf = m_function(mf_p)
-    result = mf.compute(case)
+    result = mf.compute(cg)
 
     comm.gather(result[2], root=0)

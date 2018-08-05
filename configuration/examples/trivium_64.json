@@ -1,7 +1,6 @@
 {
   "algorithm": "ev",
   "ev_parameters": {
-    "s": 64,
     "comparator": "max_min",
     "predictive_function": "pool_ibs",
     "mutation_function": {
@@ -27,7 +26,7 @@
     }
   },
   "mf_parameters": {
-    "crypto_algorithm": "trivium_64",
+    "key_generator": "trivium_64",
     "threads": 32,
     "N": 500,
     "solver_wrapper": {

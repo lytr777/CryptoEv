@@ -5,7 +5,7 @@ from time import sleep, time as now
 
 from key_generators.block_cipher import BlockCipher
 from model.solver_report import SolverReport
-from util import caser, formatter
+from util import formatter
 
 
 class SubprocessHelper:
@@ -23,12 +23,7 @@ class SubprocessHelper:
 
         for i in range(self.tries):
             if report is None or report.check():
-                start_solving_str = "%s start solving %s case with secret key: %s" % (
-                    thread_name, name, formatter.format_array(case.secret_key)
-                )
-                if isinstance(case, BlockCipher):
-                    start_solving_str += "\n%s and public key: %s" % (thread_name, formatter.format_array(case.public_key))
-                self.debugger.write(3, 2, start_solving_str)
+                self.debugger.write(3, 2, "%s start solving %s case" % (thread_name, name))
 
                 init_sp = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output, err = init_sp.communicate(case.get_cnf())
@@ -52,15 +47,14 @@ class SubprocessHelper:
 
 class TaskGenerator:
     def __init__(self, args):
-        self.base_cnf = args["base_cnf"]
-        self.algorithm = args["algorithm"]
         self.solver_wrapper = args["solver_wrapper"]
+        self.cg = args["case_generator"]
 
     def get(self, case):
         raise NotImplementedError
 
     def get_report(self, output):
-        return self.solver_wrapper.parse_out(output, self.algorithm)
+        return self.solver_wrapper.parse_out(output)
 
 
 class InitTaskGenerator(TaskGenerator):
@@ -69,28 +63,23 @@ class InitTaskGenerator(TaskGenerator):
 
     def get(self, case=None):
         init_args = self.solver_wrapper.get_arguments(simplifying=False)
-        init_case = caser.create_init_case(self.base_cnf, self.algorithm)
+        init_case = self.cg.generate_init()
 
         return init_args, init_case
 
 
 class PredictiveFunction:
     def __init__(self, parameters):
-        self.algorithm = parameters["crypto_algorithm"][0]
-        self.base_cnf = parameters["crypto_algorithm"][1]
         self.N = parameters["N"]
         self.solver_wrapper = parameters["solver_wrapper"]
 
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
         self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
         self.debugger = parameters["debugger"] if ("debugger" in parameters) else None
+        self.mpi_call = parameters["mpi_call"] if ("mpi_call" in parameters) else False
 
         self.sleep_time = 2
-        self.task_generator_args = {
-            "base_cnf": self.base_cnf,
-            "algorithm": self.algorithm,
-            "solver_wrapper": self.solver_wrapper
-        }
+        self.task_generator_args = {"solver_wrapper": self.solver_wrapper}
         self.worker_args = {"debugger": self.debugger}
         self.workers = []
 
@@ -99,7 +88,7 @@ class PredictiveFunction:
             worker.terminated.set()
         exit(s)
 
-    def compute(self, mask, cases):
+    def compute(self, cg, cases):
         raise NotImplementedError
 
     def solve(self, worker_constructor):
