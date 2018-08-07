@@ -10,22 +10,21 @@ class Var:
 class Clause:
     def __init__(self):
         self.vars = []
+        self.max_var = -1
 
     def add_var(self, var):
         self.vars.append(var)
+        self.max_var = max(self.max_var, var.number)
         return self
-
-    def get_max_var_number(self):
-        m = 0
-        for v in self.vars:
-            m = max(m, v.number)
-        return m
 
     def __str__(self):
         s = ""
         for v in self.vars:
             s += "%s " % v
         return s + "0"
+
+    def __len__(self):
+        return len(self.vars)
 
 
 class Cnf:
@@ -36,7 +35,7 @@ class Cnf:
         self.str = ""
 
     def add_clause(self, clause):
-        self.var_count = max(self.var_count, clause.get_max_var_number())
+        self.var_count = max(self.var_count, clause.max_var)
         self.clauses.append(clause)
         self.edited = True
         return self
@@ -49,18 +48,21 @@ class Cnf:
         self.edited = False
 
     def __str__(self):
-        header = "p cnf %d %d\n" % (self.var_count, len(self.clauses))
+        header = "p cnf %d %d\n" % (self.var_count, self.__len__())
         if self.edited:
             self.__update_str()
         return "%s%s" % (header, self.str)
 
+    def __len__(self):
+        return len(self.clauses)
+
     def to_str(self, substitutions):
-        sub_len, sub_str = 0, ""
+        length, sub_str = self.__len__(), ""
         for substitution in substitutions:
-            sub_len += len(substitution)
+            length += len(substitution)
             sub_str += str(substitution)
 
-        header = "p cnf %d %d\n" % (self.var_count, len(self.clauses) + sub_len)
+        header = "p cnf %d %d\n" % (self.var_count, length)
         if self.edited:
             self.__update_str()
 

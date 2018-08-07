@@ -1,6 +1,3 @@
-from model.cnf_model import CnfSubstitution
-
-
 class KeyGenerator:
     key_stream_start = None
     key_stream_len = None
@@ -19,7 +16,7 @@ class KeyGenerator:
 
     def __init__(self, cnf):
         self.cnf = cnf
-        self.substitutions = []
+        self.substitutions = {}
 
         self.time = None
         self.status = None
@@ -29,15 +26,17 @@ class KeyGenerator:
     def __str__(self):
         return self.name
 
+    def __len__(self):
+        return self.key_stream_start + self.key_stream_len - 1
+
     def add_substitution(self, name, substitution):
-        self.substitutions.append(substitution)
-        # print "add substitution for %s" % name
+        self.substitutions[name] = substitution
 
     def get_cnf(self):
-        return self.cnf.to_str(self.substitutions)
+        return self.cnf.to_str(self.substitutions.values())
 
     def write_to(self, file_path):
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w+') as f:
             f.write(self.get_cnf())
 
     def mark_solved(self, report):
@@ -50,8 +49,7 @@ class KeyGenerator:
         if len(self.solution) == 0:
             raise Exception("Solution is not specified")
 
-        true_solution_len = self.key_stream_start + self.key_stream_len - 1
-        if len(self.solution) != true_solution_len:
+        if len(self.solution) != self.__len__():
             raise Exception("Solution not corrected")
 
     def get_status(self, short=False):

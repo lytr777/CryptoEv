@@ -7,4 +7,4 @@ def max_min(p1, p2):
     if vs != 0:
         return vs
     else:
-        return cnz(p2[0].value_list) - cnz(p1[0].value_list)
+        return cnz(p2[0]) - cnz(p1[0])

@@ -2,9 +2,7 @@ import numpy as np
 from time import time as now
 
 from algorithm import MetaAlgorithm
-from model.backdoor_list import BackdoorList
 from model.case_generator import CaseGenerator
-from model.variable_set import Backdoor
 from parse_utils.cnf_parser import CnfParser
 from util import constant
 
@@ -26,11 +24,10 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         algorithm = mf_parameters["key_generator"]
         cnf_path = constant.cnfs[algorithm.tag]
         cnf = CnfParser().parse_for_path(cnf_path)
-        cg = CaseGenerator(algorithm, cnf)
-        mf_parameters["mpi_call"] = True
 
-        backdoor = Backdoor(algorithm, self.init_backdoor.vars)
-        cg.set_backdoor(backdoor)
+        rs = np.random.RandomState(43)
+        cg = CaseGenerator(algorithm, cnf, rs, self.backdoor)
+        mf_parameters["mpi_call"] = True
 
         (quotient, remainder) = divmod(mf_parameters["N"], self.size)
         rank_N = quotient + (1 if remainder > 0 else 0)
@@ -44,7 +41,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             stagnation = 0
 
             P = self.__restart()
-            best = (BackdoorList(), max_value, [])
+            best = (self.backdoor.get(), max_value, [])
             locals_list = []
 
             self.print_info(algorithm.name, "%s" % self.strategy)
@@ -53,8 +50,8 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                 self.print_iteration_header(it)
                 P_v = []
                 for p in P:
-                    backdoor.from_list(p)
-                    key = p.get_key()
+                    self.backdoor.set(p)
+                    key = str(self.backdoor)
                     if key in self.value_hash:
                         hashed = True
                         (value, n), mf_log = self.value_hash[key], ""
@@ -63,7 +60,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                         hashed = False
                         start_work_time = now()
 
-                        self.comm.Bcast(p.value_list, root=0)
+                        self.comm.Bcast(p, root=0)
                         mf = self.predictive_function(mf_parameters)
                         result = mf.compute(cg)
 
@@ -87,10 +84,10 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
                 stagnation += 1
                 if stagnation >= self.stagnation_limit:
-                    P = self.__restart()
-                    locals_list.append(best)
+                    locals_list.append((self.backdoor.snapshot(best[0]), best[1]))
                     self.print_local_info(best)
-                    best = (BackdoorList(), max_value, [])
+                    P = self.__restart()
+                    best = (self.backdoor.get(), max_value, [])
                     stagnation = 0
                 else:
                     P_v.sort(cmp=self.comparator)
@@ -100,21 +97,18 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             self.comm.Bcast(np.array([-1] * algorithm.secret_key_len), root=0)
 
             if best[1] != max_value:
-                locals_list.append(best)
+                locals_list.append((self.backdoor.snapshot(best[0]), best[1]))
                 self.print_local_info(best)
 
             return locals_list
         else:
             while True:
-                value_list = np.empty(len(self.init_backdoor), dtype=np.int)
-                self.comm.Bcast(value_list, root=0)
-                if value_list.__contains__(-1):
+                p = np.empty(self.backdoor.length, dtype=np.int)
+                self.comm.Bcast(p, root=0)
+                if p.__contains__(-1):
                     break
 
-                p = backdoor.to_list()
-                p.value_list = value_list
-                backdoor.from_list(p)
-
+                self.backdoor.set(p)
                 mf = self.predictive_function(mf_parameters)
                 result = mf.compute(cg)
 
@@ -122,7 +116,8 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
     def __restart(self):
         P = []
+        self.backdoor.reset()
         for i in range(self.strategy.get_population_size()):
-            P.append(self.init_backdoor.to_list())
+            P.append(self.backdoor.get())
 
         return P

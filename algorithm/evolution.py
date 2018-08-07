@@ -1,7 +1,7 @@
+import numpy as np
+
 from algorithm import MetaAlgorithm
-from model.backdoor_list import BackdoorList
 from model.case_generator import CaseGenerator
-from model.variable_set import Backdoor
 from parse_utils.cnf_parser import CnfParser
 from util import constant
 from copy import copy
@@ -21,10 +21,9 @@ class EvolutionAlgorithm(MetaAlgorithm):
         algorithm = mf_parameters["key_generator"]
         cnf_path = constant.cnfs[algorithm.tag]
         cnf = CnfParser().parse_for_path(cnf_path)
-        cg = CaseGenerator(algorithm, cnf)
+        rs = np.random.RandomState(43)
+        cg = CaseGenerator(algorithm, cnf, rs, self.backdoor)
 
-        backdoor = Backdoor(algorithm, self.init_backdoor.vars)
-        cg.set_backdoor(backdoor)
         max_value = float("inf")
         it = 1
         mf_calls = 0
@@ -38,7 +37,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
             adaptive_selection = None
 
         P = self.__restart()
-        best = (BackdoorList(), max_value, [])
+        best = (self.backdoor.get(), max_value, [])
         locals_list = []
 
         self.print_info(algorithm.name, "%s" % self.strategy)
@@ -47,8 +46,8 @@ class EvolutionAlgorithm(MetaAlgorithm):
             self.print_iteration_header(it)
             P_v = []
             for p in P:
-                backdoor.from_list(p)
-                key = p.get_key()
+                self.backdoor.set(p)
+                key = str(self.backdoor)
                 if key in self.value_hash:
                     hashed = True
                     if key in updated_logs:
@@ -96,10 +95,10 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
             stagnation += 1
             if stagnation >= self.stagnation_limit:
-                P = self.__restart()
-                locals_list.append(best)
+                locals_list.append((self.backdoor.snapshot(best[0]), best[1]))
                 self.print_local_info(best)
-                best = (BackdoorList(), max_value, [])
+                P = self.__restart()
+                best = (self.backdoor.get(), max_value, [])
                 stagnation = 0
             else:
                 P_v.sort(cmp=self.comparator)
@@ -107,14 +106,15 @@ class EvolutionAlgorithm(MetaAlgorithm):
             it += 1
 
         if best[1] != max_value:
-            locals_list.append(best)
+            locals_list.append((self.backdoor.snapshot(best[0]), best[1]))
             self.print_local_info(best)
 
         return locals_list
 
     def __restart(self):
         P = []
+        self.backdoor.reset()
         for i in range(self.strategy.get_population_size()):
-            P.append(self.init_backdoor.to_list())
+            P.append(self.backdoor.get())
 
         return P

@@ -5,9 +5,9 @@ from time import time as now
 
 from configuration import configurator
 from model.case_generator import CaseGenerator
-from model.variable_set import Backdoor
+from model.backdoor import InextensibleBackdoor
 from parse_utils.cnf_parser import CnfParser
-from util import formatter, constant
+from util import constant
 from util.debugger import Debugger
 
 parser = argparse.ArgumentParser(description='CryptoEv')
@@ -26,10 +26,11 @@ true_log_file = constant.true_log_path + args.id
 algorithm = mf_p["key_generator"]
 cnf_path = constant.cnfs[algorithm.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
-cg = CaseGenerator(algorithm, cnf)
 
-backdoor = Backdoor.load(args.backdoor, algorithm)
-cg.set_backdoor(backdoor)
+backdoor = InextensibleBackdoor.load(args.backdoor)
+backdoor.check(algorithm)
+rs = np.random.RandomState()
+cg = CaseGenerator(algorithm, cnf, rs, backdoor)
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()

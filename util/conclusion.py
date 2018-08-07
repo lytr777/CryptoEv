@@ -1,6 +1,4 @@
 from parse_utils.log_parser import LogParser
-from util.formatter import format_array
-
 
 def add_conclusion(parameters):
     comparator = parameters["comparator"]
@@ -45,14 +43,14 @@ def add_conclusion(parameters):
         for local in locals_list:
             if comparator(best, local) > 0:
                 best = local
-            conclusion += "best local: %s with value: %.7g\n" % (format_array(local[0]), local[1])
+            conclusion += "local: %s with value: %.7g\n" % (local[0], local[1])
 
         conclusion += "------------------------------------------------------\n"
         conclusion += "------------------------------------------------------\n"
         conclusion += "------------------------------------------------------\n"
-        conclusion += "best: %s with value: %.7g\n" % (format_array(best[0]), best[1])
+        conclusion += "best: %s with value: %.7g\n" % (best[0], best[1])
     else:
-        conclusion += "best locals not found\n"
+        conclusion += "locals not found\n"
 
     with open(path, 'a') as f:
         f.write(conclusion)

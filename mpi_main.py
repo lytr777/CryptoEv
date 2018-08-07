@@ -2,7 +2,7 @@ import argparse
 from mpi4py import MPI
 
 from configuration import configurator
-from model.variable_set import SecretKey, Backdoor
+from model.backdoor import SecretKey, InextensibleBackdoor
 from util.debugger import Debugger
 from util import constant, conclusion
 
@@ -29,7 +29,8 @@ if args.v > 0 and args.d is None:
 if args.backdoor is None:
     meta_p["init_backdoor"] = SecretKey(mf_p["key_generator"])
 else:
-    meta_p["init_backdoor"] = Backdoor.load(args.b, mf_p["key_generator"])
+    meta_p["init_backdoor"] = InextensibleBackdoor.load(args.backdoor)
+    meta_p["init_backdoor"].check(mf_p["key_generator"])
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()

@@ -1,10 +1,9 @@
-import numpy as np
-
-from variable_set import KeyStream, PublicKey, SecretKey
+from variable_set import KeyStream, PublicKey
+from backdoor import SecretKey
 
 
 class CaseGenerator:
-    def __init__(self, algorithm, cnf, random_state=np.random.RandomState()):
+    def __init__(self, algorithm, cnf, random_state, backdoor):
         self.algorithm = algorithm
         self.cnf = cnf
         self.random_state = random_state
@@ -13,13 +12,7 @@ class CaseGenerator:
         self.key_stream = KeyStream(algorithm)
         self.public_key = PublicKey(algorithm) if hasattr(algorithm, 'public_key_len') else None
 
-        self.backdoor = None
-
-    def set_backdoor(self, backdoor):
         self.backdoor = backdoor
-
-    def reset_backdoor(self):
-        self.backdoor = None
 
     def generate_init(self):
         case = self.algorithm(self.cnf)
@@ -50,5 +43,3 @@ class CaseGenerator:
         case.add_substitution("key_stream", ks_substitution)
 
         return case
-
-print len(())

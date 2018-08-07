@@ -40,4 +40,4 @@ class SolverReport:
         return self.status == "BROKEN"
 
     def __str__(self):
-        return "%s (%f) solution: %s" % (self.status, self.time, formatter.format_array(self.solution))
+        return "%s (%f) with solution: %d" % (self.status, self.time, len(self.solution))
