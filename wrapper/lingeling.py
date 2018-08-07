@@ -1,8 +1,6 @@
 import re
 import warnings
 
-import sys
-
 from model.solver_report import SolverReport
 from wrapper import Wrapper
 
@@ -20,7 +18,7 @@ class LingelingWrapper(Wrapper):
         info = {
             "tag": "lingeling",
             "dir": "lingeling",
-            "script": "./untar_ling.sh"
+            "script": "./untar_lingeling.sh"
         }
         Wrapper.__init__(self, info, tl_util)
         self.time_regexp = re.compile('[\t ]+')
@@ -29,7 +27,7 @@ class LingelingWrapper(Wrapper):
         launching_args = [self.solver_path]
 
         if tl is not None:
-            launching_args.append("-T")
+            launching_args.append("-t")
             launching_args.append(str(tl))
         if workers is not None:
             warnings.warn("Workers not support in lingeling", UserWarning)

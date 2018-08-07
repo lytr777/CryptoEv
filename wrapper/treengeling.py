@@ -18,7 +18,7 @@ class TreengelingWrapper(Wrapper):
         info = {
             "tag": "treengeling",
             "dir": "lingeling",
-            "script": "./untar_ling.sh"
+            "script": "./untar_lingeling.sh"
         }
         Wrapper.__init__(self, info, tl_util)
         self.time_regexp = re.compile('[\t ]+')
