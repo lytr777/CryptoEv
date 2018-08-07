@@ -58,6 +58,8 @@ class GADWorker(threading.Thread):
 
 
 class GADFunction(PredictiveFunction):
+    type = "gad"
+
     def __init__(self, parameters):
         PredictiveFunction.__init__(self, parameters)
         self.decomposition = parameters["decomposition"] if ("decomposition" in parameters) else None

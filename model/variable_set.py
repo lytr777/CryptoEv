@@ -7,7 +7,7 @@ class VariableSet:
     def __init__(self, variables):
         self.vars = sorted(list(set(variables)))
         self.min = self.vars[0]
-        self.max = self.vars[len(self.vars) - 1]
+        self.max = self.vars[-1]
 
         if len(variables) != len(self.vars):
             warnings.warn("Repeating variables in list", Warning)
@@ -45,7 +45,6 @@ class KeyStream(VariableSet):
         st = algorithm.key_stream_start
         end = st + algorithm.key_stream_len
         VariableSet.__init__(self, range(st, end))
-        self.max_len = end - 1
 
 
 class PublicKey(VariableSet):
@@ -56,4 +55,3 @@ class PublicKey(VariableSet):
         st = algorithm.public_key_start
         end = st + algorithm.public_key_len
         VariableSet.__init__(self, range(st, end))
-        self.max_len = end - 1

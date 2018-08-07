@@ -16,7 +16,7 @@ class InextensibleBackdoor(VariableSet):
         ks_end = ks_st + algorithm.key_stream_len - 1
         if hasattr(algorithm, 'public_key_len'):
             pk_st = algorithm.public_key_start
-            pk_end = ks_st + algorithm.public_key_len - 1
+            pk_end = pk_st + algorithm.public_key_len - 1
         else:
             pk_st, pk_end = 0, 0
 

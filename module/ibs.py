@@ -81,6 +81,8 @@ class IBSWorker(threading.Thread):
 
 
 class IBSFunction(PredictiveFunction):
+    type = "ibs"
+
     def __init__(self, parameters):
         PredictiveFunction.__init__(self, parameters)
         self.time_limit = parameters["time_limit"]

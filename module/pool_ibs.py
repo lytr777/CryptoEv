@@ -74,6 +74,8 @@ class PoolIBSTaskGenerator(TaskGenerator):
 
 
 class PoolIBSFunction:
+    type = "ibs"
+
     def __init__(self, parameters):
         self.N = parameters["N"]
         self.solver_wrapper = parameters["solver_wrapper"]

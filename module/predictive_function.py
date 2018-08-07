@@ -3,9 +3,7 @@ import subprocess
 import threading
 from time import sleep, time as now
 
-from key_generators.block_cipher import BlockCipher
 from model.solver_report import SolverReport
-from util import formatter
 
 
 class SubprocessHelper:
@@ -69,6 +67,8 @@ class InitTaskGenerator(TaskGenerator):
 
 
 class PredictiveFunction:
+    type = None
+
     def __init__(self, parameters):
         self.N = parameters["N"]
         self.solver_wrapper = parameters["solver_wrapper"]
