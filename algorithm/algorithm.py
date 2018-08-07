@@ -7,11 +7,11 @@ class MetaAlgorithm:
 
         self.backdoor = parameters["init_backdoor"]
         self.comparator = parameters["comparator"]
-        self.predictive_function = parameters["predictive_function"]
+        self.p_function = parameters["predictive_function"]
         self.stop_condition = parameters["stop_condition"]
         self.value_hash = parameters["value_hash"]
 
-    def start(self, mf_parameters):
+    def start(self, pf_parameters):
         raise NotImplementedError
 
     def print_info(self, alg_name, info=None):
@@ -19,6 +19,7 @@ class MetaAlgorithm:
             f.write("-- %s\n" % self.name)
             if info is not None:
                 f.write("-- %s\n" % info)
+            f.write("-- %s\n" % self.p_function.type)
             f.write("-- Start with backdoor: %s\n" % self.backdoor)
             f.write("-- Key Generator: %s\n" % alg_name)
 
@@ -27,20 +28,20 @@ class MetaAlgorithm:
             f.write("------------------------------------------------------\n")
             f.write("iteration step: %d\n" % it)
 
-    def print_mf_log(self, hashed, key, value, mf_log):
+    def print_pf_log(self, hashed, key, value, pf_log):
         with open(self.log_file, 'a') as f:
             f.write("------------------------------------------------------\n")
             if hashed:
-                if mf_log == "":
+                if pf_log == "":
                     f.write("backdoor: %s has been saved in hash\n" % key)
                     f.write("with value: %.7g\n" % value)
                 else:
                     f.write("update prediction with backdoor: %s\n" % key)
-                    f.write(mf_log)
+                    f.write(pf_log)
                     f.write("end prediction with value: %.7g\n" % value)
             else:
                 f.write("start prediction with backdoor: %s\n" % key)
-                f.write(mf_log)
+                f.write(pf_log)
                 f.write("end prediction with value: %.7g\n" % value)
 
     def print_local_info(self, local):

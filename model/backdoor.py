@@ -111,3 +111,27 @@ class BackdoorSnapshot:
                 s += "%s " % self.vars[i]
         s = s[:-1] + "](%d)" % np.count_nonzero(self.mask)
         return s
+
+    def restore(self, s):
+        bs = BackdoorSnapshot.from_str(s)
+        bs.mask = np.ones(self.length)
+
+        j = 0
+        for i in range(self.length):
+            if self.vars[i] == bs.vars[j]:
+                j += 1
+            else:
+                bs.mask[i] = 0
+
+        bs.vars = self.vars
+        return bs
+
+    @staticmethod
+    def from_str(s):
+        s = s.split('(')[0]
+        s = s[1:-1].split(' ')
+        variables = []
+        for var in s:
+            variables.append(int(var))
+
+        return BackdoorSnapshot(variables, np.ones(len(s)))

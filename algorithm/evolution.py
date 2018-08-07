@@ -17,8 +17,8 @@ class EvolutionAlgorithm(MetaAlgorithm):
         self.stagnation_limit = ev_parameters["stagnation_limit"]
         self.strategy = ev_parameters["evolution_strategy"]
 
-    def start(self, mf_parameters):
-        algorithm = mf_parameters["key_generator"]
+    def start(self, pf_parameters):
+        algorithm = pf_parameters["key_generator"]
         cnf_path = constant.cnfs[algorithm.tag]
         cnf = CnfParser().parse_for_path(cnf_path)
         rs = np.random.RandomState(43)
@@ -26,12 +26,12 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
         max_value = float("inf")
         it = 1
-        mf_calls = 0
+        pf_calls = 0
         stagnation = 0
         updated_logs = {}
 
-        if "adaptive_N" in mf_parameters:
-            adaptive_selection = mf_parameters["adaptive_N"]
+        if "adaptive_N" in pf_parameters:
+            adaptive_selection = pf_parameters["adaptive_N"]
             adaptive_selection.choose_function(algorithm.tag)
         else:
             adaptive_selection = None
@@ -42,7 +42,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
         self.print_info(algorithm.name, "%s" % self.strategy)
 
-        while not self.stop_condition(it, mf_calls, len(locals_list), best[1]):
+        while not self.stop_condition(it, pf_calls, len(locals_list), best[1]):
             self.print_iteration_header(it)
             P_v = []
             for p in P:
@@ -55,30 +55,30 @@ class EvolutionAlgorithm(MetaAlgorithm):
                         updated_logs.pop(key)
                     else:
                         logs = ""
-                    (value, n), mf_log = self.value_hash[key], logs
+                    (value, n), pf_log = self.value_hash[key], logs
 
                     p_v = (p, value)
                 else:
                     hashed = False
                     if adaptive_selection is not None:
-                        mf_parameters["N"] = adaptive_selection.get_N(best)
+                        pf_parameters["N"] = adaptive_selection.get_N(best)
 
-                    mf = self.predictive_function(mf_parameters)
-                    result = mf.compute(cg)
-                    value, mf_log = result[0], result[1]
-                    n = mf_parameters["N"]
-                    mf_calls += 1
+                    pf = self.p_function(pf_parameters)
+                    result = pf.compute(cg)
+                    value, pf_log = result[0], result[1]
+                    n = pf_parameters["N"]
+                    pf_calls += 1
                     self.value_hash[key] = value, n
 
                     if len(result) > 2:
                         p_v = (p, value, result[2])
                         if self.comparator(best, p_v) < 0 and len(best[2]) < n:
                             ad_key = best[0].get_key()
-                            mf_copy = copy(mf_parameters)
-                            mf_copy["N"] = n - len(best[2])
+                            pf_copy = copy(pf_parameters)
+                            pf_copy["N"] = n - len(best[2])
 
-                            mf = self.predictive_function(mf_copy)
-                            ad_result = mf.compute(best[0], best[2])
+                            pf = self.p_function(pf_copy)
+                            ad_result = pf.compute(best[0], best[2])
                             updated_logs[ad_key] = ad_result[1]
 
                             best = (best[0], ad_result[0], ad_result[2])
@@ -91,7 +91,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                         stagnation = -1
 
                 P_v.append(p_v)
-                self.print_mf_log(hashed, key, value, mf_log)
+                self.print_pf_log(hashed, key, value, pf_log)
 
             stagnation += 1
             if stagnation >= self.stagnation_limit:

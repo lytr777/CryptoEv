@@ -8,7 +8,7 @@ from util import constant
 
 
 class MPIEvolutionAlgorithm(MetaAlgorithm):
-    name = "MPI Evolution Algorithm"
+    name = "Evolution Algorithm (MPI)"
 
     def __init__(self, ev_parameters, comm):
         MetaAlgorithm.__init__(self, ev_parameters)
@@ -20,24 +20,24 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         self.size = comm.Get_size()
         self.rank = comm.Get_rank()
 
-    def start(self, mf_parameters):
-        algorithm = mf_parameters["key_generator"]
+    def start(self, pf_parameters):
+        algorithm = pf_parameters["key_generator"]
         cnf_path = constant.cnfs[algorithm.tag]
         cnf = CnfParser().parse_for_path(cnf_path)
 
         rs = np.random.RandomState(43)
         cg = CaseGenerator(algorithm, cnf, rs, self.backdoor)
-        mf_parameters["mpi_call"] = True
+        pf_parameters["mpi_call"] = True
 
-        (quotient, remainder) = divmod(mf_parameters["N"], self.size)
+        (quotient, remainder) = divmod(pf_parameters["N"], self.size)
         rank_N = quotient + (1 if remainder > 0 else 0)
         real_N = rank_N * self.size
 
-        mf_parameters["N"] = rank_N
+        pf_parameters["N"] = rank_N
         if self.rank == 0:
             max_value = float("inf")
             it = 1
-            mf_calls = 0
+            pf_calls = 0
             stagnation = 0
 
             P = self.__restart()
@@ -46,7 +46,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
             self.print_info(algorithm.name, "%s" % self.strategy)
 
-            while not self.stop_condition(it, mf_calls, len(locals_list), best[1]):
+            while not self.stop_condition(it, pf_calls, len(locals_list), best[1]):
                 self.print_iteration_header(it)
                 P_v = []
                 for p in P:
@@ -54,24 +54,24 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                     key = str(self.backdoor)
                     if key in self.value_hash:
                         hashed = True
-                        (value, n), mf_log = self.value_hash[key], ""
+                        (value, n), pf_log = self.value_hash[key], ""
                         p_v = (p, value)
                     else:
                         hashed = False
                         start_work_time = now()
 
                         self.comm.Bcast(p, root=0)
-                        mf = self.predictive_function(mf_parameters)
-                        result = mf.compute(cg)
+                        pf = self.p_function(pf_parameters)
+                        result = pf.compute(cg)
 
                         cases = self.comm.gather(result[2], root=0)
                         cases = np.concatenate(cases)
 
                         time = now() - start_work_time
-                        final_result = mf.handle_cases(cg, cases, time)
+                        final_result = pf.handle_cases(cg, cases, time)
 
-                        value, mf_log = final_result[0], final_result[1]
-                        mf_calls += 1
+                        value, pf_log = final_result[0], final_result[1]
+                        pf_calls += 1
                         self.value_hash[key] = value, real_N
                         p_v = (p, value)
 
@@ -80,7 +80,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                             stagnation = -1
 
                     P_v.append(p_v)
-                    self.print_mf_log(hashed, key, value, mf_log)
+                    self.print_pf_log(hashed, key, value, pf_log)
 
                 stagnation += 1
                 if stagnation >= self.stagnation_limit:
@@ -109,8 +109,8 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                     break
 
                 self.backdoor.set(p)
-                mf = self.predictive_function(mf_parameters)
-                result = mf.compute(cg)
+                pf = self.p_function(pf_parameters)
+                result = pf.compute(cg)
 
                 self.comm.gather(result[2], root=0)
 
