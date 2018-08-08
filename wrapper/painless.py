@@ -6,7 +6,7 @@ class PainlessWrapper(Wrapper):
     statuses = {
         "SATISFIABLE": "SATISFIABLE",
         "UNSATISFIABLE": "UNSATISFIABLE",
-        "?": "INDETERMINATE"
+        "UNKNOWN": "INDETERMINATE"
     }
 
     min_time = 0.001
@@ -18,13 +18,12 @@ class PainlessWrapper(Wrapper):
             "script": "./untar_painless.sh"
         }
         Wrapper.__init__(self, info, tl_util)
-        self.tl = None
 
     def get_common_arguments(self, tl, workers, simplifying):
         launching_args = [self.solver_path]
 
         if tl is not None:
-            raise Exception("painless don't suport time embedded limit")
+            launching_args.append("-t=%d" % tl)
         if workers is not None:
             launching_args.append("-c=%d" % workers)
 
@@ -56,7 +55,7 @@ class PainlessWrapper(Wrapper):
                     solution += "%s " % var
 
         if status == "":
-            return SolverReport(self.statuses["?"], self.tl)
+            return SolverReport(self.statuses["UNKNOWN"], -1)
 
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
