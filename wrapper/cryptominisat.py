@@ -1,5 +1,3 @@
-import re
-
 from model.solver_report import SolverReport
 from wrapper import Wrapper
 
@@ -20,7 +18,6 @@ class CryptoMinisatWrapper(Wrapper):
             "script": "./untar_crypto.sh"
         }
         Wrapper.__init__(self, info, tl_util)
-        self.time_regexp = re.compile('[\t ]+')
 
     def get_common_arguments(self, tl, workers, simplifying):
         launching_args = [self.solver_path]
@@ -64,6 +61,6 @@ class CryptoMinisatWrapper(Wrapper):
 
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
-            report.parse_solution(solution, self.time_regexp)
+            report.parse_solution(solution, self.spaces)
 
         return report

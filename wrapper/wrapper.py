@@ -1,4 +1,5 @@
 import os
+import re
 
 from util.constant import solver_paths
 
@@ -8,6 +9,7 @@ class Wrapper:
         self.info = info
         self.tl_util = tl_util
         self.solver_path = solver_paths[self.info["tag"]]
+        self.spaces = re.compile('[\t ]+')
 
     def check_installation(self):
         if not os.path.isdir(self.info["dir"]) or not os.path.exists(self.solver_path):

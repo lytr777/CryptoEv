@@ -20,7 +20,8 @@ solver_paths = {
     "treengeling": "./lingeling/treengeling",
     "plingeling": "./lingeling/plingeling",
     "rokk": "./rokk/binary/rokk.py",
-    "cryptominisat": "./cryptominisat/build/cryptominisat5"
+    "cryptominisat": "./cryptominisat/build/cryptominisat5",
+    "painless": "./painless/painless-maplecomsps"
 }
 
 log_path = './out/new_log_'

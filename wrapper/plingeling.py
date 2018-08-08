@@ -1,4 +1,3 @@
-import re
 import warnings
 
 from model.solver_report import SolverReport
@@ -21,7 +20,6 @@ class PlingelingWrapper(Wrapper):
             "script": "./untar_lingeling.sh"
         }
         Wrapper.__init__(self, info, tl_util)
-        self.time_regexp = re.compile('[\t ]+')
 
     def get_common_arguments(self, tl, workers, simplifying):
         launching_args = [self.solver_path]
@@ -56,13 +54,13 @@ class PlingelingWrapper(Wrapper):
                 for i in range(1, len(solution_line)):
                     solution += solution_line[i] + " "
 
-        str_time = self.time_regexp.split(output[len(output) - 2])[1]
+        str_time = self.spaces.split(output[len(output) - 2])[1]
         time = max(float(str_time), self.min_time)
 
         solution = solution[:-1]
 
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
-            report.parse_solution(solution, self.time_regexp)
+            report.parse_solution(solution, self.spaces)
 
         return report

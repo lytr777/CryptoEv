@@ -1,8 +1,4 @@
-import re
 import warnings
-
-from util import formatter
-
 
 class SolverReport:
     def __init__(self, status, time):
@@ -13,7 +9,7 @@ class SolverReport:
             False  # preprocessing
         ]
 
-    def parse_solution(self, solution_str, spaces=re.compile('[\t ]+')):
+    def parse_solution(self, solution_str, spaces):
         solution_str = solution_str.strip()
         if len(solution_str) == 0:
             self.status = "BROKEN"

@@ -52,7 +52,7 @@ class MinisatWrapper:
 
         report = SolverReport(status, time)
         if status == self.statuses["SAT"]:
-            report.parse_solution(solution)
+            report.parse_solution(solution, None)
 
         return report
 

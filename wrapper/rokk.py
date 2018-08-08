@@ -48,6 +48,6 @@ class RokkWrapper(Wrapper):
             report = SolverReport(data[1], float(data[0]))
 
         if data[1] == self.statuses['SAT']:
-            report.parse_solution(data[2])
+            report.parse_solution(data[2], self.spaces)
 
         return report

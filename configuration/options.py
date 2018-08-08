@@ -26,6 +26,7 @@ from wrapper.plingeling import PlingelingWrapper
 from wrapper.treengeling import TreengelingWrapper
 from wrapper.rokk import RokkWrapper
 from wrapper.cryptominisat import CryptoMinisatWrapper
+from wrapper.painless import PainlessWrapper
 
 from util import comparator, corrector
 from util.adaptive_selection import AdaptiveFunction
@@ -125,6 +126,7 @@ def solver_wrapper(args):
         "treengeling": TreengelingWrapper(args[0]),
         "rokk": RokkWrapper(args[0]),
         "cryptominisat": CryptoMinisatWrapper(args[0]),
+        "painless": PainlessWrapper(args[0])
     }
 
 
