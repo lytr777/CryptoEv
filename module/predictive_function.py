@@ -72,16 +72,20 @@ class PredictiveFunction:
 
     def __init__(self, parameters):
         self.N = parameters["N"]
-        self.thread_count = parameters["thread_count"]
 
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
         self.debugger = parameters["debugger"] if ("debugger" in parameters) else None
         self.mpi_call = parameters["mpi_call"] if ("mpi_call" in parameters) else False
+        self.worker_count = parameters["worker_count"] if ("worker_count" in parameters) else 1
+
+        self.thread_count, remainder = divmod(parameters["thread_count"], self.worker_count)
+        if self.thread_count == 0 or remainder != 0:
+            raise Exception("Incorrect number of threads or workers")
 
         self.sleep_time = 2
         self.task_generator_args = {
             "solver_wrapper": parameters["solver_wrapper"],
-            "worker_count": parameters["worker_count"] if ("worker_count" in parameters) else 1
+            "worker_count": self.worker_count
         }
         self.worker_args = {"debugger": self.debugger}
         self.workers = []

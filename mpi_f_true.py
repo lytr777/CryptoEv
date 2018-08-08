@@ -57,7 +57,7 @@ if rank == 0:
 
 pf_p["mpi_call"] = True
 
-(quotient, remainder) = divmod(pf_p["N"], size)
+quotient, remainder = divmod(pf_p["N"], size)
 rank_N = quotient + (1 if remainder > 0 else 0)
 real_N = rank_N * size
 
