@@ -1,5 +1,3 @@
-import numpy as np
-
 from block_cipher import BlockCipher
 
 
@@ -21,6 +19,6 @@ class Present_5_2KP(BlockCipher):
 
     def __copy__(self):
         copy_present = Present_5_2KP(self.cnf)
-        copy_present.substitution = self.substitutions
+        copy_present.substitutions = self.substitutions
 
         return copy_present

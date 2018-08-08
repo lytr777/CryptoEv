@@ -1,5 +1,3 @@
-import numpy as np
-
 from stream_cipher import StreamCipher
 
 
@@ -18,6 +16,6 @@ class Trivium_64(StreamCipher):
 
     def __copy__(self):
         copy_tr_64 = Trivium_64(self.cnf)
-        copy_tr_64.substitution = self.substitutions
+        copy_tr_64.substitutions = self.substitutions
 
         return copy_tr_64

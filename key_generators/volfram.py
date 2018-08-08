@@ -1,5 +1,3 @@
-import numpy as np
-
 from stream_cipher import StreamCipher
 
 
@@ -18,6 +16,6 @@ class Volfram(StreamCipher):
 
     def __copy__(self):
         copy_volfram = Volfram(self.cnf)
-        copy_volfram.substitution = self.substitutions
+        copy_volfram.substitutions = self.substitutions
 
         return copy_volfram

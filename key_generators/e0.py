@@ -1,5 +1,3 @@
-import numpy as np
-
 from stream_cipher import StreamCipher
 
 
@@ -18,6 +16,6 @@ class E0(StreamCipher):
 
     def __copy__(self):
         copy_e0 = E0(self.cnf)
-        copy_e0.substitution = self.substitutions
+        copy_e0.substitutions = self.substitutions
 
         return copy_e0

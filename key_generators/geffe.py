@@ -1,5 +1,3 @@
-import numpy as np
-
 from stream_cipher import StreamCipher
 
 
@@ -18,6 +16,6 @@ class Geffe(StreamCipher):
 
     def __copy__(self):
         copy_geffe = Geffe(self.cnf)
-        copy_geffe.substitution = self.substitutions
+        copy_geffe.substitutions = self.substitutions
 
         return copy_geffe

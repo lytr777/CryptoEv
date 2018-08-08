@@ -1,5 +1,3 @@
-import numpy as np
-
 from stream_cipher import StreamCipher
 
 
@@ -18,6 +16,6 @@ class Bivium(StreamCipher):
 
     def __copy__(self):
         copy_bivium = Bivium(self.cnf)
-        copy_bivium.substitution = self.substitutions
+        copy_bivium.substitutions = self.substitutions
 
         return copy_bivium

@@ -1,5 +1,3 @@
-import numpy as np
-
 from stream_cipher import StreamCipher
 
 
@@ -18,6 +16,6 @@ class A5_1(StreamCipher):
 
     def __copy__(self):
         copy_a5_1 = A5_1(self.cnf)
-        copy_a5_1.substitution = self.substitutions
+        copy_a5_1.substitutions = self.substitutions
 
         return copy_a5_1
