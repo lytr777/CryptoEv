@@ -46,6 +46,7 @@ class SubprocessHelper:
 class TaskGenerator:
     def __init__(self, args):
         self.solver_wrapper = args["solver_wrapper"]
+        self.worker_count = args["worker_count"]
         self.cg = args["case_generator"]
 
     def get(self, case):
@@ -60,7 +61,7 @@ class InitTaskGenerator(TaskGenerator):
         TaskGenerator.__init__(self, args)
 
     def get(self, case=None):
-        init_args = self.solver_wrapper.get_arguments(simplifying=False)
+        init_args = self.solver_wrapper.get_arguments(self.worker_count, simplifying=False)
         init_case = self.cg.generate_init()
 
         return init_args, init_case
@@ -71,15 +72,17 @@ class PredictiveFunction:
 
     def __init__(self, parameters):
         self.N = parameters["N"]
-        self.solver_wrapper = parameters["solver_wrapper"]
+        self.thread_count = parameters["thread_count"]
 
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
-        self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
         self.debugger = parameters["debugger"] if ("debugger" in parameters) else None
         self.mpi_call = parameters["mpi_call"] if ("mpi_call" in parameters) else False
 
         self.sleep_time = 2
-        self.task_generator_args = {"solver_wrapper": self.solver_wrapper}
+        self.task_generator_args = {
+            "solver_wrapper": parameters["solver_wrapper"],
+            "worker_count": parameters["worker_count"] if ("worker_count" in parameters) else 1
+        }
         self.worker_args = {"debugger": self.debugger}
         self.workers = []
 

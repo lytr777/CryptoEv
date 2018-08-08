@@ -68,7 +68,8 @@ mpiexec -n node_count python2.7 mpi_main.py id [-cp file/path]
   - *trivium_64* – Trivium 64
   - *trivium_96* – Trivium 96
   - *e0* – E0
-* **threads** – число потоков
+* **thread_count** – число одновременно запущенных решателей
+* **worker_count** – число потоков на один решатель
 * **N** – обьем выборки (учитывается, если не задан adaptive_N)
 * **adaptive_N** – адаптивное изменение обьема выборки
   - *function* – изменение с помощью встроенной функции (только для шифра A5/1)

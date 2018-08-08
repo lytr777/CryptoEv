@@ -12,7 +12,7 @@ class GADTaskGenerator(TaskGenerator):
         self.init_case = args["init_case"]
 
     def get(self, case=None):
-        args = self.solver_wrapper.get_arguments()
+        args = self.solver_wrapper.get_arguments(self.worker_count)
         case = self.cg.generate(self.init_case.solution)
 
         return args, case

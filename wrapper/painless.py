@@ -19,23 +19,18 @@ class PainlessWrapper(Wrapper):
         }
         Wrapper.__init__(self, info, tl_util)
 
-    def get_common_arguments(self, tl, workers, simplifying):
+    def get_common_arguments(self, workers, tl, simplifying):
         launching_args = ["python", "./tools/stdin_to_file.py"]
-        launching_args.extend([self.solver_path])
+        launching_args.extend([self.solver_path, "-c=%d" % workers])
 
         if tl is not None:
             launching_args.append("-t=%d" % tl)
-        if workers is not None:
-            launching_args.append("-c=%d" % workers)
 
         return launching_args
 
-    def get_timelimit_arguments(self, tl, workers, simplifying):
+    def get_timelimit_arguments(self, workers, tl, simplifying):
         launching_args = ["python", "./tools/stdin_to_file.py"]
-        launching_args.extend(["timelimit", "-t%d" % tl, self.solver_path])
-
-        if workers is not None:
-            launching_args.append("-c=%d" % workers)
+        launching_args.extend(["timelimit", "-t%d" % tl, self.solver_path, "-c=%d" % workers])
 
         return launching_args
 
@@ -47,7 +42,6 @@ class PainlessWrapper(Wrapper):
                 status = output[i].split(' ')[-1]
             if output[i].startswith("c Resolution time: "):
                 str_time = output[i].split(": ")[1]
-                print str_time
                 time = max(float(str_time[:-1]), self.min_time)
             if output[i].startswith("v"):
                 solution_line = output[i].split(' ')

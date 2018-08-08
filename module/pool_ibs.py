@@ -61,13 +61,13 @@ class PoolIBSTaskGenerator(TaskGenerator):
         self.tl = args["time_limit"]
 
     def get_init(self):
-        init_args = self.solver_wrapper.get_arguments(simplifying=False)
+        init_args = self.solver_wrapper.get_arguments(self.worker_count, simplifying=False)
         init_case = self.cg.generate_init()
 
         return init_args, init_case
 
     def get(self, init_case):
-        args = self.solver_wrapper.get_arguments(tl=self.tl)
+        args = self.solver_wrapper.get_arguments(self.worker_count, tl=self.tl)
         case = self.cg.generate(init_case.solution)
 
         return args, case
@@ -78,14 +78,18 @@ class PoolIBSFunction:
 
     def __init__(self, parameters):
         self.N = parameters["N"]
-        self.solver_wrapper = parameters["solver_wrapper"]
+        self.time_limit = parameters["time_limit"]
+        self.thread_count = parameters["thread_count"]
 
         self.corrector = parameters["corrector"] if ("corrector" in parameters) else None
-        self.thread_count = parameters["threads"] if ("threads" in parameters) else 1
         self.debugger = parameters["debugger"] if ("debugger" in parameters) else None
         self.mpi_call = parameters["mpi_call"] if ("mpi_call" in parameters) else False
 
-        self.time_limit = parameters["time_limit"]
+        self.task_generator_args = {
+            "solver_wrapper": parameters["solver_wrapper"],
+            "time_limit": self.time_limit,
+            "worker_count": parameters["worker_count"] if ("worker_count" in parameters) else 1
+        }
         self.pool = None
 
     def __signal_handler(self, s, f):
@@ -97,17 +101,13 @@ class PoolIBSFunction:
         self.debugger.write(1, 0, "init signal handler")
         signal.signal(signal.SIGINT, self.__signal_handler)
 
-        task_generator_args = {
-            "solver_wrapper": self.solver_wrapper,
-            "case_generator": cg,
-            "time_limit": self.time_limit
-        }
         cases = list(cases)
         self.debugger.deferred_write(1, 0, "compute for backdoor: %s" % cg.backdoor)
         self.debugger.deferred_write(1, 0, "set time limit: %s" % self.time_limit)
 
+        self.task_generator_args["case_generator"] = cg
         self.debugger.write(1, 0, "creating task generators")
-        task_generator = PoolIBSTaskGenerator(task_generator_args)
+        task_generator = PoolIBSTaskGenerator(self.task_generator_args)
         tread_count = min(self.N, self.thread_count)
         self.debugger.write(1, 0, "init pool with %d threads" % tread_count)
         self.pool = Pool(processes=tread_count)

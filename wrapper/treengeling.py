@@ -21,25 +21,16 @@ class TreengelingWrapper(Wrapper):
         }
         Wrapper.__init__(self, info, tl_util)
 
-    def get_common_arguments(self, tl, workers, simplifying):
-        launching_args = [self.solver_path]
+    def get_common_arguments(self, workers, tl, simplifying):
+        launching_args = [self.solver_path, "-t", str(workers)]
 
         if tl is not None:
             warnings.warn("Time limit not support in treengeling", UserWarning)
-        if workers is not None:
-            launching_args.append("-t")
-            launching_args.append(str(workers))
 
         return launching_args
 
-    def get_timelimit_arguments(self, tl, workers, simplifying):
-        launching_args = ["timelimit", "-t%d" % tl, self.solver_path]
-
-        if workers is not None:
-            launching_args.append("-t")
-            launching_args.append(str(workers))
-
-        return launching_args
+    def get_timelimit_arguments(self, workers, tl, simplifying):
+        return ["timelimit", "-t%d" % tl, self.solver_path, "-t", str(workers)]
 
     def parse_out(self, output):
         output = output.split('\n')

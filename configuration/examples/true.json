@@ -5,7 +5,8 @@
   },
   "mf_parameters": {
     "key_generator": "present_5_2kp",
-    "threads": 32,
+    "thread_count": 32,
+    "worker_count": 1,
     "N": 1000,
     "solver_wrapper": {
       "args_description": "use timelimit util?",

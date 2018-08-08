@@ -21,22 +21,22 @@ class LingelingWrapper(Wrapper):
         }
         Wrapper.__init__(self, info, tl_util)
 
-    def get_common_arguments(self, tl, workers, simplifying):
+    def get_common_arguments(self, workers, tl, simplifying):
         launching_args = [self.solver_path]
 
         if tl is not None:
             launching_args.append("-t")
             launching_args.append(str(tl))
-        if workers is not None:
-            warnings.warn("Workers not support in lingeling", UserWarning)
+        if workers != 1:
+            warnings.warn("workers not support in lingeling", UserWarning)
 
         return launching_args
 
-    def get_timelimit_arguments(self, tl, workers, simplifying):
+    def get_timelimit_arguments(self, workers, tl, simplifying):
         launching_args = ["timelimit", "-t%d" % tl, self.solver_path]
 
-        if workers is not None:
-            warnings.warn("Workers not support in lingeling", UserWarning)
+        if workers != 1:
+            warnings.warn("workers not support in lingeling", UserWarning)
 
         return launching_args
 

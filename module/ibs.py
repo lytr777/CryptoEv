@@ -10,7 +10,7 @@ class IBSTaskGenerator(TaskGenerator):
         self.tl = args["time_limit"]
 
     def get(self, init_case):
-        args = self.solver_wrapper.get_arguments(tl=self.tl)
+        args = self.solver_wrapper.get_arguments(self.worker_count, tl=self.tl)
         case = self.cg.generate(init_case.solution)
 
         return args, case
