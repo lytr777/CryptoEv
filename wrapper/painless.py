@@ -20,23 +20,23 @@ class PainlessWrapper(Wrapper):
         Wrapper.__init__(self, info, tl_util)
 
     def get_common_arguments(self, tl, workers, simplifying):
-        launching_args = [self.solver_path]
+        launching_args = ["python", "./tools/stdin_to_file.py"]
+        launching_args.extend([self.solver_path])
 
         if tl is not None:
             launching_args.append("-t=%d" % tl)
         if workers is not None:
             launching_args.append("-c=%d" % workers)
 
-        launching_args.append("/dev/stdin")
         return launching_args
 
     def get_timelimit_arguments(self, tl, workers, simplifying):
-        launching_args = ["timelimit", "-t%d" % tl, self.solver_path]
+        launching_args = ["python", "./tools/stdin_to_file.py"]
+        launching_args.extend(["timelimit", "-t%d" % tl, self.solver_path])
 
         if workers is not None:
             launching_args.append("-c=%d" % workers)
 
-        launching_args.append("/dev/stdin")
         return launching_args
 
     def parse_out(self, output):
