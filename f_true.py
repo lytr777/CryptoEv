@@ -37,10 +37,14 @@ cg = CaseGenerator(algorithm, cnf, rs, backdoor)
 
 mf_p["solver_wrapper"].check_installation()
 with open(true_log_file, 'w+') as f:
-    f.write("-- Key Generator: %s\n" % algorithm(''))
-    f.write("-- N = %d\n" % mf_p["N"])
+    f.write("-- key generator: %s\n" % algorithm('').tag)
+    f.write("-- solver: %s\n" % mf_p["solver_wrapper"].info["tag"])
+    f.write("-- pf type: %s\n" % m_function.type)
+    if m_function.type == "ibs":
+        f.write("-- time limit: %s\n" % mf_p["time_limit"])
+    f.write("-- samples size: %d\n" % mf_p["N"])
+    f.write("-- backdoor: %s\n" % backdoor)
     f.write("------------------------------------------------------\n")
-    f.write("start with backdoor: %s\n" % backdoor)
 
 mf = m_function(mf_p)
 result = mf.compute(cg)
