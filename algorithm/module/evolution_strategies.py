@@ -77,7 +77,7 @@ class MuPlusLambda(MuCommaLambda):
         return P
 
     def __str__(self):
-        return "Strategy (%d + %d)" % (self.mu, self.lmbda)
+        return "strategy: (%d + %d)" % (self.mu, self.lmbda)
 
 
 class Genetic(EvolutionStrategy):
@@ -115,5 +115,5 @@ class Genetic(EvolutionStrategy):
         return P
 
     def __str__(self):
-        return "Genetic (%d, %d, %d)" % (self.m, self.l, self.c)
+        return "genetic: (%d, %d, %d)" % (self.m, self.l, self.c)
 

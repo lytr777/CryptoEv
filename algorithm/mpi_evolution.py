@@ -8,7 +8,7 @@ from util import constant
 
 
 class MPIEvolutionAlgorithm(MetaAlgorithm):
-    name = "Evolution Algorithm (MPI)"
+    name = "evolution"
 
     def __init__(self, ev_parameters, comm):
         MetaAlgorithm.__init__(self, ev_parameters)
@@ -44,7 +44,9 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             best = (self.backdoor.get(), max_value, [])
             locals_list = []
 
-            self.print_info(algorithm.name, "%s" % self.strategy)
+            solver = pf_parameters["solver_wrapper"].info["tag"]
+            tl = pf_parameters["time_limit"] if self.p_function.type == "ibs" else None
+            self.print_info(algorithm.tag, solver, tl, str(self.strategy))
 
             while not self.stop_condition(it, pf_calls, len(locals_list), best[1]):
                 self.print_iteration_header(it)

@@ -58,7 +58,12 @@ class InextensibleBackdoor(VariableSet):
 
     def snapshot(self, mask=None):
         mask = self.mask if mask is None else mask
-        return BackdoorSnapshot(self.vars, mask)
+        variables = []
+        for i in range(len(mask)):
+            if mask[i]:
+                variables.append(self.vars[i])
+
+        return FixedBackdoor(variables)
 
     def get_substitution(self, solution):
         if len(solution) < self.max:
@@ -95,43 +100,20 @@ class SecretKey(InextensibleBackdoor):
         self.max_len = end - 1
 
 
-class BackdoorSnapshot:
-    def __init__(self, variables, mask):
-        self.vars = variables
-        self.mask = mask
-        self.length = len(self.vars)
-
-    def __len__(self):
-        return np.count_nonzero(self.mask)
+class FixedBackdoor(VariableSet):
+    def __init__(self, variables):
+        VariableSet.__init__(self, variables)
 
     def __str__(self):
         s = "["
-        for i in range(self.length):
-            if self.mask[i]:
-                s += "%s " % self.vars[i]
-        s = s[:-1] + "](%d)" % np.count_nonzero(self.mask)
+        for var in self.vars:
+            s += "%s " % var
+        s = s[:-1] + "](%d)" % self.__len__()
         return s
-
-    def restore(self, s):
-        bs = BackdoorSnapshot.from_str(s)
-        bs.mask = np.ones(self.length)
-
-        j = 0
-        for i in range(self.length):
-            if self.vars[i] == bs.vars[j]:
-                j += 1
-            else:
-                bs.mask[i] = 0
-
-        bs.vars = self.vars
-        return bs
 
     @staticmethod
     def from_str(s):
         s = s.split('(')[0]
-        s = s[1:-1].split(' ')
-        variables = []
-        for var in s:
-            variables.append(int(var))
+        variables = [int(var) for var in s[1:-1].split(' ')]
 
-        return BackdoorSnapshot(variables, np.ones(len(s)))
+        return FixedBackdoor(variables)

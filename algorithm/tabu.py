@@ -9,7 +9,7 @@ from util import constant
 
 
 class TabuSearch(MetaAlgorithm):
-    name = "Tabu Search"
+    name = "tabu"
 
     def __init__(self, ts_parameters):
         MetaAlgorithm.__init__(self, ts_parameters)
@@ -28,7 +28,9 @@ class TabuSearch(MetaAlgorithm):
         locals_list = []
         tabu_list = {}
 
-        self.print_info(algorithm.name)
+        solver = pf_parameters["solver_wrapper"].info["tag"]
+        tl = pf_parameters["time_limit"] if self.p_function.type == "ibs" else None
+        self.print_info(algorithm.tag, solver, tl)
         center, value = self.__get_new_center(cg, pf_parameters)
         best = (center, value)
 

@@ -135,7 +135,7 @@ class PoolIBSFunction:
         if self.corrector is not None:
             self.debugger.write(1, 0, "correcting time limit...")
             self.time_limit, dis_count = self.corrector(cases, self.time_limit)
-            log += "time limit has been corrected: %f\n" % self.time_limit
+            log += "corrected time limit: %f\n" % self.time_limit
             self.debugger.deferred_write(1, 0, "new time limit: %f" % self.time_limit)
 
             self.debugger.write(1, 0, "correcting time stat...")
@@ -143,7 +143,7 @@ class PoolIBSFunction:
             time_stat["DETERMINATE"] -= dis_count
             self.debugger.deferred_write(1, 0, "new time stat: %s" % time_stat)
 
-        log += "main phase ended with time: %f\n" % time
+        log += "spent time: %f\n" % time
         self.debugger.write(1, 0, "calculating value...")
         xi = float(time_stat["DETERMINATE"]) / float(len(cases))
         if xi != 0:

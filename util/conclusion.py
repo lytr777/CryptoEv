@@ -1,14 +1,14 @@
 from parse_utils.log_parser import LogParser
 
+
 def add_conclusion(parameters):
     comparator = parameters["comparator"]
     path = parameters["path"]
 
     if "locals_list" in parameters:
         locals_list = parameters["locals_list"]
-    elif "function_type" in parameters:
-        function_type = parameters["function_type"]
-        parser = LogParser(function_type)
+    else:
+        parser = LogParser()
         info, its = parser.parse_for_path(path)
 
         if len(its) == 0:
@@ -30,8 +30,8 @@ def add_conclusion(parameters):
 
         if len(locals_list) == 0:
             locals_list.append(previous)
-    else:
-        raise Exception("add locals_list or function_type in parameters map")
+    # else:
+    #     raise Exception("add locals_list or function_type in parameters map")
 
     conclusion = "------------------------------------------------------\n"
     conclusion += "------------------------------------------------------\n"
@@ -43,12 +43,12 @@ def add_conclusion(parameters):
         for local in locals_list:
             if comparator(best, local) > 0:
                 best = local
-            conclusion += "local: %s with value: %.7g\n" % (local[0], local[1])
+            conclusion += "value: %.7g for backdoor: %s\n" % (local[1], local[0])
 
         conclusion += "------------------------------------------------------\n"
         conclusion += "------------------------------------------------------\n"
         conclusion += "------------------------------------------------------\n"
-        conclusion += "best: %s with value: %.7g\n" % (best[0], best[1])
+        conclusion += "best value: %.7g for backdoor: %s\n" % (best[1], best[0])
     else:
         conclusion += "locals not found\n"
 

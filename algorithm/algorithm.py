@@ -14,14 +14,17 @@ class MetaAlgorithm:
     def start(self, pf_parameters):
         raise NotImplementedError
 
-    def print_info(self, alg_name, info=None):
+    def print_info(self, alg_name, solver_name, tl=None, info=None):
         with open(self.log_file, 'a') as f:
-            f.write("-- %s\n" % self.name)
+            f.write("-- algorithm: %s\n" % self.name)
             if info is not None:
                 f.write("-- %s\n" % info)
-            f.write("-- %s\n" % self.p_function.type)
-            f.write("-- Start with backdoor: %s\n" % self.backdoor)
-            f.write("-- Key Generator: %s\n" % alg_name)
+            f.write("-- key generator: %s\n" % alg_name)
+            f.write("-- solver: %s\n" % solver_name)
+            f.write("-- pf type: %s\n" % self.p_function.type)
+            if tl is not None:
+                f.write("-- time limit: %s\n" % tl)
+            f.write("-- backdoor: %s\n" % self.backdoor)
 
     def print_iteration_header(self, it):
         with open(self.log_file, 'a') as f:
