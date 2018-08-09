@@ -25,7 +25,7 @@ class ColorPlot(Plot):
                 if best is None or self.comparator(best.mv(), case.mv()) > 0:
                     best = case
 
-            key = formatter.format_array(best.mask)
+            key = str(best.mask)
             if len(best.times) > 0:
                 times_hash[key] = times = best.times
             else:

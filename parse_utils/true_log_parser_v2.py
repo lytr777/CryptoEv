@@ -3,7 +3,7 @@ from parser import Parser
 from model.case import Case
 
 
-class TrueLogParser(Parser):
+class TrueLogParserV2(Parser):
     def __init__(self):
         Parser.__init__(self)
 

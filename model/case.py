@@ -27,3 +27,6 @@ class Case:
                 statistic["INDETERMINATE"] += 1
 
         return statistic
+
+    def __str__(self):
+        return "%s for %s" % (self.value, self.mask)

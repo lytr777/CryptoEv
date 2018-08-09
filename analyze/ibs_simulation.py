@@ -41,7 +41,7 @@ class IBSSimulation:
             return self.max_value
 
     def get_value(self, value_hash, mask, times, tl):
-        key = formatter.format_array(mask)
+        key = str(mask)
         if len(times) == 0:
             return value_hash[key]
         else:
@@ -65,7 +65,7 @@ class IBSSimulation:
         subset.set_filter(choice)
 
     def dispersion_values(self, values_hash, mask, times, tl, k, rep, min_value):
-        key = formatter.format_array(mask)
+        key = str(mask)
         if len(times) > 0:
             values = []
             for j in range(rep):
@@ -93,7 +93,7 @@ class IBSSimulation:
             best, _ = self.get_best_case(value_hash, iterations[i], tl)
             main_line.append(best[1])
 
-        min_value = 0.7 * main_line[len(main_line) - 1]
+        min_value = 0.7 * main_line[-1]
 
         changed = False
         for k in ks:

@@ -50,7 +50,8 @@ class LogParserV3(Parser):
 
         return cases
 
-    def parse_case(self, case_data):
+    @staticmethod
+    def parse_case(case_data):
         st_line = case_data[0]
         if st_line.startswith("start") or st_line.startswith("update"):
             backdoor = Backdoor.from_str(st_line.split(": ")[1])
@@ -81,12 +82,12 @@ class LogParserV3(Parser):
         else:
             raise Exception("Unexpected line: %s" % st_line)
 
-    def parse_info(self, info_data):
+    @staticmethod
+    def parse_info(info_data):
         def get_v(j, k=1):
             return info_data[j].split(": ")[k]
 
-        def get_n(j):
-            return get_v(j, 0).split("-- ")[1]
+        get_n = lambda j: get_v(j, 0).split("-- ")[1]
 
         info = {"algorithm": get_v(0)}
         i = 1
@@ -97,7 +98,7 @@ class LogParserV3(Parser):
             info[key] = get_v(i)
             i += 1
         if info["pf_type"] == "ibs":
-            info["tl"] = int(info_data[i].split(": ")[1])
+            info["time_limit"] = int(info_data[i].split(": ")[1])
             i += 1
         info["backdoor"] = Backdoor.from_str(get_v(i))
 
