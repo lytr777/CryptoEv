@@ -1,4 +1,5 @@
 from model.solver_report import SolverReport
+from util.constant import in_out_tools as iot
 from wrapper import Wrapper
 
 
@@ -20,7 +21,7 @@ class PainlessWrapper(Wrapper):
         Wrapper.__init__(self, info, tl_util)
 
     def get_common_arguments(self, workers, tl, simplifying):
-        launching_args = ["python", "./tools/stdin_to_file.py"]
+        launching_args = ["python", iot["in"]]
         launching_args.extend([self.solver_path, "-c=%d" % workers])
 
         if tl is not None:
@@ -29,7 +30,7 @@ class PainlessWrapper(Wrapper):
         return launching_args
 
     def get_timelimit_arguments(self, workers, tl, simplifying):
-        launching_args = ["python", "./tools/stdin_to_file.py"]
+        launching_args = ["python", iot["in"]]
         launching_args.extend(["timelimit", "-t%d" % tl, self.solver_path, "-c=%d" % workers])
 
         return launching_args

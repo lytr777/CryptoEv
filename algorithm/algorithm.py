@@ -36,7 +36,7 @@ class MetaAlgorithm:
             f.write("------------------------------------------------------\n")
             if hashed:
                 if pf_log == "":
-                    f.write("backdoor: %s has been saved in hash\n" % key)
+                    f.write("hashed backdoor: %s\n" % key)
                     f.write("with value: %.7g\n" % value)
                 else:
                     f.write("update prediction with backdoor: %s\n" % key)

@@ -1,4 +1,4 @@
-from parse_utils.log_parser import LogParser
+from parse_utils.log_parser_v3 import LogParserV3
 
 
 def add_conclusion(parameters):
@@ -8,7 +8,7 @@ def add_conclusion(parameters):
     if "locals_list" in parameters:
         locals_list = parameters["locals_list"]
     else:
-        parser = LogParser()
+        parser = LogParserV3()
         info, its = parser.parse_for_path(path)
 
         if len(its) == 0:
@@ -30,8 +30,6 @@ def add_conclusion(parameters):
 
         if len(locals_list) == 0:
             locals_list.append(previous)
-    # else:
-    #     raise Exception("add locals_list or function_type in parameters map")
 
     conclusion = "------------------------------------------------------\n"
     conclusion += "------------------------------------------------------\n"

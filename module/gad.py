@@ -3,7 +3,6 @@ import threading
 import numpy as np
 
 from module.predictive_function import PredictiveFunction, TaskGenerator, InitTaskGenerator, SubprocessHelper
-from util import formatter
 
 
 class GADTaskGenerator(TaskGenerator):
@@ -76,11 +75,10 @@ class GADFunction(PredictiveFunction):
         return init_case
 
     def compute(self, cg, cases=()):
+        self.task_generator_args["case_generator"] = cg
         init_case = self.solve_init()
-        log = self.__get_info(init_case)
 
         cases = list(cases)
-        self.task_generator_args["case_generator"] = cg
         self.task_generator_args["init_case"] = init_case
         self.worker_args["task_generator"] = GADTaskGenerator(self.task_generator_args)
 
@@ -91,8 +89,8 @@ class GADFunction(PredictiveFunction):
             return None, "", np.array(cases)
 
         time_stat, cases_log = PredictiveFunction.get_time_stat(self, cases)
-        log += cases_log
-        log += "spent time: %f" % time
+        log = cases_log
+        log += "spent time: %f\n" % time
 
         times_sum = 0
         for _, time in cases:
@@ -105,10 +103,3 @@ class GADFunction(PredictiveFunction):
 
         log += "%s\n" % time_stat
         return partially_value / len(cases), log, cases
-
-    @staticmethod
-    def __get_info(case):
-        s = "init secret key: %s\n" % formatter.format_array(case.get_solution_secret_key())
-        s += "init key stream: %s\n" % formatter.format_array(case.get_solution_key_stream())
-        s += "init info: (%s, %f)\n" % (case.get_status(short=True), case.time)
-        return s

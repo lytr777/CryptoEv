@@ -64,7 +64,7 @@ def parse_gad_case(case_data):
         raise Exception("unexpected line: %s" % st_line)
 
 
-class LogParser(Parser):
+class LogParserV2(Parser):
     case_parsers = {
         "ibs": parse_ibs_case,
         "gad": parse_gad_case
