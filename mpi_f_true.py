@@ -18,7 +18,7 @@ parser.add_argument('-v', metavar='0', type=int, default=0, help='[0-3] verbosit
 parser.add_argument('-d', metavar='path', type=str, help='path to debug file')
 
 args = parser.parse_args()
-_, meta_p, pf_p = configurator.load('true', {})
+_, meta_p, pf_p, ls_p = configurator.load('true', {})
 p_function = meta_p["predictive_function"]
 
 true_log_file = constant.true_log_path + args.id

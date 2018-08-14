@@ -15,6 +15,15 @@
 *.present_5_2kp_true_log
 out/**/README
 
+log_storage/a5_1
+log_storage/bivium
+log_storage/trivium_64
+log_storage/trivium_96
+log_storage/e0
+log_storage/present_5_2kp
+log_storage/present_6_1kp
+log_storage/present_6_2kp
+
 # Solvers
 lingeling
 minisat

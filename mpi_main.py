@@ -15,7 +15,7 @@ parser.add_argument('-d', metavar='path', type=str, help='path to debug file')
 parser.add_argument('-b', '--backdoor', metavar='path', type=str, help='load backdoor from specified file')
 
 args = parser.parse_args()
-alg, meta_p, mf_p = configurator.load(args.cp, {}, True)
+alg, meta_p, mf_p, ls_p = configurator.load(args.cp, {}, True)
 
 if "adaptive_N" in mf_p:
     raise Exception("MPI version not supported adaptive selection")

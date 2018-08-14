@@ -5,20 +5,30 @@
   },
   "mf_parameters": {
     "key_generator": "present_5_2kp",
-    "thread_count": 32,
+    "thread_count": 4,
     "worker_count": 1,
-    "N": 1000,
+    "N": 10,
     "solver_wrapper": {
       "args_description": "use timelimit util?",
       "name": "lingeling",
       "args": [false]
     },
-    "time_limit": 100,
+    "time_limit": 10,
     "corrector": "mass",
     "decomposition": {
       "args_description": "decomposition power, break time",
       "name": "none",
       "args": [2, 2]
     }
+  },
+  "ls_parameters": {
+    "log_name": "log",
+    "debug_name": "debug",
+    "src_dump": [
+      "./configuration/options.py",
+      "./util/comparator.py",
+      "./util/corrector.py"
+    ],
+    "tar": true
   }
 }

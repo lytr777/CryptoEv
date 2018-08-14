@@ -1,43 +1,44 @@
 import argparse
 
 from configuration import configurator
+from log_storage.logger import Logger
 from model.backdoor import SecretKey, InextensibleBackdoor
 from util.debugger import Debugger
 from util import constant, conclusion
 
 parser = argparse.ArgumentParser(description='CryptoEv')
-parser.add_argument('id', type=str, help='suffix for log file')
 parser.add_argument('-cp', metavar='tag/path', type=str, default="base", help='tag or path to configuration file')
 parser.add_argument('-v', metavar='0', type=int, default=0, help='[0-3] verbosity level')
-parser.add_argument('-d', metavar='path', type=str, help='path to debug file')
 parser.add_argument('-b', '--backdoor', metavar='path', type=str, help='load backdoor from specified file')
 # parser.add_argument('-r', '--restore', help="try to restore by logs", action="store_true")
 
 args = parser.parse_args()
-alg, meta_p, mf_p = configurator.load(args.cp, {})
+alg, meta_p, pf_p, ls_p = configurator.load(args.cp, {})
 
-meta_p["log_file"] = constant.log_path + args.id
-meta_p["locals_log_file"] = constant.locals_log_path + args.id
+ls_p["description"] = ""
+ls_p["algorithm"] = pf_p["key_generator"].tag
+logger = Logger(ls_p)
 
-mf_p["debugger"] = Debugger(args.d, args.v)
-if args.d is not None:
-    open(args.d, 'w+').close()
+meta_p["log_file"] = logger.get_log_path()
+open(meta_p["log_file"], 'w+').close()
+pf_p["debugger"] = Debugger(logger.get_debug_path(), args.v)
+open(logger.get_debug_path(), 'w+').close()
 
 if args.backdoor is None:
-    meta_p["init_backdoor"] = SecretKey(mf_p["key_generator"])
+    meta_p["init_backdoor"] = SecretKey(pf_p["key_generator"])
 else:
     meta_p["init_backdoor"] = InextensibleBackdoor.load(args.backdoor)
-    meta_p["init_backdoor"].check(mf_p["key_generator"])
+    meta_p["init_backdoor"].check(pf_p["key_generator"])
 
-mf_p["solver_wrapper"].check_installation()
-open(meta_p["log_file"], 'w+').close()
+pf_p["solver_wrapper"].check_installation()
 
 # if args.restore:
 
 alg = alg(meta_p)
-locals_list = alg.start(mf_p)
+locals_list = alg.start(pf_p)
 conclusion.add_conclusion({
     "path": meta_p["log_file"],
     "comparator": alg.comparator,
     "locals_list": locals_list
 })
+logger.end()

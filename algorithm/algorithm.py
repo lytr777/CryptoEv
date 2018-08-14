@@ -3,7 +3,6 @@ class MetaAlgorithm:
 
     def __init__(self, parameters):
         self.log_file = parameters["log_file"]
-        self.locals_log_file = parameters["locals_log_file"]
 
         self.backdoor = parameters["init_backdoor"]
         self.comparator = parameters["comparator"]
@@ -48,7 +47,6 @@ class MetaAlgorithm:
                 f.write("end prediction with value: %.7g\n" % value)
 
     def print_local_info(self, local):
-        with open(self.locals_log_file, 'a') as f:
-            f.write("------------------------------------------------------\n")
-            f.write("local with backdoor: %s\n" % self.backdoor.to_str(local[0]))
-            f.write("and value: %.7g\n" % local[1])
+        print "------------------------------------------------------"
+        print "local with backdoor: %s" % self.backdoor.to_str(local[0])
+        print "and value: %.7g" % local[1]

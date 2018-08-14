@@ -39,13 +39,17 @@ def load(path, value_hash, mpi=False):
         algorithm = algorithms[meta_name]
 
     # meta
-    meta_parameters = data[meta_name + "_parameters"]
-    __substitution(meta_parameters, value_hash)
-    meta_parameters["value_hash"] = value_hash
+    meta_p = data[meta_name + "_parameters"]
+    __substitution(meta_p, value_hash)
+    meta_p["value_hash"] = value_hash
 
-    # mf
-    mf_parameters = data["mf_parameters"]
-    __substitution(mf_parameters, value_hash)
+    # pf
+    pf_p = data["mf_parameters"]
+    __substitution(pf_p, value_hash)
+
+    # ls
+    ls_p = data["ls_parameters"]
+    ls_p["configuration"] = path
 
     print "Load configuration: %s" % path
-    return algorithm, meta_parameters, mf_parameters
+    return algorithm, meta_p, pf_p, ls_p
