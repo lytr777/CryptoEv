@@ -1,4 +1,3 @@
-import sys
 import threading
 
 from datetime import datetime
@@ -42,3 +41,14 @@ class Debugger:
     @staticmethod
     def lp(level):
         return "--" * level + " "
+
+
+class DebuggerStub:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def deferred_write(self, verb, level=0, *strs):
+        pass
+
+    def write(self, verb, level=0, *strs):
+        pass
