@@ -1,3 +1,4 @@
+import platform
 import warnings
 
 from model.solver_report import SolverReport
@@ -24,8 +25,9 @@ class LingelingWrapper(Wrapper):
     def get_common_arguments(self, workers, tl, simplifying):
         launching_args = [self.solver_path]
 
+        arg_name = "-t" if platform.system() == "Darwin" else "-T"
         if tl is not None:
-            launching_args.append("-T")
+            launching_args.append(arg_name)
             launching_args.append(str(tl))
         if workers != 1:
             warnings.warn("workers not support in lingeling", UserWarning)
