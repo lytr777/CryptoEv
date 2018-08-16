@@ -42,5 +42,18 @@
       "name": "none",
       "args": [2, 2]
     }
+  },
+  "ls_parameters": {
+    "log_name": "log",
+    "debug_name": "debug",
+    "src_dump": [
+      "./configuration/options.py",
+      "./algorithm/module/mutation.py",
+      "./algorithm/module/crossover.py",
+      "./util/adaptive_selection.py",
+      "./util/comparator.py",
+      "./util/corrector.py"
+    ],
+    "tar": true
   }
 }
