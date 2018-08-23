@@ -31,7 +31,7 @@ def show_dispersion(ks, k_tuples, configuration=111):
     plt.show()
 
 
-def show_value_dependency(ks, lines, my_line=None):
+def show_value_dependency(ks, lines, my_line=None, path=None):
     figure = plt.figure()
     for label, line in lines:
         ax = figure.add_subplot(111)
@@ -45,4 +45,7 @@ def show_value_dependency(ks, lines, my_line=None):
         ax.semilogy(kss, ys, label="my")
         ax.legend()
 
+    if path is not None:
+        plt.draw()
+        figure.savefig(path, format='eps')
     plt.show()

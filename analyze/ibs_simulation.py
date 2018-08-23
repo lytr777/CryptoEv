@@ -36,7 +36,7 @@ class IBSSimulation:
         xi = det_count / float(len(times))
 
         if xi != 0:
-            return (2 ** np.count_nonzero(mask)) * new_tl * (3 / xi)
+            return (2 ** len(mask)) * new_tl * (3 / xi)
         else:
             return self.max_value
 

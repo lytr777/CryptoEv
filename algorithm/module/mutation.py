@@ -24,7 +24,6 @@ def scaled_uniform_mutation(c):  # bit-flip
 
     return __scaled_uniform_mutation
 
-
 def swap_mutation(v):
     new_v = copy(v)
 

@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
 from plot import Plot
-from util import formatter
 
 
 class ColorPlot(Plot):
