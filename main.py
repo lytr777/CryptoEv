@@ -4,7 +4,7 @@ from configuration import configurator
 from log_storage.logger import Logger
 from model.backdoor import SecretKey, InextensibleBackdoor
 from util.debugger import Debugger
-from util import constant, conclusion
+from util import conclusion
 
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('-cp', metavar='tag/path', type=str, default="base", help='tag or path to configuration file')

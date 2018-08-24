@@ -27,40 +27,41 @@ class InextensibleBackdoor(VariableSet):
             if pk_st <= var <= pk_end:
                 raise Exception("Backdoor intersect with public key")
 
-    def to_str(self, mask):
-        if len(mask) != self.length:
-            raise Exception("Mask length don't equals %d" % self.length)
-
+    def __str__(self):
         s = "["
         for i in range(self.length):
-            if mask[i]:
+            if self.mask[i]:
                 s += "%s " % self.vars[i]
-        s = "%s](%d)" % (s[:-1], np.count_nonzero(mask))
+        s = "%s](%d)" % (s[:-1], np.count_nonzero(self.mask))
         return s
-
-    def __str__(self):
-        return self.to_str(self.mask)
 
     def __len__(self):
         return np.count_nonzero(self.mask)
 
-    def get(self):
+    def __copy__(self):
+        return self.get_copy(self.mask)
+
+    def get_mask(self):
         return copy(self.mask)
 
-    def set(self, mask):
+    def get_copy(self, mask):
+        ib = InextensibleBackdoor(self.vars)
+        ib.__set_mask(mask)
+        return ib
+
+    def __set_mask(self, mask):
         if len(mask) != self.length:
             raise Exception("Mask length don't equals %d" % self.length)
 
         self.mask = copy(mask)
 
     def reset(self):
-        self.mask = np.ones(self.length, dtype=np.int)
+        return self.get_copy(np.ones(self.length, dtype=np.int))
 
-    def snapshot(self, mask=None):
-        mask = self.mask if mask is None else mask
+    def snapshot(self):
         variables = []
-        for i in range(len(mask)):
-            if mask[i]:
+        for i in range(len(self.mask)):
+            if self.mask[i]:
                 variables.append(self.vars[i])
 
         return FixedBackdoor(variables)
@@ -92,11 +93,62 @@ class InextensibleBackdoor(VariableSet):
             return InextensibleBackdoor(variables)
 
 
-class SecretKey(InextensibleBackdoor):
+class ExpandingBackdoor(InextensibleBackdoor):
+    def __init__(self, variables):
+        InextensibleBackdoor.__init__(self, variables)
+
+    def add(self, var):
+        l, r = 0, len(self.vars)
+        while r - l > 1:
+            c = int((l + r) / 2)
+            if self.vars[c] > var:
+                r = c
+            else:
+                l = c
+
+        if self.vars[l] == var:
+            if self.mask[l] == 0:
+                self.mask[l] = 1
+            else:
+                raise Exception("Variable %d already exists in backdoor" % var)
+        else:
+            self.vars.insert(r, var)
+
+            self.length += 1
+            self.max = self.vars[-1]
+
+            new_mask = np.ones(self.length, dtype=np.int)
+            for i in range(len(self.mask)):
+                if i < r:
+                    new_mask[i] = self.mask[i]
+                elif i > r:
+                    new_mask[i + 1] = self.mask[i]
+            self.mask = new_mask
+
+    def find(self, var):
+        try:
+            i = self.vars.index(var)
+            return i if self.mask[i] else -1
+        except ValueError:
+            return -1
+
+    def get_copy(self, mask):
+        ib = ExpandingBackdoor(self.vars)
+        ib.__set_mask(mask)
+        return ib
+
+    def __set_mask(self, mask):
+        if len(mask) != self.length:
+            raise Exception("Mask length don't equals %d" % self.length)
+
+        self.mask = copy(mask)
+
+
+class SecretKey(ExpandingBackdoor):
     def __init__(self, algorithm):
         st = algorithm.secret_key_start
         end = st + algorithm.secret_key_len
-        InextensibleBackdoor.__init__(self, range(st, end))
+        ExpandingBackdoor.__init__(self, range(st, end))
         self.max_len = end - 1
 
 

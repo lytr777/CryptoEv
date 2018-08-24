@@ -5,7 +5,7 @@
     "predictive_function": "ibs",
     "mutation_function": {
       "args_description": "uniform scale",
-      "name": "uniform",
+      "name": "level",
       "args": [1.0]
     },
     "crossover_function": {

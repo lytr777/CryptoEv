@@ -2,6 +2,7 @@ from algorithm.evolution import EvolutionAlgorithm
 from algorithm.mpi_evolution import MPIEvolutionAlgorithm
 from algorithm.tabu import TabuSearch
 from algorithm.module import mutation, crossover
+from algorithm.module.backdoor_mutation import LevelMutation
 from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, Genetic
 
 from module.decomposition import Decomposition
@@ -55,7 +56,8 @@ def mutation_function(args):
     return {
         "neighbour": mutation.neighbour_mutation,
         "uniform": mutation.scaled_uniform_mutation(args[0]),
-        "swap": mutation.swap_mutation
+        "swap": mutation.swap_mutation,
+        "level": LevelMutation
     }
 
 
