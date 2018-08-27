@@ -30,6 +30,11 @@
     "thread_count": 32,
     "worker_count": 1,
     "N": 1000,
+    "adaptive_N": {
+      "args_description": "min_N, max_N",
+      "name": "function",
+      "args": [10, 1000]
+    },
     "solver_wrapper": {
       "args_description": "use timelimit util?",
       "name": "lingeling",
