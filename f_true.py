@@ -34,7 +34,7 @@ cnf = CnfParser().parse_for_path(cnf_path)
 backdoor = InextensibleBackdoor.load(args.backdoor)
 backdoor.check(algorithm)
 rs = np.random.RandomState()
-cg = CaseGenerator(algorithm, cnf, rs, backdoor)
+cg = CaseGenerator(algorithm, cnf, rs)
 
 pf_p["solver_wrapper"].check_installation()
 with open(log_path, 'w+') as f:
@@ -48,7 +48,7 @@ with open(log_path, 'w+') as f:
     f.write("------------------------------------------------------\n")
 
 mf = p_function(pf_p)
-result = mf.compute(cg)
+result = mf.compute(cg, backdoor)
 value, pf_log = result[0], result[1]
 
 with open(log_path, 'a') as f:
