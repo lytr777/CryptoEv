@@ -34,10 +34,12 @@ class LevelMutation:
 
     def mutate(self, backdoor):
         new_mask = copy(backdoor.mask)
+        core_p = 1. / self.skl
+        opt_p = 1. / (self.skl + np.count_nonzero(new_mask))
 
         distribution = np.random.rand(len(new_mask))
-        p1 = 1. / self.skl
-        p2 = p1 + 1. / (self.skl + np.count_nonzero(new_mask))
+        p1 = core_p / 2 + opt_p
+        p2 = p1 + opt_p
 
         add_list = []
         for i in range(len(new_mask)):
