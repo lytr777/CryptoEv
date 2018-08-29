@@ -2,18 +2,20 @@ import numpy as np
 
 
 def percent_function(x):
-    if x <= 20:
+    if x <= 20:  # 0.8
         return 1.2 - (x / 50.)
-    elif x <= 50:
+    elif x <= 50:  # 0.5
         return 1 - (x / 100.)
-    elif x <= 100:
-        return 0.8 - (x / 167.)
-    elif x <= 300:
+    elif x <= 100:  # 0.2
+        return 0.8 - (x / 166.6666666)
+    elif x <= 300:  # 0.1
         return 0.25 - (x / 2000.)
-    elif x <= 800:
-        return 0.13 - (x / 10000.)
-    else:
-        return 0.05
+    elif x <= 500:  # 0.05
+        return 0.175 - (x / 4000.)
+    elif x <= 800:  # 0.02
+        return 0.1 - (x / 10000.)
+    else:  # 0.005
+        return 0.08 - (x / 13333.3333333)
 
 
 class AdaptiveFunction:

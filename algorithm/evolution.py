@@ -103,6 +103,8 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 locals_list.append((best[0], best[1]))
                 self.print_local_info(best)
                 P = self.__restart()
+                if adaptive_selection is not None:
+                    pf_parameters["N"] = adaptive_selection.reset()
                 best = (self.init_backdoor, max_value, [])
                 stagnation = 0
             else:
