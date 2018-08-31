@@ -13,8 +13,14 @@ def neighbour_mutation(backdoor):
 def scaled_uniform_mutation(c):  # bit-flip
     def __scaled_uniform_mutation(backdoor):
         new_v = copy(backdoor.get_mask())
-        distribution = np.random.rand(len(new_v))
         p = float(c) / len(new_v)
+        flag = True
+        while flag:
+            distribution = np.random.rand(len(new_v))
+
+            for d in distribution:
+                if p >= d:
+                    flag = False
 
         for i in range(len(new_v)):
             if p >= distribution[i]:
