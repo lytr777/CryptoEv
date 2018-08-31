@@ -65,8 +65,6 @@ class EvolutionAlgorithm(MetaAlgorithm):
                     p_v = (p, value)
                 else:
                     hashed = False
-                    if adaptive_selection is not None:
-                        pf_parameters["N"] = adaptive_selection.get_N(best)
 
                     pf = self.p_function(pf_parameters)
                     result = pf.compute(cg, p)
@@ -94,6 +92,9 @@ class EvolutionAlgorithm(MetaAlgorithm):
                     if self.comparator(best, p_v) > 0:
                         best = p_v
                         stagnation = -1
+
+                    if adaptive_selection is not None:
+                        pf_parameters["N"] = adaptive_selection.get_N(p_v)
 
                 P_v.append(p_v)
                 self.print_pf_log(hashed, key, value, pf_log)
