@@ -1,0 +1,59 @@
+{
+  "algorithm": "ev",
+  "ev_parameters": {
+    "comparator": "max_min",
+    "predictive_function": "ibs",
+    "mutation_function": {
+      "args_description": "uniform scale",
+      "name": "uniform",
+      "args": [1.0]
+    },
+    "crossover_function": {
+      "args_description": "uniform p",
+      "name": "one-point",
+      "args": [0.2]
+    },
+    "stop_condition": {
+      "args_description": "iterations, mf calls, locals, mf value",
+      "name": "mf_calls",
+      "args": [1000, 2500, 1, 1e20]
+    },
+    "stagnation_limit": 100,
+    "evolution_strategy": {
+      "args_description": "mu, lambda, c",
+      "name": "plus",
+      "args": [1, 1, 4]
+    }
+  },
+  "mf_parameters": {
+    "key_generator": "a5_1",
+    "thread_count": 32,
+    "worker_count": 1,
+    "N": 1000,
+    "solver_wrapper": {
+      "args_description": "use timelimit util?",
+      "name": "lingeling",
+      "args": [false]
+    },
+    "time_limit": 5,
+    "corrector": "mass",
+    "decomposition": {
+      "args_description": "decomposition power, break time",
+      "name": "none",
+      "args": [2, 2]
+    }
+  },
+  "ls_parameters": {
+    "log_name": "log",
+    "debug_name": "debug",
+    "src_dump": [
+      "./configuration/options.py",
+      "./algorithm/module/mutation.py",
+      "./algorithm/module/crossover.py",
+      "./util/adaptive_selection.py",
+      "./util/comparator.py",
+      "./util/corrector.py"
+    ],
+    "tar": true
+  }
+}
