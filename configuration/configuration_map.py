@@ -1,4 +1,5 @@
 configurations = {
+    "2500": "configuration/examples/2500.json",
     "base": "configuration/examples/base.json",
     "tabu": "configuration/examples/tabu.json",
     "trivium_64": "configuration/examples/trivium_64.json",
