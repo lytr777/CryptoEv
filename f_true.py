@@ -13,12 +13,13 @@ parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('backdoor', help='load backdoor from specified file')
 parser.add_argument('-cp', metavar='tag/path', type=str, default="true", help='tag or path to configuration file')
 parser.add_argument('-v', metavar='0', type=int, default=0, help='[0-3] verbosity level')
+parser.add_argument('-d', '--description', metavar='test', default="", type=str, help='description for this launching')
 
 args = parser.parse_args()
 _, meta_p, pf_p, ls_p = configurator.load('true', {})
 p_function = meta_p["predictive_function"]
 
-ls_p["description"] = ""
+ls_p["description"] = args.d
 ls_p["algorithm"] = pf_p["key_generator"].tag
 logger = Logger(ls_p)
 
