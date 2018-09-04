@@ -28,6 +28,7 @@ class Logger:
 
         os.mkdir(paths["main"])
         if len(self.description) > 0:
+            self.description += '\n' if self.description[-1] != '\n' else ''
             open("%s/DESCRIPTION" % paths["main"], 'w+').write(self.description)
 
         if len(self.src_dump) > 0:
