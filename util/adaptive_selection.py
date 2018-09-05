@@ -61,3 +61,4 @@ class AdaptiveFunction:
 
     def reset(self):
         self.last_N = self.min_N
+        return self.min_N
