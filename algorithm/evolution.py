@@ -36,7 +36,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
         if "adaptive_N" in pf_parameters:
             adaptive_selection = pf_parameters["adaptive_N"]
-            # adaptive_selection.choose_function(algorithm.tag)
+            pf_parameters["N"] = adaptive_selection.reset()
         else:
             adaptive_selection = None
 
