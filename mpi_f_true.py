@@ -6,7 +6,7 @@ from time import time as now
 from configuration import configurator
 from log_storage.logger import Logger
 from model.case_generator import CaseGenerator
-from model.backdoor import InextensibleBackdoor
+from model.backdoor import Backdoor
 from parse_utils.cnf_parser import CnfParser
 from util import constant
 from util.debugger import Debugger, DebuggerStub
@@ -40,7 +40,7 @@ algorithm = pf_p["key_generator"]
 cnf_path = constant.cnfs[algorithm.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
 
-backdoor = InextensibleBackdoor.load(args.backdoor)
+backdoor = Backdoor.load(args.backdoor)
 backdoor.check(algorithm)
 rs = np.random.RandomState()
 cg = CaseGenerator(algorithm, cnf, rs, backdoor)

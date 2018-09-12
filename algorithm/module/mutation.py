@@ -4,7 +4,7 @@ from copy import copy
 
 
 def neighbour_mutation(backdoor):
-    new_v = copy(backdoor.get_mask())
+    new_v = backdoor.get_mask()
     pos = np.random.randint(len(new_v))
     new_v[pos] = not new_v[pos]
     return backdoor.get_copy(new_v)
@@ -12,7 +12,7 @@ def neighbour_mutation(backdoor):
 
 def scaled_uniform_mutation(c):  # bit-flip
     def __scaled_uniform_mutation(backdoor):
-        new_v = copy(backdoor.get_mask())
+        new_v = backdoor.get_mask()
         p = float(c) / len(new_v)
         flag = True
         while flag:
@@ -32,7 +32,7 @@ def scaled_uniform_mutation(c):  # bit-flip
 
 
 def swap_mutation(backdoor):
-    new_v = copy(backdoor.get_mask())
+    new_v = backdoor.get_mask()
 
     zero_indices = []
     nonzero_indices = []

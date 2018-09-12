@@ -4,8 +4,8 @@ from copy import copy
 
 
 def one_point_crossover(b1, b2):
-    new_v = copy(b1.get_mask())
-    new_w = copy(b2.get_mask())
+    new_v = b1.get_mask()
+    new_w = b2.get_mask()
 
     pos = np.random.randint(len(new_v))
 
@@ -16,8 +16,8 @@ def one_point_crossover(b1, b2):
 
 
 def two_point_crossover(b1, b2):
-    new_v = copy(b1.get_mask())
-    new_w = copy(b2.get_mask())
+    new_v = b1.get_mask()
+    new_w = b2.get_mask()
 
     a = np.random.randint(len(new_v))
     b = np.random.randint(len(new_v))
@@ -33,8 +33,8 @@ def two_point_crossover(b1, b2):
 
 def uniform_crossover(p):
     def __uniform_crossover(b1, b2):
-        new_v = copy(b1.get_mask())
-        new_w = copy(b2.get_mask())
+        new_v = b1.get_mask()
+        new_w = b2.get_mask()
         distribution = np.random.rand(len(new_v))
 
         for i in range(len(new_v)):

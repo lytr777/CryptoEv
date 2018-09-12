@@ -1,12 +1,9 @@
 import argparse
-
-import numpy as np
 from mpi4py import MPI
-from array import array
 
 from configuration import configurator
 from log_storage.logger import Logger
-from model.backdoor import SecretKey, InextensibleBackdoor
+from model.backdoor import SecretKey, Backdoor
 from util.debugger import Debugger, DebuggerStub
 from util import conclusion
 
@@ -41,7 +38,7 @@ else:
 if args.backdoor is None:
     meta_p["init_backdoor"] = SecretKey(pf_p["key_generator"])
 else:
-    meta_p["init_backdoor"] = InextensibleBackdoor.load(args.backdoor)
+    meta_p["init_backdoor"] = Backdoor.load(args.backdoor)
     meta_p["init_backdoor"].check(pf_p["key_generator"])
 
 pf_p["solver_wrapper"].check_installation()
