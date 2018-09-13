@@ -72,6 +72,21 @@ class Backdoor(VariableSet):
 
         return FixedBackdoor(variables)
 
+    def pack(self):
+        array = np.empty(2 * self.length, dtype=np.int)
+        array[:self.length] = np.array(self.vars)
+        array[self.length:] = self.mask
+
+        return array
+
+    @staticmethod
+    def unpack(array):
+        lenght = len(array) / 2
+        backdoor = Backdoor(array[:lenght])
+        backdoor.__set_mask(array[lenght:])
+
+        return backdoor
+
     @staticmethod
     def load(path):
         with open(path, 'r') as f:
@@ -164,15 +179,18 @@ class FixedBackdoor(VariableSet):
 
 if __name__ == "__main__":
     mutation_f = scaled_uniform_mutation(1.)
-    backdoor = Backdoor([1, 3, 4, 5, 6])
-    print backdoor
+    bd = Backdoor([1, 3, 4, 5, 6])
+    print bd
 
-    backdoor = backdoor.get_copy(np.array([1, 0, 0, 1, 1]))
-    print backdoor
+    bd = bd.get_copy(np.array([1, 0, 0, 1, 1]))
+    print bd
 
-    print backdoor.find(4)
+    print bd.find(4)
 
-    backdoor.add(2)
-    print backdoor
+    bd.add(2)
+    print bd
 
-    print backdoor.find(4)
+    print bd.find(4)
+
+    bd = Backdoor.unpack(np.array([1, 2, 3, 4, 5, 6, 0, 0, 1, 1, 0, 1]))
+    print bd.pack()
