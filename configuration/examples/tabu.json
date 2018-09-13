@@ -12,7 +12,7 @@
   },
   "mf_parameters": {
     "key_generator": "a5_1",
-    "thread_count": 32,
+    "thread_count": 4,
     "worker_count": 1,
     "N": 1000,
     "solver_wrapper": {
