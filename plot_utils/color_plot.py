@@ -15,9 +15,9 @@ class ColorPlot(Plot):
         divider = (self.max_N - self.min_N) / 256.
         times_hash = {}
 
-        data = []
-        points = []
-        color = None
+        xs, ys, cs = [], [], []
+        xss, yss = [], []
+        color, i = 0, 0
         for it in its:
             best = None
             for case in it:
@@ -31,21 +31,25 @@ class ColorPlot(Plot):
                 times = times_hash[key]
 
             c = int((len(times) - self.min_N) / divider)
-            if color is not None and color != c:
-                data.append((points, self.cmap(color)))
-                last_point = points[len(points) - 1]
-                points = [last_point]
+            if color != c and len(xss) > 0:
+                xs.append(xss)
+                ys.append(yss)
+                cs.append(color)
 
-            points.append(best.value)
-            color = c
+                xss = [xss[-1]]
+                yss = [yss[-1]]
 
-        if len(points) > 0:
-            data.append((points, self.cmap(color)))
+            xss.append(i)
+            yss.append(best.value)
+            color, i = c, i + 1
 
-        return data
+        if len(xss) > 0:
+            xs.append(xss)
+            ys.append(yss)
+            cs.append(color)
 
-    def draw_line(self, ax, data):
-        i = 0
-        for ys, color in data:
-            ax.semilogy(range(i, i + len(ys)), ys, c=color, lw=self.lw)
-            i += len(ys) - 1
+        return xs, ys, cs
+
+    def draw_line(self, ax, line):
+        for i in range(len(line.xs)):
+            ax.semilogy(line.xs[i], line.ys[i], c=self.cmap(line.cs[i]), lw=self.lw)
