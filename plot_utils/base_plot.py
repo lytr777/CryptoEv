@@ -6,16 +6,23 @@ class BasePlot(Plot):
         Plot.__init__(self, parameters)
 
     def process_iterations(self, its):
-        points = []
+        xs, ys = [], []
+        i = 0
         for it in its:
-            best = None
+            best = it[0]
             for case in it:
-                if best is None or self.comparator(best, case.mv()) > 0:
-                    best = case.mv()
+                if self.comparator(best.mv(), case.mv()) > 0:
+                    best = case
 
-            points.append(best.value)
+            ys.append(best.value)
+            xs.append(i)
+            i += 1
 
-        return points
+        return xs, ys, None
 
-    def draw_line(self, ax, data):
-        ax.semilogy(range(len(data)), data, lw=self.lw)
+    def draw_line(self, ax, line):
+        if line.label is None:
+            ax.semilogy(line.xs, line.ys, lw=self.lw)
+        else:
+            ax.semilogy(line.xs, line.ys, lw=self.lw, label=line.label)
+            ax.legend()

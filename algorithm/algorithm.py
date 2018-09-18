@@ -4,7 +4,7 @@ class MetaAlgorithm:
     def __init__(self, parameters):
         self.log_file = parameters["log_file"]
 
-        self.backdoor = parameters["init_backdoor"]
+        self.init_backdoor = parameters["init_backdoor"]
         self.comparator = parameters["comparator"]
         self.p_function = parameters["predictive_function"]
         self.stop_condition = parameters["stop_condition"]
@@ -23,7 +23,7 @@ class MetaAlgorithm:
             f.write("-- pf type: %s\n" % self.p_function.type)
             if tl is not None:
                 f.write("-- time limit: %s\n" % tl)
-            f.write("-- backdoor: %s\n" % self.backdoor)
+            f.write("-- backdoor: %s\n" % self.init_backdoor)
 
     def print_iteration_header(self, it):
         with open(self.log_file, 'a') as f:
@@ -48,5 +48,5 @@ class MetaAlgorithm:
 
     def print_local_info(self, local):
         print "------------------------------------------------------"
-        print "local with backdoor: %s" % self.backdoor.to_str(local[0])
+        print "local with backdoor: %s" % local[0]
         print "and value: %.7g" % local[1]

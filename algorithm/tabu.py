@@ -20,7 +20,7 @@ class TabuSearch(MetaAlgorithm):
         cnf_path = constant.cnfs[algorithm.tag]
         cnf = CnfParser().parse_for_path(cnf_path)
         rs = np.random.RandomState(43)
-        cg = CaseGenerator(algorithm, cnf, rs, self.backdoor)
+        cg = CaseGenerator(algorithm, cnf, rs)
 
         it = 1
         it_updates = 0
@@ -32,21 +32,20 @@ class TabuSearch(MetaAlgorithm):
         tl = pf_parameters["time_limit"] if self.p_function.type == "ibs" else None
         self.print_info(algorithm.tag, solver, tl)
         center, value = self.__get_new_center(cg, pf_parameters)
-        best = (center, value)
+        best = (self.init_backdoor, value)
 
         while not self.stop_condition(it, pf_calls, len(locals_list), best[1]):
             self.print_iteration_header(it)
             updated = False
             for x in self.__get_neighbourhood(center):
-                self.backdoor.set(x)
-                key = str(self.backdoor)
+                key = str(x)
                 if key in self.value_hash:
                     hashed = True
                     value, pf_log = self.value_hash[key], ""
                 else:
                     hashed = False
                     pf = self.p_function(pf_parameters)
-                    result = pf.compute(cg)
+                    result = pf.compute(cg, x)
                     value, pf_log = result[0], result[1]
                     pf_calls += 1
                     self.value_hash[key] = value
@@ -65,14 +64,14 @@ class TabuSearch(MetaAlgorithm):
                     break
 
             if updated:
-                center_key = self.backdoor.to_str(best[0])
+                center_key = str(best[0])
                 tabu_list[center_key] = best[1]
                 center = best[0]
             else:
-                locals_list.append((self.backdoor.snapshot(best[0]), best[1]))
+                locals_list.append((best[0], best[1]))
                 self.print_local_info(best)
                 center, value = self.__get_new_center(cg, pf_parameters)
-                best = (center, value)
+                best = (self.init_backdoor, value)
 
             it += 1
             it_updates = 0
@@ -80,26 +79,25 @@ class TabuSearch(MetaAlgorithm):
         return locals_list
 
     def __get_new_center(self, cg, pf_parameters):
-        self.backdoor.reset()
-        center = self.backdoor.get()
-        key = str(self.backdoor)
+        key = str(self.init_backdoor)
 
         if key in self.value_hash:
             value = self.value_hash[key]
         else:
             pf = self.p_function(pf_parameters)
-            result = pf.compute(cg)
+            result = pf.compute(cg, self.init_backdoor)
             value = result[0]
             self.value_hash[key] = value
 
-        return center, value
+        return self.init_backdoor, value
 
     @staticmethod
-    def __get_neighbourhood(vector):
-        for i in range(len(vector)):
-            new_vector = copy(vector)
-            new_vector[i] = not new_vector[i]
-            yield new_vector
+    def __get_neighbourhood(backdoor):
+        v = backdoor.get_mask()
+        for i in range(len(v)):
+            new_v = copy(v)
+            new_v[i] = not new_v[i]
+            yield backdoor.get_copy(new_v)
 
     def print_tabu_log(self, key, value):
         with open(self.log_file, 'a') as f:

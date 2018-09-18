@@ -48,6 +48,7 @@ class TaskGenerator:
         self.solver_wrapper = args["solver_wrapper"]
         self.worker_count = args["worker_count"]
         self.cg = args["case_generator"]
+        self.backdoor = args["backdoor"]
 
     def get(self, case):
         raise NotImplementedError
@@ -95,7 +96,7 @@ class PredictiveFunction:
             worker.terminated.set()
         exit(s)
 
-    def compute(self, cg, cases):
+    def compute(self, cg, backdoor, cases):
         raise NotImplementedError
 
     def solve(self, worker_constructor):

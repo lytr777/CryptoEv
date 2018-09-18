@@ -6,7 +6,7 @@ from time import time as now
 from configuration import configurator
 from log_storage.logger import Logger
 from model.case_generator import CaseGenerator
-from model.backdoor import InextensibleBackdoor
+from model.backdoor import Backdoor
 from parse_utils.cnf_parser import CnfParser
 from util import constant
 from util.debugger import Debugger, DebuggerStub
@@ -40,10 +40,10 @@ algorithm = pf_p["key_generator"]
 cnf_path = constant.cnfs[algorithm.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
 
-backdoor = InextensibleBackdoor.load(args.backdoor)
+backdoor = Backdoor.load(args.backdoor)
 backdoor.check(algorithm)
 rs = np.random.RandomState()
-cg = CaseGenerator(algorithm, cnf, rs, backdoor)
+cg = CaseGenerator(algorithm, cnf, rs)
 
 pf_p["solver_wrapper"].check_installation()
 if rank == 0:
@@ -69,13 +69,13 @@ if rank == 0:
     start_work_time = now()
 
     pf = p_function(pf_p)
-    result = pf.compute(cg)
+    result = pf.compute(cg, backdoor)
 
     cases = comm.gather(result[2], root=0)
     cases = np.concatenate(cases)
 
     time = now() - start_work_time
-    final_result = pf.handle_cases(cg, cases, time)
+    final_result = pf.handle_cases(cg, backdoor, cases, time)
     value, pf_log = final_result[0], final_result[1]
 
     with open(log_path, 'a') as f:
@@ -83,6 +83,6 @@ if rank == 0:
     logger.end()
 else:
     pf = p_function(pf_p)
-    result = pf.compute(cg)
+    result = pf.compute(cg, backdoor)
 
     comm.gather(result[2], root=0)

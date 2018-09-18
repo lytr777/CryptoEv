@@ -33,10 +33,10 @@ class RelativeDeviation(DispersionFunction):
                         j = i - 1
                         while original[i] == original[j]:
                             j -= 1
-                        return original[j]
-                    return original[i]
+                        return original[j], j
+                    return original[i], i
 
-        return min_value
+        return min_value, -1
 
 
 class DispersionAnalyzer:
@@ -46,10 +46,13 @@ class DispersionAnalyzer:
 
     def analyze(self, k_tuples):
         values = [self.max_value]
+        indexes = [0]
         keys = sorted(k_tuples.keys())
 
         for key in keys:
             _, lines = k_tuples[key]
-            values.append(self.f.compute(lines))
+            value, i = self.f.compute(lines)
+            values.append(value)
+            indexes.append(i)
 
-        return values
+        return values, indexes

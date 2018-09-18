@@ -11,7 +11,7 @@ class IBSTaskGenerator(TaskGenerator):
 
     def get(self, init_case):
         args = self.solver_wrapper.get_arguments(self.worker_count, tl=self.tl)
-        case = self.cg.generate(init_case.solution)
+        case = self.cg.generate(self.backdoor, init_case.solution)
 
         return args, case
 
@@ -87,10 +87,11 @@ class IBSFunction(PredictiveFunction):
         PredictiveFunction.__init__(self, parameters)
         self.time_limit = parameters["time_limit"]
 
-    def compute(self, cg, cases=()):
+    def compute(self, cg, backdoor, cases=()):
         cases = list(cases)
         self.task_generator_args["case_generator"] = cg
-        self.debugger.deferred_write(1, 0, "compute for backdoor: %s" % cg.backdoor)
+        self.task_generator_args["backdoor"] = backdoor
+        self.debugger.deferred_write(1, 0, "compute for backdoor: %s" % backdoor)
         self.task_generator_args["time_limit"] = self.time_limit
         self.debugger.deferred_write(1, 0, "set time limit: %s" % self.time_limit)
 
@@ -107,9 +108,9 @@ class IBSFunction(PredictiveFunction):
         if self.mpi_call:
             return None, "", np.array(cases)
 
-        return self.handle_cases(cg, cases, time)
+        return self.handle_cases(cg, backdoor, cases, time)
 
-    def handle_cases(self, cg, cases, time):
+    def handle_cases(self, cg, backdoor, cases, time):
         self.debugger.write(1, 0, "counting time stat...")
         time_stat, log = self.get_time_stat(cases)
         self.debugger.deferred_write(1, 0, "time stat: %s" % time_stat)
@@ -129,7 +130,7 @@ class IBSFunction(PredictiveFunction):
         self.debugger.write(1, 0, "calculating value...")
         xi = float(time_stat["DETERMINATE"]) / float(len(cases))
         if xi != 0:
-            value = (2 ** len(cg.backdoor)) * self.time_limit * (3 / xi)
+            value = (2 ** len(backdoor)) * self.time_limit * (3 / xi)
         else:
             value = (2 ** cg.algorithm.secret_key_len) * self.time_limit
         self.debugger.write(1, 0, "value: %.7g\n" % value)

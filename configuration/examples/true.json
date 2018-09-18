@@ -4,16 +4,16 @@
     "predictive_function": "ibs"
   },
   "mf_parameters": {
-    "key_generator": "present_5_2kp",
-    "thread_count": 4,
+    "key_generator": "a5_1",
+    "thread_count": 32,
     "worker_count": 1,
-    "N": 10,
+    "N": 50000,
     "solver_wrapper": {
       "args_description": "use timelimit util?",
       "name": "lingeling",
       "args": [false]
     },
-    "time_limit": 10,
+    "time_limit": 5,
     "corrector": "mass",
     "decomposition": {
       "args_description": "decomposition power, break time",

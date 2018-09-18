@@ -28,6 +28,7 @@ class Logger:
 
         os.mkdir(paths["main"])
         if len(self.description) > 0:
+            self.description += '\n' if self.description[-1] != '\n' else ''
             open("%s/DESCRIPTION" % paths["main"], 'w+').write(self.description)
 
         if len(self.src_dump) > 0:
@@ -61,7 +62,7 @@ class Logger:
 
     def __now(self):
         now = datetime.today()
-        z = lambda n: ("0%s" if n < 9 else "%s") % n
+        z = lambda n: ("0%s" if n <= 9 else "%s") % n
 
         date = "%s.%s.%s" % (now.year, z(now.month), z(now.day))
         time = "%s:%s:%s" % (z(now.hour), z(now.minute), z(now.second))

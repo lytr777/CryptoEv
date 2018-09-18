@@ -1,5 +1,5 @@
 from numpy import sign, count_nonzero as cnz, ndarray
-from model.backdoor import FixedBackdoor, InextensibleBackdoor as Backdoor
+from model.backdoor import Backdoor, FixedBackdoor as FB
 
 
 # max s, min value
@@ -10,5 +10,5 @@ def max_min(p1, p2):
     else:
         if isinstance(p1[0], ndarray) or isinstance(p1[0], list):
             return cnz(p2[0]) - cnz(p1[0])
-        elif isinstance(p1[0], FixedBackdoor) or isinstance(p1[0], Backdoor):
+        elif isinstance(p1[0], FB) or isinstance(p1[0], Backdoor):
             return len(p2[0]) - len(p1[0])

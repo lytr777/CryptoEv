@@ -15,8 +15,8 @@
     },
     "stop_condition": {
       "args_description": "iterations, mf calls, locals, mf value",
-      "name": "locals",
-      "args": [1000, 1000, 1, 1e20]
+      "name": "mf_calls",
+      "args": [1000, 2500, 1, 1e20]
     },
     "stagnation_limit": 100,
     "evolution_strategy": {
@@ -30,11 +30,6 @@
     "thread_count": 32,
     "worker_count": 1,
     "N": 1000,
-    "adaptive_N": {
-      "args_description": "min_N, max_N",
-      "name": "function",
-      "args": [10, 1000]
-    },
     "solver_wrapper": {
       "args_description": "use timelimit util?",
       "name": "lingeling",

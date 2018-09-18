@@ -1,7 +1,9 @@
 import numpy as np
+from copy import copy
 from time import time as now
 
 from algorithm import MetaAlgorithm
+from model.backdoor import Backdoor
 from model.case_generator import CaseGenerator
 from parse_utils.cnf_parser import CnfParser
 from util import constant
@@ -26,7 +28,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         cnf = CnfParser().parse_for_path(cnf_path)
 
         rs = np.random.RandomState(43)
-        cg = CaseGenerator(algorithm, cnf, rs, self.backdoor)
+        cg = CaseGenerator(algorithm, cnf, rs)
         pf_parameters["mpi_call"] = True
 
         (quotient, remainder) = divmod(pf_parameters["N"], self.size)
@@ -34,6 +36,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         real_N = rank_N * self.size
 
         pf_parameters["N"] = rank_N
+        mpi_params_length = 2
         if self.rank == 0:
             max_value = float("inf")
             it = 1
@@ -41,7 +44,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             stagnation = 0
 
             P = self.__restart()
-            best = (self.backdoor.get(), max_value, [])
+            best = (self.init_backdoor, max_value, [])
             locals_list = []
 
             solver = pf_parameters["solver_wrapper"].info["tag"]
@@ -52,8 +55,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                 self.print_iteration_header(it)
                 P_v = []
                 for p in P:
-                    self.backdoor.set(p)
-                    key = str(self.backdoor)
+                    key = str(p)
                     if key in self.value_hash:
                         hashed = True
                         (value, n), pf_log = self.value_hash[key], ""
@@ -62,15 +64,18 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                         hashed = False
                         start_work_time = now()
 
-                        self.comm.Bcast(p, root=0)
+                        mpi_params = np.array([2 * p.length, rank_N])
+                        self.comm.Bcast(mpi_params, root=0)
+
+                        self.comm.Bcast(p.pack(), root=0)
                         pf = self.p_function(pf_parameters)
-                        result = pf.compute(cg)
+                        result = pf.compute(cg, p)
 
                         cases = self.comm.gather(result[2], root=0)
                         cases = np.concatenate(cases)
 
                         time = now() - start_work_time
-                        final_result = pf.handle_cases(cg, cases, time)
+                        final_result = pf.handle_cases(cg, p, cases, time)
 
                         value, pf_log = final_result[0], final_result[1]
                         pf_calls += 1
@@ -86,40 +91,43 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
                 stagnation += 1
                 if stagnation >= self.stagnation_limit:
-                    locals_list.append((self.backdoor.snapshot(best[0]), best[1]))
+                    locals_list.append((best[0].snapshot(), best[1]))
                     self.print_local_info(best)
                     P = self.__restart()
-                    best = (self.backdoor.get(), max_value, [])
+                    best = (self.init_backdoor, max_value, [])
                     stagnation = 0
                 else:
                     P_v.sort(cmp=self.comparator)
                     P = self.strategy.get_next_population((self.mutation_f, self.crossover_f), P_v)
                 it += 1
 
-            self.comm.Bcast(np.array([-1] * algorithm.secret_key_len), root=0)
+            mpi_params = np.array([-1, -1])
+            self.comm.Bcast(mpi_params, root=0)
 
             if best[1] != max_value:
-                locals_list.append((self.backdoor.snapshot(best[0]), best[1]))
+                locals_list.append((best[0].snapshot(), best[1]))
                 self.print_local_info(best)
 
             return locals_list
         else:
             while True:
-                p = np.empty(self.backdoor.length, dtype=np.int)
-                self.comm.Bcast(p, root=0)
-                if p.__contains__(-1):
+                mpi_params = np.empty(mpi_params_length, dtype=np.int)
+                self.comm.Bcast(mpi_params, root=0)
+                if mpi_params[0] == -1:
                     break
 
-                self.backdoor.set(p)
+                array = np.empty(mpi_params[0], dtype=np.int)
+                self.comm.Bcast(array, root=0)
+
+                p = Backdoor.unpack(array)
                 pf = self.p_function(pf_parameters)
-                result = pf.compute(cg)
+                result = pf.compute(cg, p)
 
                 self.comm.gather(result[2], root=0)
 
     def __restart(self):
         P = []
-        self.backdoor.reset()
         for i in range(self.strategy.get_population_size()):
-            P.append(self.backdoor.get())
+            P.append(copy(self.init_backdoor))
 
         return P
