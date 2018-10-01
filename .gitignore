@@ -15,7 +15,7 @@
 *.present_5_2kp_true_log
 out/**/README
 
-log_storage/_logs
+output/_logs
 
 # Solvers
 lingeling
