@@ -1,9 +1,11 @@
 import argparse
 
 from configuration import configurator
-from log_storage.logger import Logger
+
+from output.module.logger import Logger
+from output.module.debugger import Debugger
+from constants.runtime import runtime_constants as rc
 from model.backdoor import SecretKey, Backdoor
-from util.debugger import Debugger
 from util import conclusion
 
 parser = argparse.ArgumentParser(description='CryptoEv')
@@ -14,32 +16,40 @@ parser.add_argument('-d', '--description', metavar='test', default="", type=str,
 # parser.add_argument('-r', '--restore', help="try to restore by logs", action="store_true")
 
 args = parser.parse_args()
-alg, meta_p, pf_p, ls_p = configurator.load(args.cp, {})
+path, configuration = configurator.load(args.cp)
+rc.configuration = configuration
 
-ls_p["description"] = args.description
-ls_p["algorithm"] = pf_p["key_generator"].tag
-logger = Logger(ls_p)
+key_generator = configuration["predictive_function"].key_generator
+# output
+output = configuration["output"]
+output.create(
+    key_generator=key_generator.tag,
+    description=args.description,
+    conf_path=path,
+)
 
-meta_p["log_file"] = logger.get_log_path()
-open(meta_p["log_file"], 'w+').close()
-pf_p["debugger"] = Debugger(logger.get_debug_path(), args.v)
-open(logger.get_debug_path(), 'w+').close()
+rc.logger = Logger(output.get_log_path())
+rc.debugger = Debugger(output.get_debug_path(), args.v)
 
 if args.backdoor is None:
-    meta_p["init_backdoor"] = SecretKey(pf_p["key_generator"])
+    backdoor = SecretKey(key_generator)
 else:
-    meta_p["init_backdoor"] = Backdoor.load(args.backdoor)
-    meta_p["init_backdoor"].check(pf_p["key_generator"])
+    backdoor = Backdoor.load(args.backdoor)
+    backdoor.check(key_generator)
 
-pf_p["solver_wrapper"].check_installation()
+for key in configuration["solvers"].solvers.keys():
+    configuration["solvers"].get(key).check_installation()
 
 # if args.restore:
 
-alg = alg(meta_p)
-locals_list = alg.start(pf_p)
+algorithm = configuration["algorithm"]
+rc.logger.write(algorithm.get_info())
+locals_list = algorithm.start(backdoor)
+
 conclusion.add_conclusion({
-    "path": meta_p["log_file"],
-    "comparator": alg.comparator,
+    "path": rc.logger.log_file,
+    "comparator": algorithm.comparator,
     "locals_list": locals_list
 })
-logger.end()
+configuration["concurrency"].terminate()
+configuration["output"].close()

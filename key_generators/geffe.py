@@ -1,4 +1,4 @@
-from stream_cipher import StreamCipher
+from key_generator import StreamCipher
 
 
 class Geffe(StreamCipher):

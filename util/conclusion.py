@@ -1,4 +1,4 @@
-from parse_utils.log_parser_v3 import LogParserV3
+from parse.log_parser_v3 import LogParserV3
 
 
 def add_conclusion(parameters):
@@ -39,7 +39,7 @@ def add_conclusion(parameters):
         best = locals_list[0]
 
         for local in locals_list:
-            if comparator(best, local) > 0:
+            if comparator.compare(best, local) > 0:
                 best = local
             conclusion += "value: %.7g for backdoor: %s\n" % (local[1], local[0])
 

@@ -1,4 +1,4 @@
-from block_cipher import BlockCipher
+from key_generator import BlockCipher
 
 
 class Present_5_2KP(BlockCipher):

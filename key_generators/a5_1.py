@@ -1,4 +1,4 @@
-from stream_cipher import StreamCipher
+from key_generator import StreamCipher
 
 
 class A5_1(StreamCipher):

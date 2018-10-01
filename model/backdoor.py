@@ -1,9 +1,9 @@
 import numpy as np
 from copy import copy
 
-from model.cnf_model import CnfSubstitution
+from model.cnf import CnfSubstitution
 from model.variable_set import VariableSet
-from algorithm.module.mutation import scaled_uniform_mutation
+from algorithm.module.mutation import UniformMutation
 
 
 class Backdoor(VariableSet):
@@ -178,7 +178,7 @@ class FixedBackdoor(VariableSet):
 
 
 if __name__ == "__main__":
-    mutation_f = scaled_uniform_mutation(1.)
+    mutation_f = UniformMutation(scale=1.)
     bd = Backdoor([1, 3, 4, 5, 6])
     print bd
 

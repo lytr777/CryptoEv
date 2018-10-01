@@ -1,55 +1,42 @@
 import json
 
 from configuration_map import get_path
-from options import matcher, algorithms
+from options import modules, options
 
 
-def __get_option(key):
-    return matcher[key]
+def __substitute_option(key, value):
+    name = value["name"]
+    option = options[key](name)
+
+    for v_key in value.keys():
+        if isinstance(value[v_key], dict):
+            value[v_key] = __substitute_option(v_key, value[v_key])
+
+    return option(**value)
 
 
-def __substitution(parameters, value_hash):
-    for key in parameters.keys():
-        value = parameters[key]
-        if isinstance(value, unicode) or isinstance(value, str):
-            parameters[key] = __get_option(key)[value]
-        elif isinstance(value, dict):
-            name, args = value["name"], value["args"]
-            option = __get_option(key)
-            if key != "decomposition":
-                parameters[key] = option(args)[name]
-            else:
-                parameters[key] = option(value_hash, args)[name]
+def __substitute(key, value, mpi):
+    t = value["type"]
+    module = modules[key](t, mpi)
+
+    for v_key in value.keys():
+        if isinstance(value[v_key], dict):
+            value[v_key] = __substitute_option(v_key, value[v_key])
+
+    return module(**value)
 
 
-def load_base(value_hash):
-    return load(get_path("base"), value_hash)
+def load_base():
+    return load(get_path("base"))
 
 
-def load(path, value_hash, mpi=False):
+def load(path, mpi=False):
     if not path.endswith(".json"):
         path = get_path(path)
 
     data = json.load(open(path, 'r'))
 
-    meta_name = data["algorithm"]
-    if mpi:
-        algorithm = algorithms["mpi_%s" % meta_name]
-    else:
-        algorithm = algorithms[meta_name]
+    for key in data.keys():
+        data[key] = __substitute(key, data[key], mpi)
 
-    # meta
-    meta_p = data[meta_name + "_parameters"]
-    __substitution(meta_p, value_hash)
-    meta_p["value_hash"] = value_hash
-
-    # pf
-    pf_p = data["mf_parameters"]
-    __substitution(pf_p, value_hash)
-
-    # ls
-    ls_p = data["ls_parameters"]
-    ls_p["configuration"] = path
-
-    print "Load configuration: %s" % path
-    return algorithm, meta_p, pf_p, ls_p
+    return path, data

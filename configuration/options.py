@@ -1,15 +1,17 @@
 from algorithm.evolution import EvolutionAlgorithm
 from algorithm.mpi_evolution import MPIEvolutionAlgorithm
 from algorithm.tabu import TabuSearch
-from algorithm.module import mutation, crossover
-from algorithm.module.backdoor_mutation import LevelMutation
-from algorithm.module.evolution_strategies import MuCommaLambda, MuPlusLambda, Genetic
 
-from module.decomposition import Decomposition
-from module.gad import GADFunction
-from module.ibs import IBSFunction
-from module.pool_ibs import PoolIBSFunction
+from algorithm.module.strategies import MuCommaLambda, MuPlusLambda, Genetic
+from algorithm.module.mutation import UniformMutation
+from algorithm.module.crossover import OnePointCrossover, TwoPointCrossover, UniformCrossover
+from util.comparator import MaxMin
+from algorithm.module.stop_condition import IterationStop
 
+from predictive_function.gad import GuessAndDetermine
+from predictive_function.ibs import InverseBackdoorSets
+
+from key_generators.key_generator import builder
 from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
 from key_generators.bivium import Bivium
@@ -20,146 +22,154 @@ from key_generators.present_6_1kp import Present_6_1KP
 from key_generators.present_6_2kp import Present_6_2KP
 from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
+from predictive_function.module.corrector import MassCorrector, MaxCorrector
+from predictive_function.module.selection import AdaptiveFunction, ConstSelection
 
-from wrapper.lingeling import LingelingWrapper
-from wrapper.minisat import MinisatWrapper
-from wrapper.plingeling import PlingelingWrapper
-from wrapper.treengeling import TreengelingWrapper
-from wrapper.rokk import RokkWrapper
-from wrapper.cryptominisat import CryptoMinisatWrapper
-from wrapper.painless import PainlessWrapper
+from solver.solver_net import SolverNet
 
-from util import comparator, corrector
-from util.adaptive_selection import AdaptiveFunction
+from solver.cryptominisat import CryptoMinisatSolver
+from solver.lingeling import LingelingSolver
+from solver.minisat import MinisatSolver
+from solver.painless import PainlessSolver
+from solver.plingeling import PlingelingSolver
+from solver.treengeling import TreengelingSolver
 
-algorithms = {
-    "ev": EvolutionAlgorithm,
-    "mpi_ev": MPIEvolutionAlgorithm,
-    "ts": TabuSearch
+from concurrency.module.queue import QueueOfGeneratedTasks
+from concurrency.workers import Workers
+
+from output.storage import Storage
+
+
+def __get(d):
+    def __w(name, *args):
+        return d[name]
+
+    return __w
+
+
+# algorithm
+def get_algorithm(name, mpi):
+    name = "mpi_%s" % name if mpi else name
+    return {
+        "evolution": EvolutionAlgorithm,
+        "mpi_evolution": MPIEvolutionAlgorithm,
+        "tabu_search": TabuSearch
+    }[name]
+
+
+strategies = {
+    "comma": MuCommaLambda,
+    "plus": MuPlusLambda,
+    "genetic": Genetic
 }
 
-# meta
+mutation_functions = {
+    "uniform": UniformMutation,
+    # "level": LevelMutation
+}
+
+crossover_functions = {
+    "one-point": OnePointCrossover,
+    "two-point": TwoPointCrossover,
+    "uniform": UniformCrossover
+}
+
 comparators = {
-    "max_min": comparator.max_min
+    "max_min": MaxMin
 }
 
+stop_conditions = {
+    "iterations": IterationStop
+}
+
+
+# predictive function
 predictive_functions = {
-    "gad": GADFunction,
-    "ibs": IBSFunction,
-    "pool_ibs": PoolIBSFunction,
+    "gad": GuessAndDetermine,
+    "ibs": InverseBackdoorSets,
 }
 
 
-def mutation_function(args):
-    if len(args) != 1:
-        raise Exception("Count of mutation_function args must equals 1! [<scale>]")
-    return {
-        "neighbour": mutation.neighbour_mutation,
-        "uniform": mutation.scaled_uniform_mutation(args[0]),
-        "swap": mutation.swap_mutation,
-        "level": LevelMutation
-    }
+def get_key_generators(name):
+    kg = {"a5_1": A5_1,
+          "e0": E0,
+          # Trivium
+          "bivium": Bivium,
+          "trivium_64": Trivium_64,
+          "trivium_96": Trivium_96,
+          # Present
+          "present_5_2kp": Present_5_2KP,
+          "present_6_1kp": Present_6_1KP,
+          "present_6_2kp": Present_6_2KP,
+          # Other
+          "volfram": Volfram,
+          "geffe": Geffe
+          }[name]
+    return builder(kg)
 
 
-def crossover_function(args):
-    if len(args) != 1:
-        raise Exception("Count of crossover_function args must equals 1! [<p>]")
-    return {
-        "one-point": crossover.one_point_crossover,
-        "two-point": crossover.two_point_crossover,
-        "uniform": crossover.uniform_crossover(args[0])
-    }
-
-
-def stop_condition(args):
-    if len(args) != 4:
-        raise Exception("Count of stop_conditions args must equals 4! [<it>, <mf calls>, <locals>, <mf_value>]")
-    return {
-        "iterable": lambda _1, _2, _3, _4: _1 > args[0],
-        "mf_calls": lambda _1, _2, _3, _4: _2 >= args[1],
-        "locals": lambda _1, _2, _3, _4: _3 >= args[2],
-        "mf_value": lambda _1, _2, _3, _4: _4 < args[3],
-    }
-
-
-def evolution_strategy(args):
-    if len(args) != 3:
-        raise Exception("Count of evolution_strategy args must equals 3! [<m>, <l>, <k>]")
-    return {
-        "comma": MuCommaLambda(args[0], args[1]),
-        "plus": MuPlusLambda(args[0], args[1]),
-        "genetic": Genetic(args[0], args[1], args[2])
-    }
-
-
-# mf
-key_generators = {
-    "a5_1": A5_1,
-    "e0": E0,
-    # Trivium
-    "bivium": Bivium,
-    "trivium_64": Trivium_64,
-    "trivium_96": Trivium_96,
-    # Present
-    "present_5_2kp": Present_5_2KP,
-    "present_6_1kp": Present_6_1KP,
-    "present_6_2kp": Present_6_2KP,
-    # Other
-    "volfram": Volfram,
-    "geffe": Geffe
+selection = {
+    "const": ConstSelection,
+    "function": AdaptiveFunction
 }
-
-
-def adaptive_selection(args):
-    if len(args) != 2:
-        raise Exception("Count of adaptive_selection args must equals 2! [<min_N>, <max_N>]")
-    return {
-        "function": AdaptiveFunction(args[0], args[1])
-    }
-
-
-def solver_wrapper(args):
-    if len(args) != 1:
-        raise Exception("Count of evolution_strategy args must equals 1! [<timelimit?>]")
-    return {
-        "minisat": MinisatWrapper(args[0]),
-        "lingeling": LingelingWrapper(args[0]),
-        "plingeling": PlingelingWrapper(args[0]),
-        "treengeling": TreengelingWrapper(args[0]),
-        "rokk": RokkWrapper(args[0]),
-        "cryptominisat": CryptoMinisatWrapper(args[0]),
-        "painless": PainlessWrapper(args[0])
-    }
-
 
 correctors = {
-    "none": None,
-    "mass": corrector.mass_corrector,
-    "max": corrector.max_corrector,
-    "throw": corrector.throw_corrector,
+    "mass": MassCorrector,
+    "max": MaxCorrector
+}
+
+# solvers
+solver_system = {
+    "net": SolverNet
+}
+
+solvers = {
+    "minisat": MinisatSolver,
+    "lingeling": LingelingSolver,
+    "plingeling": PlingelingSolver,
+    "treengeling": TreengelingSolver,
+    "cryptominisat": CryptoMinisatSolver,
+    "painless": PainlessSolver
+}
+
+# concurrency
+concurrency = {
+    "workers": Workers
+}
+
+queues = {
+    "generate": QueueOfGeneratedTasks
+}
+
+# output
+output = {
+    "storage": Storage
 }
 
 
-def decomposition(value_hash, args):
-    if len(args) != 2:
-        raise Exception("Count of decomposition args must equals 2! [<decomposition power>, <break time>]")
-    return {
-        "none": None,
-        "base": Decomposition(value_hash, args[0], args[1])
-    }
+# modules
+modules = {
+    "algorithm": get_algorithm,
+    "predictive_function": __get(predictive_functions),
+    "solvers": __get(solver_system),
+    "concurrency": __get(concurrency),
+    "output": __get(output)
+}
 
+# modules
+options = {
+    "strategy": __get(strategies),
+    "mutation_function": __get(mutation_functions),
+    "crossover_function": __get(crossover_functions),
+    "comparator": __get(comparators),
+    "stop_condition": __get(stop_conditions),
 
-# matcher
-matcher = {
-    "comparator": comparators,
-    "predictive_function": predictive_functions,
-    "mutation_function": mutation_function,
-    "crossover_function": crossover_function,
-    "stop_condition": stop_condition,
-    "evolution_strategy": evolution_strategy,
-    "key_generator": key_generators,
-    "adaptive_N": adaptive_selection,
-    "solver_wrapper": solver_wrapper,
-    "corrector": correctors,
-    "decomposition": decomposition
+    "key_generator": get_key_generators,
+    "selection": __get(selection),
+    "corrector": __get(correctors),
+
+    "init_solver": __get(solvers),
+    "main_solver": __get(solvers),
+
+    "task_queue": __get(queues)
 }

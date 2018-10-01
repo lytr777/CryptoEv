@@ -1,6 +1,6 @@
 import warnings
 
-from model.cnf_model import CnfSubstitution
+from model.cnf import CnfSubstitution
 
 
 class VariableSet:

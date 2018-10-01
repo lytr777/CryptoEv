@@ -16,7 +16,7 @@ l_args.extend([in_file, out_file])
 
 p = subprocess.Popen(l_args)
 p.wait()
-print open(out_file, 'w').read()
+print open(out_file, 'r').read()
 
 if os.path.isfile(in_file):
     os.remove(in_file)

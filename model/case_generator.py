@@ -24,17 +24,35 @@ class CaseGenerator:
 
         return case
 
-    def generate(self, backdoor, solution):
+    def generate(self, backdoor, solution, rnd=""):
         case = self.algorithm(self.cnf)
 
         if self.public_key is not None:
-            pk_substitution = self.public_key.get_substitution(solution)
+            pk_substitution = self.__substitution(self.public_key, 'p', solution, rnd)
             case.add_substitution("public_key", pk_substitution)
 
-        bd_substitution = backdoor.get_substitution(solution)
+        bd_substitution = self.__substitution(backdoor, 'b', solution, rnd)
         case.add_substitution("backdoor", bd_substitution)
 
-        ks_substitution = self.key_stream.get_substitution(solution)
+        ks_substitution = self.__substitution(self.key_stream, 's', solution, rnd)
         case.add_substitution("key_stream", ks_substitution)
 
         return case
+
+    def __substitution(self, o, c, solution, rnd):
+        if rnd.__contains__(c):
+            return o.generate_substitution(self.random_state)
+        else:
+            return o.get_substitution(solution)
+
+
+class BackdoorCaseGenerator:
+    def __init__(self, cg, backdoor):
+        self.cg = cg
+        self.backdoor = backdoor
+
+    def generate_init(self):
+        return self.cg.generate_init()
+
+    def generate(self, solution, rnd=""):
+        return self.cg.generate(self.backdoor, solution, rnd)
