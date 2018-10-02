@@ -2,19 +2,6 @@
 *.pyc
 
 # Log files
-*.a5_1_log
-*.bivium_log
-*.trivium_64_log
-*.trivium_96_log
-*.e0_log
-*.present_5_2kp_log
-*.a5_1_true_log
-*.bivium_true_log
-*.trivium_64_true_log
-*.e0_true_log
-*.present_5_2kp_true_log
-out/**/README
-
 output/_logs
 
 # Solvers
@@ -32,7 +19,6 @@ local_tools
 obsolete
 analyze/main.py
 load.sh
-start_after_30.05.sh
 
 # Dump files
 analyze/memory

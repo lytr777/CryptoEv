@@ -1,64 +1,79 @@
 {
-  "algorithm": "ev",
-  "ev_parameters": {
-    "comparator": "max_min",
-    "predictive_function": "ibs",
+  "algorithm": {
+    "type": "evolution",
+    "strategy": {
+      "name": "plus",
+      "mu": 1,
+      "lambda": 1
+    },
     "mutation_function": {
-      "args_description": "uniform scale",
       "name": "uniform",
-      "args": [1.0]
+      "scale": 1.0
     },
     "crossover_function": {
-      "args_description": "uniform p",
-      "name": "one-point",
-      "args": [0.2]
-    },
-    "stop_condition": {
-      "args_description": "iterations, mf calls, locals, mf value",
-      "name": "locals",
-      "args": [1000, 1000, 1, 1e20]
+      "name": "one-point"
     },
     "stagnation_limit": 100,
-    "evolution_strategy": {
-      "args_description": "mu, lambda, c",
-      "name": "plus",
-      "args": [1, 1, 4]
+    "comparator": {
+      "name": "max_min"
+    },
+    "stop_condition": {
+      "name": "iterations",
+      "limit": 1000
     }
   },
-  "mf_parameters": {
-    "key_generator": "a5_1",
-    "thread_count": 32,
-    "worker_count": 1,
-    "N": 1000,
-    "adaptive_N": {
-      "args_description": "min_N, max_N",
-      "name": "function",
-      "args": [10, 1000]
+  "predictive_function": {
+    "type": "ibs",
+    "key_generator": {
+      "name": "a5_1"
     },
-    "solver_wrapper": {
-      "args_description": "use timelimit util?",
+    "selection": {
+      "name": "const",
+      "value": 1000
+    },
+    "corrector": {
+      "name": "mass"
+    }
+  },
+  "solvers": {
+    "type": "net",
+    "init_solver": {
       "name": "lingeling",
-      "args": [false]
+      "tag": "init",
+      "tl_util": false,
+      "tl": 0,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": false
     },
-    "time_limit": 5,
-    "corrector": "mass",
-    "decomposition": {
-      "args_description": "decomposition power, break time",
-      "name": "none",
-      "args": [2, 2]
+    "main_solver": {
+      "name": "lingeling",
+      "tag": "main",
+      "tl_util": false,
+      "tl": 5,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": true
     }
   },
-  "ls_parameters": {
+  "concurrency": {
+    "type": "workers",
+    "thread_count": 32,
+    "task_queue": {
+      "name": "generate"
+    }
+  },
+  "output": {
+    "type": "storage",
     "log_name": "log",
     "debug_name": "debug",
     "src_dump": [
       "./configuration/options.py",
       "./algorithm/module/mutation.py",
       "./algorithm/module/crossover.py",
-      "./util/adaptive_selection.py",
-      "./util/comparator.py",
-      "./util/corrector.py"
-    ],
-    "tar": true
+      "./predictive_function/module/selection.py",
+      "./predictive_function/module/corrector.py",
+      "./util/comparator.py"
+    ]
   }
 }
