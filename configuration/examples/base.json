@@ -73,7 +73,7 @@
       "./algorithm/module/crossover.py",
       "./predictive_function/module/selection.py",
       "./predictive_function/module/corrector.py",
-      "./util/comparator.py"
+      "./algorithm/module/comparator.py"
     ]
   }
 }

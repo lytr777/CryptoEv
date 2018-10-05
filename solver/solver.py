@@ -10,6 +10,8 @@ from constants.runtime import runtime_constants as rc
 
 
 class Solver:
+    name = "solver"
+
     def __init__(self, info, **kwargs):
         self.tag = kwargs["tag"]
         self.info = info
@@ -68,3 +70,6 @@ class Solver:
         if rc == 143:  # timelimit exit
             return False
         return True
+
+    def __str__(self):
+        return self.name

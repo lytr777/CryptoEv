@@ -5,6 +5,8 @@ from util import formatter
 
 
 class Decomposition:
+    name = "decomposition"
+
     def __init__(self, value_hash, d, break_time):
         self.value_hash = value_hash
         self.d = d
@@ -59,3 +61,6 @@ class Decomposition:
             keys = new_keys
 
         return keys
+
+    def __str__(self):
+        return self.name
