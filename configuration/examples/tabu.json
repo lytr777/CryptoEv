@@ -1,44 +1,66 @@
 {
-  "algorithm": "ts",
-  "ts_parameters": {
-    "comparator": "max_min",
-    "predictive_function": "ibs",
+  "algorithm": {
+    "type": "tabu",
+    "update_count": 100,
+    "comparator": {
+      "name": "max_min"
+    },
     "stop_condition": {
-      "args_description": "iterations, mf calls, locals, mf value",
       "name": "mf_calls",
-      "args": [1000, 1000, 1, 1e20]
-    },
-    "update_count": 100
-  },
-  "mf_parameters": {
-    "key_generator": "a5_1",
-    "thread_count": 4,
-    "worker_count": 1,
-    "N": 1000,
-    "solver_wrapper": {
-      "args_description": "use timelimit util?",
-      "name": "lingeling",
-      "args": [false]
-    },
-    "time_limit": 5,
-    "corrector": "max",
-    "decomposition": {
-      "args_description": "decomposition power, break time",
-      "name": "none",
-      "args": [2, 2]
+      "limit": 1000
     }
   },
-  "ls_parameters": {
+  "predictive_function": {
+    "type": "ibs",
+    "key_generator": {
+      "name": "a5_1"
+    },
+    "selection": {
+      "name": "const",
+      "value": 1000
+    },
+    "corrector": {
+      "name": "mass"
+    }
+  },
+  "solvers": {
+    "type": "net",
+    "init_solver": {
+      "name": "lingeling",
+      "tag": "init",
+      "tl_util": false,
+      "tl": 0,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": false
+    },
+    "main_solver": {
+      "name": "lingeling",
+      "tag": "main",
+      "tl_util": false,
+      "tl": 5,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": true
+    }
+  },
+  "concurrency": {
+    "type": "workers",
+    "thread_count": 32,
+    "task_queue": {
+      "name": "generate"
+    }
+  },
+  "output": {
+    "type": "storage",
     "log_name": "log",
     "debug_name": "debug",
     "src_dump": [
       "./configuration/options.py",
-      "./algorithm/module/mutation.py",
-      "./algorithm/module/crossover.py",
-      "./util/adaptive_selection.py",
-      "./util/comparator.py",
-      "./util/corrector.py"
-    ],
-    "tar": true
+      "./predictive_function/module/selection.py",
+      "./predictive_function/module/corrector.py",
+      "./util/comparator.py"
+    ]
   }
 }
+

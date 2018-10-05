@@ -6,7 +6,7 @@ from algorithm.module.strategies import MuCommaLambda, MuPlusLambda, Genetic
 from algorithm.module.mutation import UniformMutation
 from algorithm.module.crossover import OnePointCrossover, TwoPointCrossover, UniformCrossover
 from util.comparator import MaxMin
-from algorithm.module.stop_condition import IterationStop
+from algorithm.module.stop_condition import IterationStop, LocalsStop, PFValueStop, PFCallsStop
 
 from predictive_function.gad import GuessAndDetermine
 from predictive_function.ibs import InverseBackdoorSets
@@ -53,7 +53,7 @@ def get_algorithm(name, mpi):
     return {
         "evolution": EvolutionAlgorithm,
         "mpi_evolution": MPIEvolutionAlgorithm,
-        "tabu_search": TabuSearch
+        "tabu": TabuSearch
     }[name]
 
 
@@ -79,9 +79,11 @@ comparators = {
 }
 
 stop_conditions = {
-    "iterations": IterationStop
+    "iterations": IterationStop,
+    "pf_calls": PFCallsStop,
+    "pf_value": PFValueStop,
+    "locals": LocalsStop
 }
-
 
 # predictive function
 predictive_functions = {
@@ -145,7 +147,6 @@ queues = {
 output = {
     "storage": Storage
 }
-
 
 # modules
 modules = {
