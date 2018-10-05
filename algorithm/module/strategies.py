@@ -19,6 +19,8 @@ class PopulationRoulette:
 
 
 class EvolutionStrategy:
+    name = "strategy"
+    
     def __init__(self, alive_count):
         self.alive_count = alive_count
 
@@ -37,6 +39,9 @@ class EvolutionStrategy:
             Q.append(sorted_P_v[i][0])
 
         return Q
+    
+    def __str__(self):
+        return self.name
 
 
 class MuCommaLambda(EvolutionStrategy):

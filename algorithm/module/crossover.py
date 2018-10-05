@@ -2,11 +2,16 @@ import numpy as np
 
 
 class Crossover:
+    name = "crossover"
+
     def __init__(self, **kwargs):
         pass
 
     def cross(self, b1, b2):
         raise NotImplementedError
+
+    def __str__(self):
+        return self.name
 
 
 class OnePointCrossover(Crossover):

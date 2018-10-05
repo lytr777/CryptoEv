@@ -15,8 +15,25 @@ def percent_function(x):
         return 0.08 - (x * 3 / 40000.)
 
 
-class AdaptiveFunction:
+class Selection:
+    name = "selection"
+
     def __init__(self, **kwargs):
+        pass
+
+    def get_N(self, case):
+        raise NotImplementedError
+
+    def correct_by(self, case):
+        raise NotImplementedError
+
+    def __str__(self):
+        return self.name
+
+
+class AdaptiveFunction(Selection):
+    def __init__(self, **kwargs):
+        Selection.__init__(self, **kwargs)
         self.min_N = kwargs["min_N"]
         self.max_N = kwargs["max_N"]
 
@@ -53,8 +70,9 @@ class AdaptiveFunction:
         return self.min_N
 
 
-class ConstSelection:
+class ConstSelection(Selection):
     def __init__(self, **kwargs):
+        Selection.__init__(self, **kwargs)
         self.value = kwargs["value"]
 
     def get_N(self, case=None):

@@ -3,11 +3,16 @@ from model.backdoor import Backdoor, FixedBackdoor as FB
 
 
 class Comparator:
+    name = "comparator"
+    
     def __init__(self, **kwargs):
         pass
 
     def compare(self, p1, p2):
         raise NotImplementedError
+
+    def __str__(self):
+        return self.name
 
 
 class MaxMin(Comparator):

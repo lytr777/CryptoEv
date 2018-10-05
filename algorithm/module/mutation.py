@@ -2,11 +2,16 @@ import numpy as np
 
 
 class Mutation:
+    name = "mutation"
+
     def __init__(self, **kwargs):
         pass
 
     def mutate(self, backdoor):
         raise NotImplementedError
+
+    def __str__(self):
+        return self.name
 
 
 class UniformMutation(Mutation):

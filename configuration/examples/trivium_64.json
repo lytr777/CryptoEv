@@ -18,7 +18,8 @@
       "name": "max_min"
     },
     "stop_condition": {
-      "name": "locals"
+      "name": "locals",
+      "limit": 1
     }
   },
   "predictive_function": {

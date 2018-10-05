@@ -4,6 +4,15 @@ from configuration_map import get_path
 from options import modules, options
 
 
+class MissingArgumentException(Exception):
+    def __init__(self, name, arg_name):
+        self.name = name
+        self.arg_name = arg_name
+
+    def __str__(self):
+        return "Missing argument '%s' from option: '%s'" % (self.arg_name, self.name)
+
+
 def __substitute_option(key, value):
     name = value["name"]
     option = options[key](name)
@@ -11,8 +20,10 @@ def __substitute_option(key, value):
     for v_key in value.keys():
         if isinstance(value[v_key], dict):
             value[v_key] = __substitute_option(v_key, value[v_key])
-
-    return option(**value)
+    try:
+        return option(**value)
+    except KeyError as e:
+        raise MissingArgumentException(option.name, e.message)
 
 
 def __substitute(key, value, mpi):

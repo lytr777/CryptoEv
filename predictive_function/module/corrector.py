@@ -40,6 +40,8 @@ def get_time(case):
 
 
 class Corrector:
+    name = "corrector"
+
     def __init__(self, **kwargs):
         self.tl_lower_bound = 0.1
 
@@ -73,11 +75,14 @@ class Corrector:
 
         return best[0]
 
+    def __str__(self):
+        return self.name
+
 
 class MassCorrector(Corrector):
     def __init__(self, **kwargs):
-        self.coef = kwargs["coef"] if "coef" in kwargs else 1
         Corrector.__init__(self, **kwargs)
+        self.coef = kwargs["coef"] if "coef" in kwargs else 1
 
     def correct(self, cases, tl, **kwargs):
         coef = kwargs["coef"] if "coef" in kwargs else self.coef

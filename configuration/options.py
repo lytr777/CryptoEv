@@ -5,7 +5,7 @@ from algorithm.tabu import TabuSearch
 from algorithm.module.strategies import MuCommaLambda, MuPlusLambda, Genetic
 from algorithm.module.mutation import UniformMutation
 from algorithm.module.crossover import OnePointCrossover, TwoPointCrossover, UniformCrossover
-from util.comparator import MaxMin
+from algorithm.module.comparator import MaxMin
 from algorithm.module.stop_condition import IterationStop, LocalsStop, PFValueStop, PFCallsStop
 
 from predictive_function.gad import GuessAndDetermine
