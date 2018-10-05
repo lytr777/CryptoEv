@@ -41,9 +41,9 @@ class Condition:
     def __init__(self):
         self.conditions = {
             "iteration": 1,
-            "pf_calls": 1,
+            "pf_calls": 0,
             "pf_value": float("inf"),
-            "local_count": 1
+            "local_count": 0
         }
 
     def set(self, key, value):

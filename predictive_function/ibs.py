@@ -89,7 +89,7 @@ class InverseBackdoorSets(PredictiveFunction):
             value = (2 ** len(backdoor)) * tl * (3 / xi)
         else:
             value = (2 ** cg.algorithm.secret_key_len) * tl
-        rc.debugger.write(1, 0, "value: %.7g\n" % value)
+        rc.debugger.write(1, 0, "value: %.7g" % value)
 
         log += "%s\n" % time_stat
         return value, log, cases
