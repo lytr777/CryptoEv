@@ -2,11 +2,11 @@ import argparse
 
 from configuration import configurator
 
+from util import conclusion
 from output.module.logger import Logger
 from output.module.debugger import Debugger
-from constants.runtime import runtime_constants as rc
 from model.backdoor import SecretKey, Backdoor
-from util import conclusion
+from constants.runtime import runtime_constants as rc
 
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('-cp', metavar='tag/path', type=str, default="base", help='tag or path to configuration file')

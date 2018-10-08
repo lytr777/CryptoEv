@@ -1,3 +1,6 @@
+from constants.runtime import runtime_constants as rc
+
+
 class TaskGenerator:
     def __init__(self, task, **kwargs):
         self.task = task
@@ -19,6 +22,11 @@ class PredictiveFunction:
 
     def calculate(self, cg, backdoor, compute_out):
         raise NotImplementedError
+
+    def correct_selection(self, backdoor, value, cases):
+        old_N, new_N = self.selection.correct_by((backdoor, value, cases))
+        if old_N != new_N:
+            rc.debugger.write(1, 0, "selection size changed from %d to %d" % (old_N, new_N))
 
     def get_time_stat(self, cases):
         time_stat = {

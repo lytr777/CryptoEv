@@ -19,10 +19,21 @@ class Selection:
     name = "selection"
 
     def __init__(self, **kwargs):
-        pass
+        self.rank = 0
+        self.size = 1
+
+    def set_mpi_sett(self, size, rank):
+        self.size = size
+        self.rank = rank
 
     def get_N(self, case):
         raise NotImplementedError
+
+    def split_selection(self, value):
+        N = int(float(value) / self.size)
+        remainder = value - N * self.size
+        N += 1 if remainder > self.rank else 0
+        return N
 
     def correct_by(self, case):
         raise NotImplementedError
@@ -43,7 +54,7 @@ class AdaptiveFunction(Selection):
     def get_N(self, case=None):
         if case is not None:
             self.correct_by(case)
-        return self.last_N
+        return self.split_selection(self.last_N)
 
     def correct_by(self, case):
         if len(case) < 3:
@@ -52,7 +63,7 @@ class AdaptiveFunction(Selection):
         if len(case[2]) == 0:
             return
 
-        k = 0.
+        old_N, k = self.last_N, 0.
         for status, _ in case[2]:
             if status == "SAT" or status == "UNSAT":
                 k += 1
@@ -61,13 +72,17 @@ class AdaptiveFunction(Selection):
         for n in range(self.last_N, self.max_N):
             if value >= self.f(n):
                 self.last_N = n
-                return
+                return old_N, self.last_N
 
         self.last_N = self.max_N
+        return old_N, self.last_N
 
     def reset(self):
         self.last_N = self.min_N
         return self.min_N
+
+    def __str__(self):
+        return "adaptive from %d to %d" % (self.min_N, self.max_N)
 
 
 class ConstSelection(Selection):
@@ -76,10 +91,13 @@ class ConstSelection(Selection):
         self.value = kwargs["value"]
 
     def get_N(self, case=None):
-        return self.value
+        return self.split_selection(self.value)
 
     def correct_by(self, case):
-        pass
+        return self.value
 
     def reset(self):
         pass
+
+    def __str__(self):
+        return "const (%d)" % self.value

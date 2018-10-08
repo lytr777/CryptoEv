@@ -1,53 +1,59 @@
 import argparse
 from mpi4py import MPI
 
-from configuration import configurator
-from log_storage.logger import Logger
-from model.backdoor import SecretKey, Backdoor
-from util.debugger import Debugger, DebuggerStub
 from util import conclusion
+from configuration import configurator
+from output.module.logger import Logger
+from output.module.debugger import Debugger
+from model.backdoor import SecretKey, Backdoor
+from constants.runtime import runtime_constants as rc
 
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('-cp', metavar='tag/path', type=str, default="base", help='tag or path to configuration file')
 parser.add_argument('-v', metavar='0', type=int, default=0, help='[0-3] verbosity level')
 parser.add_argument('-b', '--backdoor', metavar='path', type=str, help='load backdoor from specified file')
+parser.add_argument('-d', '--description', metavar='test', default="", type=str, help='description for this launching')
 
 args = parser.parse_args()
-alg, meta_p, pf_p, ls_p = configurator.load(args.cp, {}, True)
-
-if "adaptive_N" in pf_p:
-    raise Exception("MPI version not supported adaptive selection")
+path, configuration = configurator.load(args.cp, mpi=True)
+rc.configuration = configuration
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 
+key_generator = configuration["predictive_function"].key_generator
+# output
 if rank == 0:
-    ls_p["description"] = ""
-    ls_p["algorithm"] = pf_p["key_generator"].tag
-    logger = Logger(ls_p)
+    output = configuration["output"]
+    output.create(
+        key_generator=key_generator.tag,
+        description=args.description,
+        conf_path=path,
+    )
 
-    meta_p["log_file"] = logger.get_log_path()
-    open(meta_p["log_file"], 'w+').close()
+    rc.logger = Logger(output.get_log_path())
+    rc.debugger = Debugger(output.get_debug_path(), args.v)
 
-    pf_p["debugger"] = Debugger(logger.get_debug_path(), args.v)
-    open(logger.get_debug_path(), 'w+').close()
-else:
-    meta_p["log_file"] = ''
-    pf_p["debugger"] = DebuggerStub()
 
 if args.backdoor is None:
-    meta_p["init_backdoor"] = SecretKey(pf_p["key_generator"])
+    backdoor = SecretKey(key_generator)
 else:
-    meta_p["init_backdoor"] = Backdoor.load(args.backdoor)
-    meta_p["init_backdoor"].check(pf_p["key_generator"])
+    backdoor = Backdoor.load(args.backdoor)
+    backdoor.check(key_generator)
 
-pf_p["solver_wrapper"].check_installation()
-alg = alg(meta_p, comm)
-locals_list = alg.start(pf_p)
+for key in configuration["solvers"].solvers.keys():
+    configuration["solvers"].get(key).check_installation()
+
+algorithm = configuration["algorithm"]
+if rank == 0:
+    rc.logger.write(algorithm.get_info())
+locals_list = algorithm.start(backdoor)
+
 if rank == 0:
     conclusion.add_conclusion({
-        "path": meta_p["log_file"],
-        "comparator": alg.comparator,
+        "path": rc.logger.log_file,
+        "comparator": algorithm.comparator,
         "locals_list": locals_list
     })
-    logger.end()
+    configuration["output"].close()
+configuration["concurrency"].terminate()
