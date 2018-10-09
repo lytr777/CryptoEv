@@ -25,7 +25,7 @@ output = configuration["output"]
 output.create(
     key_generator=key_generator.tag,
     description=args.description,
-    conf_path=path,
+    conf_path=path
 )
 
 rc.logger = Logger(output.get_log_path())
