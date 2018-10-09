@@ -1,5 +1,3 @@
-from mpi4py import MPI
-
 import numpy as np
 from copy import copy
 from time import time as now
@@ -22,6 +20,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         self.crossover = kwargs["crossover_function"]
         self.stagnation_limit = kwargs["stagnation_limit"]
 
+        from mpi4py import MPI
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
