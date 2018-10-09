@@ -21,7 +21,8 @@ args = parser.parse_args()
 path, configuration = configurator.load(args.cp)
 rc.configuration = configuration
 
-key_generator = configuration["predictive_function"].key_generator
+predictive_f = rc.configuration["predictive_function"]
+key_generator = predictive_f.key_generator
 # output
 output = configuration["output"]
 output.create(
@@ -40,8 +41,6 @@ for key in configuration["solvers"].solvers.keys():
     configuration["solvers"].get(key).check_installation()
 
 # --
-predictive_f = rc.configuration["predictive_function"]
-key_generator = predictive_f.key_generator
 cnf_path = static.cnfs[key_generator.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
 rs = np.random.RandomState(43)
