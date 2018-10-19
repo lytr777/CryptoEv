@@ -48,6 +48,9 @@ class AdaptiveFunction(Selection):
         self.min_N = kwargs["min_N"]
         self.max_N = kwargs["max_N"]
 
+        if self.min_N > self.max_N:
+            raise Exception("min_N must be less then max_N")
+
         self.f = percent_function
         self.last_N = self.min_N
 

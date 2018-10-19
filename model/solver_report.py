@@ -1,5 +1,6 @@
 import warnings
 
+
 class SolverReport:
     def __init__(self, status, time):
         self.time = time
