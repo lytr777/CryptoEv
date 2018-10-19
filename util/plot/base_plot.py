@@ -1,4 +1,4 @@
-from plot import Plot
+from util.plot.plot import Plot
 
 
 class BasePlot(Plot):
@@ -6,23 +6,12 @@ class BasePlot(Plot):
         Plot.__init__(self, parameters)
 
     def process_iterations(self, its):
-        xs, ys = [], []
-        i = 0
-        for it in its:
-            best = it[0]
-            for case in it:
-                if self.comparator(best.mv(), case.mv()) > 0:
-                    best = case
-
-            ys.append(best.value)
-            xs.append(i)
-            i += 1
-
+        xs, ys = its
         return xs, ys, None
 
     def draw_line(self, ax, line):
         if line.label is None:
-            ax.semilogy(line.xs, line.ys, lw=self.lw)
+            ax.plot(line.xs, line.ys, lw=self.lw)
         else:
-            ax.semilogy(line.xs, line.ys, lw=self.lw, label=line.label)
+            ax.plot(line.xs, line.ys, lw=self.lw, label=line.label)
             ax.legend()

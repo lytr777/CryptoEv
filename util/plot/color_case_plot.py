@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from plot import Plot
 
 
-class ColorPlot(Plot):
+class ColorCasePlot(Plot):
     def __init__(self, parameters):
         Plot.__init__(self, parameters)
         self.min_N = parameters["min_N"]
