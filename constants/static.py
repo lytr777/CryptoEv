@@ -10,8 +10,11 @@ cnfs = {
     "present_5_2kp": "./templates/Present_5_2KP.cnf",
     "present_6_1kp": "./templates/Present_6_1KP.cnf",
     "present_6_2kp": "./templates/Present_6_2KP.cnf",
+    "asg_72_76": "./templates/ASG_72_76.cnf",
+    "asg_96_112": "./templates/ASG_96_112.cnf",
+
     "volfram": "./templates/Volfram.cnf",
-    "geffe": "./templates/Geffe.cnf"
+    "geffe": "./templates/Geffe.cnf",
 }
 
 solver_paths = {

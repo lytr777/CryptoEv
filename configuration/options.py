@@ -20,6 +20,8 @@ from key_generators.trivium_96 import Trivium_96
 from key_generators.present_5_2kp import Present_5_2KP
 from key_generators.present_6_1kp import Present_6_1KP
 from key_generators.present_6_2kp import Present_6_2KP
+from key_generators.asg_72_76 import ASG_72_76
+from key_generators.asg_96_112 import ASG_96_112
 from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
 from predictive_function.module.corrector import MassCorrector, MaxCorrector
@@ -94,20 +96,24 @@ predictive_functions = {
 
 
 def get_key_generators(name):
-    kg = {"a5_1": A5_1,
-          "e0": E0,
-          # Trivium
-          "bivium": Bivium,
-          "trivium_64": Trivium_64,
-          "trivium_96": Trivium_96,
-          # Present
-          "present_5_2kp": Present_5_2KP,
-          "present_6_1kp": Present_6_1KP,
-          "present_6_2kp": Present_6_2KP,
-          # Other
-          "volfram": Volfram,
-          "geffe": Geffe
-          }[name]
+    kg = {
+        "a5_1": A5_1,
+        "e0": E0,
+        # Trivium
+        "bivium": Bivium,
+        "trivium_64": Trivium_64,
+        "trivium_96": Trivium_96,
+        # Present
+        "present_5_2kp": Present_5_2KP,
+        "present_6_1kp": Present_6_1KP,
+        "present_6_2kp": Present_6_2KP,
+        # ASG
+        "asg_72_76": ASG_72_76,
+        "asg_96_112": ASG_96_112,
+        # Other
+        "volfram": Volfram,
+        "geffe": Geffe
+    }[name]
     return builder(kg)
 
 
