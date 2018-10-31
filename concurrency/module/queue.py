@@ -19,3 +19,7 @@ class QueueOfGeneratedTasks:
 
     def __len__(self):
         return self.count
+
+    def __iter__(self):
+        while self.count > 0:
+            yield self.pop()
