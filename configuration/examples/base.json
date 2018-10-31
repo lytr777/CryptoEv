@@ -18,8 +18,8 @@
       "name": "max_min"
     },
     "stop_condition": {
-      "name": "iterations",
-      "limit": 1000
+      "name": "locals",
+      "limit": 1
     }
   },
   "predictive_function": {
@@ -28,8 +28,10 @@
       "name": "a5_1"
     },
     "selection": {
-      "name": "const",
-      "value": 1000
+      "name": "function",
+      "value": 1000,
+      "min_N": 10,
+      "max_N": 1000
     },
     "corrector": {
       "name": "mass"
@@ -58,7 +60,7 @@
   },
   "concurrency": {
     "type": "workers",
-    "thread_count": 32,
+    "thread_count": 4,
     "task_queue": {
       "name": "generate"
     }

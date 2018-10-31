@@ -89,17 +89,20 @@ class LogParserV3(Parser):
 
         get_n = lambda j: get_v(j, 0).split("-- ")[1]
 
-        info = {"algorithm": get_v(0)}
-        i = 1
-        if info["algorithm"] == "evolution":
-            info["strategy"] = {"type": get_n(i), "param": get_v(i)}
-            i += 1
-        for key in ["key_generator", "solver", "pf_type"]:
-            info[key] = get_v(i)
-            i += 1
-        if info["pf_type"] == "ibs":
-            info["time_limit"] = int(info_data[i].split(": ")[1])
-            i += 1
-        info["backdoor"] = Backdoor.from_str(get_v(i))
+        info = {}
+        for i in range(len(info_data)):
+            info[get_n(i)] = get_v(i)
+        # info = {"algorithm": get_v(0)}
+        # i = 1
+        # if info["algorithm"] == "evolution":
+        #     info["strategy"] = {"type": get_n(i), "param": get_v(i)}
+        #     i += 1
+        # for key in ["key_generator", "solver", "pf_type"]:
+        #     info[key] = get_v(i)
+        #     i += 1
+        # if info["pf_type"] == "ibs":
+        #     info["time_limit"] = int(info_data[i].split(": ")[1])
+        #     i += 1
+        # info["backdoor"] = Backdoor.from_str(get_v(i))
 
         return info

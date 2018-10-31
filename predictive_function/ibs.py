@@ -12,14 +12,20 @@ class IBSTask:
     def solve(self):
         # init
         init_case = self.bcg.generate_init()
-        init_report = self.solvers.solve("init", init_case.get_cnf())
-        init_case.mark_solved(init_report)
-        init_case.check_solution()
+        try:
+            init_report = self.solvers.solve("init", init_case.get_cnf())
+            init_case.mark_solved(init_report)
+            init_case.check_solution()
+        except Exception as e:
+            rc.debugger.write(2, 3, "error while solving init case:\n%s" % e)
 
         # main
         main_case = self.bcg.generate(init_case.solution)
-        main_report = self.solvers.solve("main", main_case.get_cnf())
-        main_case.mark_solved(main_report)
+        try:
+            main_report = self.solvers.solve("main", main_case.get_cnf())
+            main_case.mark_solved(main_report)
+        except Exception as e:
+            rc.debugger.write(2, 3, "error while solving init case:\n%s" % e)
 
         return main_case.get_status(short=True), main_case.time
 
