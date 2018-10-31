@@ -3,6 +3,7 @@ import signal
 
 from copy import copy
 from time import sleep, time as now
+from constants.runtime import runtime_constants as rc
 
 
 class Worker(threading.Thread):
@@ -116,6 +117,12 @@ class Workers:
             self.result_lock.acquire()
             result_len = len(self.result_list)
             self.result_lock.release()
+
+            self.task_cond.acquire()
+            queue_len = len(self.task_queue)
+            self.task_cond.release()
+
+            rc.debugger.write(2, 3, "solved %d of %d (in queue: %d)" % (result_len, task_count, queue_len))
 
         end_work_time = now()
         solved = copy(self.result_list)
