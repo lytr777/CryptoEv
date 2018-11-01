@@ -70,8 +70,10 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                         start_work_time = now()
 
                         mpi_params = np.array([2 * p.length, 0])
+                        rc.debugger.write(2, 1, "sending MPI params... %s" % mpi_params)
                         self.comm.Bcast(mpi_params, root=0)
 
+                        rc.debugger.write(2, 1, "sending backdoor... %s" % p.pack())
                         self.comm.Bcast(p.pack(), root=0)
                         c_out = predictive_f.compute(cg, p)
 
@@ -121,11 +123,13 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             while True:
                 mpi_params = np.empty(mpi_params_length, dtype=np.int)
                 self.comm.Bcast(mpi_params, root=0)
+                rc.debugger.write(2, 1, "receive MPI params: %s" % mpi_params)
                 if mpi_params[0] == -1:
                     break
 
                 array = np.empty(mpi_params[0], dtype=np.int)
                 self.comm.Bcast(array, root=0)
+                rc.debugger.write(2, 1, "receive backdoor: %s" % array)
 
                 p = Backdoor.unpack(array)
                 c_out = predictive_f.compute(cg, p)

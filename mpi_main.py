@@ -1,4 +1,5 @@
 import argparse
+import numpy as np
 from mpi4py import MPI
 
 from util import conclusion
@@ -14,6 +15,8 @@ parser.add_argument('-v', metavar='0', type=int, default=0, help='[0-3] verbosit
 parser.add_argument('-b', '--backdoor', metavar='path', type=str, help='load backdoor from specified file')
 parser.add_argument('-d', '--description', metavar='test', default="", type=str, help='description for this launching')
 
+parser.add_argument('-md', '--mpi_debug', metavar='0', type=bool, default=False, help='debug file for all nodes')
+
 args = parser.parse_args()
 path, configuration = configurator.load(args.cp, mpi=True)
 rc.configuration = configuration
@@ -28,11 +31,17 @@ if rank == 0:
     output.create(
         key_generator=key_generator.tag,
         description=args.description,
-        conf_path=path,
+        conf_path=path
     )
 
     rc.logger = Logger(output.get_log_path())
     rc.debugger = Debugger(output.get_debug_path(), args.v)
+
+if args.mpi_debug:
+    df = rc.debugger.debug_file if rank == 0 else ""
+    df = comm.bcast(df, root=0)
+    if rank != 0:
+        rc.debugger = Debugger("%s_%d" % (df, rank), args.v)
 
 
 if args.backdoor is None:
