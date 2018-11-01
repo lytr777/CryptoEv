@@ -26,6 +26,8 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         self.rank = self.comm.Get_rank()
 
     def start(self, backdoor):
+        rc.debugger.write(0, 0, "MPI Evolution start on %d nodes" % self.size)
+
         predictive_f = rc.configuration["predictive_function"]
         key_generator = predictive_f.key_generator
         cnf_path = static.cnfs[key_generator.tag]
