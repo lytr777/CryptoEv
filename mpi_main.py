@@ -55,11 +55,12 @@ for key in configuration["solvers"].solvers.keys():
 
 # for test
 # !!!!
-if rank == 0:
-    rc.debugger.write(2, 1, "sending backdoor for test ... %s" % backdoor.pack())
-bbb = comm.bcast(backdoor.pack(), root=0)
-if rank != 0:
-    rc.debugger.write(2, 1, "receive backdoor for test ... %s" % bbb)
+for i in range(10, 101, 10):
+    if rank == 0:
+        rc.debugger.write(2, 1, "sending array for test ... %d" % i)
+    bbb = comm.bcast(np.empty(i, dtype=int), root=0)
+    if rank != 0:
+        rc.debugger.write(2, 1, "receive array for test ... %d" % i)
 # !!!!
 # for test
 
