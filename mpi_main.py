@@ -43,7 +43,6 @@ if args.mpi_debug:
     if rank != 0:
         rc.debugger = Debugger("%s_%d" % (df, rank), args.v)
 
-
 if args.backdoor is None:
     backdoor = SecretKey(key_generator)
 else:
@@ -52,20 +51,6 @@ else:
 
 for key in configuration["solvers"].solvers.keys():
     configuration["solvers"].get(key).check_installation()
-
-# for test
-# !!!!
-for i in range(1, 102, 10):
-    if rank == 0:
-        rc.debugger.write(2, 1, "sending array for test ... %d" % i)
-        bbb = np.empty(i, dtype=int)
-    else:
-        bbb = None
-    bbb = comm.bcast(bbb, root=0)
-    if rank != 0:
-        rc.debugger.write(2, 1, "receive array for test ... %d" % i)
-# !!!!
-# for test
 
 algorithm = configuration["algorithm"]
 if rank == 0:

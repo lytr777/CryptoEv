@@ -107,7 +107,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                     P = self.strategy.get_next_population((self.mutation.mutate, self.crossover.cross), P_v)
                 condition.increase("iteration")
 
-            self.comm.bcast(np.array([-1, 1]), root=0)
+            self.comm.bcast([-1, True], root=0)
 
             if best[1] != max_value:
                 locals_list.append((best[0].snapshot(), best[1]))
