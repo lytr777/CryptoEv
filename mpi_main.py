@@ -55,10 +55,13 @@ for key in configuration["solvers"].solvers.keys():
 
 # for test
 # !!!!
-for i in range(10, 101, 10):
+for i in range(1, 102, 10):
     if rank == 0:
         rc.debugger.write(2, 1, "sending array for test ... %d" % i)
-    bbb = comm.bcast(np.empty(i, dtype=int), root=0)
+        bbb = np.empty(i, dtype=int)
+    else:
+        bbb = None
+    bbb = comm.bcast(bbb, root=0)
     if rank != 0:
         rc.debugger.write(2, 1, "receive array for test ... %d" % i)
 # !!!!
