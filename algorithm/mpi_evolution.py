@@ -117,7 +117,8 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             return locals_list
         else:
             while True:
-                array = self.comm.bcast(None, root=0)
+                array = []
+                array = self.comm.bcast(array, root=0)
                 rc.debugger.write(2, 1, "receive backdoor: %s" % array)
                 if array[0] == -1:
                     break
