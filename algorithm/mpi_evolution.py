@@ -68,13 +68,12 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                         hashed = False
                         start_work_time = now()
 
-                        packed_p = p.pack()
-                        rc.debugger.write(2, 1, "sending backdoor... %s" % packed_p)
-                        self.comm.bcast(packed_p, root=0)
+                        rc.debugger.write(2, 1, "sending backdoor... %s" % p)
+                        self.comm.bcast(p.pack(), root=0)
                         c_out = predictive_f.compute(cg, p)
 
                         cases = self.comm.gather(c_out[0], root=0)
-                        rc.debugger.write(2, 1, "receive cases from %d nodes" % len(cases))
+                        rc.debugger.write(2, 1, "been gathered cases from %d nodes" % len(cases))
                         cases = np.concatenate(cases)
 
                         time = now() - start_work_time
@@ -117,16 +116,15 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             return locals_list
         else:
             while True:
-                array = []
-                array = self.comm.bcast(array, root=0)
-                rc.debugger.write(2, 1, "receive backdoor: %s" % array)
+                array = self.comm.bcast(None, root=0)
                 if array[0] == -1:
                     break
 
                 p = Backdoor.unpack(array)
+                rc.debugger.write(2, 1, "been received backdoor: %s" % p)
                 c_out = predictive_f.compute(cg, p)
 
-                rc.debugger.write(2, 1, "sending %d cases... " % len(c_out))
+                rc.debugger.write(2, 1, "sending %d cases... " % len(c_out[0]))
                 self.comm.gather(c_out[0], root=0)
 
     def get_info(self):

@@ -52,22 +52,6 @@ else:
 for key in configuration["solvers"].solvers.keys():
     configuration["solvers"].get(key).check_installation()
 
-# for test
-# !!!!
-j = 38
-for i in range(1, 100):
-    if rank == 0:
-        bbb = [0] * j
-        bbb.extend([True] * j)
-        rc.debugger.write(2, 1, "sending array for test ... %d" % len(bbb))
-    else:
-        bbb = []
-    bbb = comm.bcast(bbb, root=0)
-    if rank != 0:
-        rc.debugger.write(2, 1, "receive array for test ... %d" % len(bbb))
-# !!!!
-# for test
-
 algorithm = configuration["algorithm"]
 if rank == 0:
     rc.logger.write(algorithm.get_info())
