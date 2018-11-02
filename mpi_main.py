@@ -53,6 +53,16 @@ else:
 for key in configuration["solvers"].solvers.keys():
     configuration["solvers"].get(key).check_installation()
 
+# for test
+# !!!!
+if rank == 0:
+    rc.debugger.write(2, 1, "sending backdoor for test ... %s" % backdoor.pack())
+bbb = comm.bcast(backdoor.pack(), root=0)
+if rank != 0:
+    rc.debugger.write(2, 1, "receive backdoor for test ... %s" % bbb)
+# !!!!
+# for test
+
 algorithm = configuration["algorithm"]
 if rank == 0:
     rc.logger.write(algorithm.get_info())

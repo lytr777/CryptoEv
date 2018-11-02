@@ -68,8 +68,9 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                         hashed = False
                         start_work_time = now()
 
-                        rc.debugger.write(2, 1, "sending backdoor... %s" % p.pack())
-                        self.comm.bcast(p.pack(), root=0)
+                        packed_p = p.pack()
+                        rc.debugger.write(2, 1, "sending backdoor... %s" % packed_p)
+                        self.comm.bcast(packed_p, root=0)
                         c_out = predictive_f.compute(cg, p)
 
                         cases = self.comm.gather(c_out[0], root=0)
