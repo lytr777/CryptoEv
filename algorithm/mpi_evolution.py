@@ -37,7 +37,6 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         cg = CaseGenerator(key_generator, cnf, rs)
 
         predictive_f.selection.set_mpi_sett(self.size, self.rank)
-        mpi_params_length = 2
 
         if self.rank == 0:
             condition = Condition()
@@ -69,15 +68,12 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                         hashed = False
                         start_work_time = now()
 
-                        mpi_params = np.array([2 * p.length, 0])
-                        rc.debugger.write(2, 1, "sending MPI params... %s" % mpi_params)
-                        self.comm.Bcast(mpi_params, root=0)
-
                         rc.debugger.write(2, 1, "sending backdoor... %s" % p.pack())
-                        self.comm.Bcast(p.pack(), root=0)
+                        self.comm.bcast(p.pack(), root=0)
                         c_out = predictive_f.compute(cg, p)
 
                         cases = self.comm.gather(c_out[0], root=0)
+                        rc.debugger.write(2, 1, "receive cases from %d nodes" % len(cases))
                         cases = np.concatenate(cases)
 
                         time = now() - start_work_time
@@ -110,8 +106,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                     P = self.strategy.get_next_population((self.mutation.mutate, self.crossover.cross), P_v)
                 condition.increase("iteration")
 
-            mpi_params = np.array([-1, -1])
-            self.comm.Bcast(mpi_params, root=0)
+            self.comm.bcast(np.array([-1, 1]), root=0)
 
             if best[1] != max_value:
                 locals_list.append((best[0].snapshot(), best[1]))
@@ -121,19 +116,15 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             return locals_list
         else:
             while True:
-                mpi_params = np.empty(mpi_params_length, dtype=np.int)
-                self.comm.Bcast(mpi_params, root=0)
-                rc.debugger.write(2, 1, "receive MPI params: %s" % mpi_params)
-                if mpi_params[0] == -1:
-                    break
-
-                array = np.empty(mpi_params[0], dtype=np.int)
-                self.comm.Bcast(array, root=0)
+                array = self.comm.bcast(None, root=0)
                 rc.debugger.write(2, 1, "receive backdoor: %s" % array)
+                if array[0] == -1:
+                    break
 
                 p = Backdoor.unpack(array)
                 c_out = predictive_f.compute(cg, p)
 
+                rc.debugger.write(2, 1, "sending %d cases... " % len(c_out))
                 self.comm.gather(c_out[0], root=0)
 
     def get_info(self):
