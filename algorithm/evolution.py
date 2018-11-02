@@ -1,5 +1,6 @@
 import numpy as np
 from copy import copy
+from time import time as now
 
 from constants.runtime import runtime_constants as rc
 from algorithm import MetaAlgorithm, Condition
@@ -19,6 +20,8 @@ class EvolutionAlgorithm(MetaAlgorithm):
         self.stagnation_limit = kwargs["stagnation_limit"]
 
     def start(self, backdoor):
+        start_time = now()
+
         predictive_f = rc.configuration["predictive_function"]
         key_generator = predictive_f.key_generator
         cnf_path = static.cnfs[key_generator.tag]
@@ -95,6 +98,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 P_v.sort(cmp=self.comparator.compare)
                 P = self.strategy.get_next_population((self.mutation.mutate, self.crossover.cross), P_v)
             condition.increase("iteration")
+            condition.set("time", now() - start_time)
 
         if best[1] != max_value:
             locals_list.append((best[0], best[1]))

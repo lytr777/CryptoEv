@@ -6,7 +6,7 @@ from algorithm.module.strategies import MuCommaLambda, MuPlusLambda, Genetic
 from algorithm.module.mutation import UniformMutation
 from algorithm.module.crossover import OnePointCrossover, TwoPointCrossover, UniformCrossover
 from algorithm.module.comparator import MaxMin
-from algorithm.module.stop_condition import IterationStop, LocalsStop, PFValueStop, PFCallsStop
+from algorithm.module.stop_condition import IterationStop, LocalsStop, PFValueStop, PFCallsStop, TimeStop
 
 from predictive_function.gad import GuessAndDetermine
 from predictive_function.ibs import InverseBackdoorSets
@@ -85,7 +85,8 @@ stop_conditions = {
     "iterations": IterationStop,
     "pf_calls": PFCallsStop,
     "pf_value": PFValueStop,
-    "locals": LocalsStop
+    "locals": LocalsStop,
+    "time": TimeStop
 }
 
 # predictive function

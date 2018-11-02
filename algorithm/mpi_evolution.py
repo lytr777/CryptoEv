@@ -26,6 +26,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         self.rank = self.comm.Get_rank()
 
     def start(self, backdoor):
+        start_time = now()
         rc.debugger.write(0, 0, "MPI Evolution start on %d nodes" % self.size)
 
         predictive_f = rc.configuration["predictive_function"]
@@ -105,6 +106,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                     P_v.sort(cmp=self.comparator.compare)
                     P = self.strategy.get_next_population((self.mutation.mutate, self.crossover.cross), P_v)
                 condition.increase("iteration")
+                condition.set("time", now() - start_time)
 
             self.comm.bcast([-1, True], root=0)
 

@@ -1,5 +1,3 @@
-
-
 class StopCondition:
     name = "stop_condition"
 
@@ -31,3 +29,27 @@ class PFValueStop(StopCondition):
 class LocalsStop(StopCondition):
     def check(self, cond):
         return cond.get("local_count") >= self.limit
+
+
+class TimeStop(StopCondition):
+    time_scale = [1, 60, 60, 24]
+
+    def __init__(self, **kwargs):
+        StopCondition.__init__(self, **kwargs)
+        self.time = self.__get_seconds(self.limit)
+
+    def check(self, cond):
+        return cond.get("time") >= self.time
+
+    def __get_seconds(self, s):
+        time_units = s.split(':')[::-1]
+
+        if len(time_units) > len(self.time_scale):
+            time_units = time_units[:len(self.time_scale)]
+
+        time, acc = 0, 1
+        for i in range(len(time_units)):
+            acc *= self.time_scale[i]
+            time += int(time_units[i]) * acc
+
+        return time

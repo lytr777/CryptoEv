@@ -43,7 +43,8 @@ class Condition:
             "iteration": 1,
             "pf_calls": 0,
             "pf_value": float("inf"),
-            "local_count": 0
+            "local_count": 0,
+            "time": 0
         }
 
     def set(self, key, value):
