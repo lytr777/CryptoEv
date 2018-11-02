@@ -54,10 +54,11 @@ for key in configuration["solvers"].solvers.keys():
 
 # for test
 # !!!!
-for i in range(1, 72, 10):
+j = 38
+for i in range(1, 100):
     if rank == 0:
-        bbb = [0] * i
-        bbb.extend([True] * i)
+        bbb = [0] * j
+        bbb.extend([True] * j)
         rc.debugger.write(2, 1, "sending array for test ... %d" % len(bbb))
     else:
         bbb = []
