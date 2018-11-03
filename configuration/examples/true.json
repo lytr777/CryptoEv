@@ -9,7 +9,9 @@
       "value": 50000
     },
     "corrector": {
-      "name": "mass"
+      "name": "mass",
+      "coef": 0.1,
+      "lower_bound": 0.001
     }
   },
   "solvers": {

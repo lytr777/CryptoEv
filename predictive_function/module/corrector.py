@@ -43,7 +43,7 @@ class Corrector:
     name = "corrector"
 
     def __init__(self, **kwargs):
-        self.tl_lower_bound = 0.1
+        self.lower_bound = kwargs["lower_bound"]
 
     def correct(self, cases, tl, **kwargs):
         raise NotImplementedError
@@ -104,7 +104,7 @@ class MassCorrector(Corrector):
             time_sum += it
 
         new_tl = time_sum / (coef * len(det_times) + len(ind_times))
-        new_tl = max(self.tl_lower_bound, new_tl)
+        new_tl = max(self.lower_bound, new_tl)
         best_tl = self.choose_best_tl(new_tl, det_times, ind_times)
 
         dis_count = 0
@@ -117,9 +117,9 @@ class MassCorrector(Corrector):
 
 class MaxCorrector(Corrector):
     def correct(self, cases, tl, **kwargs):
-        max_tl = self.tl_lower_bound
+        min_tl = self.lower_bound
         for case in cases:
             if check_sat(get_status(case)) or check_unsat(get_status(case)):
-                max_tl = max(get_time(case), max_tl)
+                min_tl = max(get_time(case), min_tl)
 
-        return max_tl, 0
+        return min_tl, 0
