@@ -2,11 +2,11 @@
   "predictive_function": {
     "type": "ibs",
     "key_generator": {
-      "name": "a5_1"
+      "name": "asg_72_76"
     },
     "selection": {
       "name": "const",
-      "value": 50000
+      "value": 20
     },
     "corrector": {
       "name": "mass",
@@ -28,16 +28,16 @@
     "main_solver": {
       "name": "lingeling",
       "tag": "main",
-      "tl_util": false,
-      "tl": 5,
+      "tl_util": true,
+      "tl": 30,
       "workers": 1,
       "attempts": 5,
       "simplify": true
     }
   },
   "concurrency": {
-    "type": "workers",
-    "thread_count": 32,
+    "type": "pool",
+    "thread_count": 36,
     "task_queue": {
       "name": "generate"
     }

@@ -13,24 +13,24 @@
     "crossover_function": {
       "name": "one-point"
     },
-    "stagnation_limit": 100,
+    "stagnation_limit": 200,
     "comparator": {
       "name": "max_min"
     },
     "stop_condition": {
-      "name": "locals",
-      "limit": 1
+      "name": "time",
+      "limit": "18:50:00"
     }
   },
   "predictive_function": {
     "type": "ibs",
     "key_generator": {
-      "name": "a5_1"
+      "name": "asg_96_112"
     },
     "selection": {
       "name": "function",
       "value": 1000,
-      "min_N": 10,
+      "min_N": 300,
       "max_N": 1000
     },
     "corrector": {
@@ -54,15 +54,15 @@
       "name": "lingeling",
       "tag": "main",
       "tl_util": false,
-      "tl": 5,
+      "tl": 30,
       "workers": 1,
       "attempts": 5,
       "simplify": true
     }
   },
   "concurrency": {
-    "type": "workers",
-    "thread_count": 4,
+    "type": "pool",
+    "thread_count": 36,
     "task_queue": {
       "name": "generate"
     }
