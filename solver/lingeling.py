@@ -25,7 +25,10 @@ class LingelingSolver(Solver):
     def get_arguments(self, l_args, workers, tl, simp):
         l_args.append(self.solver_path)
 
-        tl_name = "-t" if platform.system() == "Darwin" else "-T"
+        if self.sett.get("tl_util") or platform.system() == "Darwin":
+            tl_name = "-t"
+        else:
+            tl_name = "-T"
         if tl > 0:
             l_args.extend([tl_name, "%d" % tl])
         if workers != 1:
