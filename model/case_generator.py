@@ -56,3 +56,6 @@ class BackdoorCaseGenerator:
 
     def generate(self, solution, rnd=""):
         return self.cg.generate(self.backdoor, solution, rnd)
+
+    def generate_check(self, solution):
+        return self.cg.generate(self.cg.secret_key, solution)

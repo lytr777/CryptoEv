@@ -27,6 +27,17 @@ class IBSTask:
         except Exception as e:
             rc.debugger.write(2, 3, "error while solving init case:\n%s" % e)
 
+        if main_case.get_status(short=True) == "SAT":
+            check_case = self.bcg.generate_check(main_case.solution)
+            try:
+                check_report = self.solvers.solve("init", check_case.get_cnf())
+                check_case.mark_solved(check_report)
+
+                if check_case.get_status(short=True) != "SAT":
+                    main_case.status = "UNSATISFIABLE"
+            except Exception as e:
+                rc.debugger.write(2, 3, "error while solving check case:\n%s" % e)
+
         return main_case.get_status(short=True), main_case.time
 
 
