@@ -16,6 +16,7 @@ class Solver:
         self.tag = kwargs["tag"]
         self.info = info
         self.solver_path = solver_paths[self.info["name"]]
+        self.name = self.info["name"]
         self.spaces = re.compile('[\t ]+')
 
         self.sett = SolverSettings(**kwargs)

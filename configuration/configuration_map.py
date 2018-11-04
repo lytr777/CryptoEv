@@ -3,7 +3,9 @@ configurations = {
     "base": "configuration/examples/base.json",
     "tabu": "configuration/examples/tabu.json",
     "trivium_64": "configuration/examples/trivium_64.json",
+
     "true": "configuration/examples/true.json",
+    "verification": "configuration/examples/verification.json",
 
     "base_test": "configuration/test/base.json",
     "tabu_test": "configuration/test/tabu.json",

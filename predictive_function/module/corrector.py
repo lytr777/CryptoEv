@@ -123,3 +123,25 @@ class MaxCorrector(Corrector):
                 min_tl = max(get_time(case), min_tl)
 
         return min_tl, 0
+
+
+class RulerCorrector(Corrector):
+    def correct(self, cases, tl, **kwargs):
+        det_times, ind_times = [], []
+        for case in cases:
+            if check_sat(get_status(case)) or check_unsat(get_status(case)):
+                det_times.append(get_time(case))
+            else:
+                ind_times.append(tl)
+
+        if len(det_times) == 0:
+            return tl, 0
+
+        best_tl = self.choose_best_tl(self.lower_bound, det_times, ind_times)
+
+        dis_count = 0
+        for i in range(len(cases)):
+            if check_sat(get_status(cases[i])) and get_time(cases[i]) > best_tl:
+                dis_count += 1
+
+        return best_tl, dis_count

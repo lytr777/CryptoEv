@@ -1,0 +1,30 @@
+{
+  "solvers": {
+    "type": "net",
+    "main_solver": {
+      "name": "lingeling",
+      "tag": "init",
+      "tl_util": false,
+      "tl": 0,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": false
+    }
+  },
+  "concurrency": {
+    "type": "apply_pool_vf",
+    "thread_count": 36,
+    "task_queue": {
+      "name": "generate"
+    }
+  },
+  "output": {
+    "type": "storage",
+    "log_name": "log",
+    "debug_name": "debug",
+    "src_dump": [
+      "./configuration/options.py",
+      "./crypto_solve.py"
+    ]
+  }
+}

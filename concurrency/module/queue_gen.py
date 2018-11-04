@@ -1,6 +1,5 @@
 class QueueOfGeneratedTasks:
     def __init__(self, **kwargs):
-        self.queue = []
         self.count = 0
         self.generator = None
 

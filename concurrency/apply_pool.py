@@ -14,8 +14,8 @@ class ApplyPool:
         self.thread_count = kwargs["thread_count"]
         self.task_queue = kwargs["task_queue"]
 
-        self.max_res = self.thread_count * 10
-        self.min_res = self.thread_count * 5
+        self.max_res = self.thread_count * 3
+        self.min_res = self.thread_count * 2
 
         self.pool = Pool(processes=self.thread_count)
 

@@ -24,7 +24,7 @@ from key_generators.asg_72_76 import ASG_72_76
 from key_generators.asg_96_112 import ASG_96_112
 from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
-from predictive_function.module.corrector import MassCorrector, MaxCorrector
+from predictive_function.module.corrector import MassCorrector, MaxCorrector, RulerCorrector
 from predictive_function.module.selection import AdaptiveFunction, ConstSelection
 
 from solver.solver_net import SolverNet
@@ -36,7 +36,7 @@ from solver.painless import PainlessSolver
 from solver.plingeling import PlingelingSolver
 from solver.treengeling import TreengelingSolver
 
-from concurrency.module.queue import QueueOfGeneratedTasks
+from concurrency.module.queue_gen import QueueOfGeneratedTasks
 from concurrency.workers import Workers
 from concurrency.map_pool import MapPool
 from concurrency.apply_pool import ApplyPool
@@ -126,7 +126,8 @@ selection = {
 
 correctors = {
     "mass": MassCorrector,
-    "max": MaxCorrector
+    "max": MaxCorrector,
+    "ruler": RulerCorrector
 }
 
 # solvers

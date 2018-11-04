@@ -2,13 +2,20 @@ from copy import copy
 import numpy as np
 from time import time as now
 
-from concurrency.workers import Workers
+from configuration.options import solvers
 from constants import static
-from model.backdoor import Backdoor, SecretKey
+from model.backdoor import Backdoor
 from key_generators.asg_72_76 import ASG_72_76
 from model.case_generator import CaseGenerator
-from solver.lingeling import LingelingSolver
 from util.parse.cnf_parser import CnfParser
+
+solver_name = "treengeling"
+worker_count = 36
+
+start_j = 1
+task_count = 100
+backdoor_path = "asg72_bd"
+log_path = "./output/_logs/asg_72_76/cryptotask_reports/report_%d"
 
 
 class BackdoorSort:
@@ -33,37 +40,55 @@ class BackdoorSort:
 
 
 key_generator = ASG_72_76
-bd = Backdoor.load("backdoor")
-bs = BackdoorSort(key_generator, bd)
-
 cnf_path = static.cnfs[key_generator.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
-rs = np.random.RandomState(43)
 
+bd = Backdoor.load(backdoor_path)
+rs = np.random.RandomState()
 cg = CaseGenerator(key_generator, cnf, rs)
-solver = LingelingSolver(
+
+solver = solvers[solver_name](
     tl=0,
     simplify=False,
-    tag="main"
+    tag="main",
+    workers=worker_count
 )
 
-init_case = cg.generate_init()
-init_report = solver.solve(init_case.get_cnf())
-init_case.mark_solved(init_report)
+for j in range(start_j, task_count + start_j):
+    log_file = open(log_path % j, "w+")
 
-save_sk = init_case.get_solution_sk()
+    log_file.write("backdoor: %s\n" % bd)
+    log_file.write("solver: %s(%d)\n" % (solver, worker_count))
+    log_file.write("\ntasks:\n")
+    log_file.flush()
 
-start_time = now()
-task_solution = init_report.solution
-for key in bs:
-    task_solution[:len(key)] = key
+    bs = BackdoorSort(key_generator, bd)
 
-    task = cg.generate(bd, task_solution)
-    task_report = solver.solve(task.get_cnf())
+    init_case = cg.generate_init()
+    init_report = solver.solve(init_case.get_cnf())
+    init_case.mark_solved(init_report)
 
-    print task_report.status, task_report.time
+    save_sk = init_case.get_solution_sk()
 
-    if task_report.status == "SATISFIABLE":
-        break
+    start_time, i = now(), 1
+    task_solution = init_report.solution
+    for key in bs:
+        task_solution[:len(key)] = key
 
-print now() - start_time
+        task = cg.generate(bd, task_solution)
+        task_report = solver.solve(task.get_cnf())
+
+        log_file.write("%d: %s %f\n" % (i, task_report.status, task_report.time))
+        log_file.flush()
+        i += 1
+
+        if task_report.status == "SATISFIABLE":
+            log_file.write("\ncomparing secret keys:\n")
+            log_file.write("%s\n" % save_sk)
+            log_file.write("%s\n" % task_report.solution[:len(save_sk)])
+            break
+
+    time = now() - start_time
+    log_file.write("\ntime: %f\n" % time)
+    log_file.write("\nav time: %f\n" % (time / (i - 1)))
+    log_file.close()
