@@ -61,7 +61,7 @@
     }
   },
   "concurrency": {
-    "type": "pool",
+    "type": "apply_pool",
     "thread_count": 36,
     "task_queue": {
       "name": "generate"
