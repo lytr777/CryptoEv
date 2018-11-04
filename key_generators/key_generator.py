@@ -55,6 +55,22 @@ class KeyGenerator:
     def get_status(self, short=False):
         return self.short_statuses[self.status] if short else self.status
 
+    def get_solution_sk(self):
+        if len(self.solution) != self.key_stream_start + self.key_stream_len - 1:
+            return []
+
+        start = self.secret_key_start - 1
+        end = start + self.secret_key_len
+        return self.solution[start:end]
+
+    def get_solution_ks(self):
+        if len(self.solution) != self.key_stream_start + self.key_stream_len - 1:
+            return []
+
+        start = self.key_stream_start - 1
+        end = start + self.key_stream_len
+        return self.solution[start:end]
+
 
 class StreamCipher(KeyGenerator):
     def __init__(self, cnf):
