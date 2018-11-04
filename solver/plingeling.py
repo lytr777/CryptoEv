@@ -13,13 +13,13 @@ class PlingelingSolver(Solver):
 
     min_time = 0.1
 
-    def __init__(self, tag):
+    def __init__(self, **kwargs):
         info = {
             "name": "plingeling",
             "dir": "lingeling",
             "script": "./untar_lingeling.sh"
         }
-        Solver.__init__(self, info, tag)
+        Solver.__init__(self, info, **kwargs)
 
     def get_arguments(self, l_args, workers, tl, simp):
         l_args.extend([self.solver_path, "-t", str(workers)])
