@@ -26,7 +26,7 @@ class EvolutionAlgorithm(MetaAlgorithm):
         key_generator = predictive_f.key_generator
         cnf_path = static.cnfs[key_generator.tag]
         cnf = CnfParser().parse_for_path(cnf_path)
-        rs = np.random.RandomState(43)
+        rs = np.random.RandomState()
 
         cg = CaseGenerator(key_generator, cnf, rs)
 

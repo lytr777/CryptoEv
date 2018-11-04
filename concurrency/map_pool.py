@@ -9,13 +9,10 @@ def task_function(task):
     return task.solve()
 
 
-class PermanentPool:
+class MapPool:
     def __init__(self, **kwargs):
         self.thread_count = kwargs["thread_count"]
         self.task_queue = kwargs["task_queue"]
-
-        self.workers = []
-        self.sleep_time = 2
 
         self.pool = Pool(processes=self.thread_count)
 

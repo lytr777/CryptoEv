@@ -38,7 +38,8 @@ from solver.treengeling import TreengelingSolver
 
 from concurrency.module.queue import QueueOfGeneratedTasks
 from concurrency.workers import Workers
-from concurrency.pool import PermanentPool
+from concurrency.map_pool import MapPool
+from concurrency.apply_pool import ApplyPool
 
 from output.storage import Storage
 
@@ -145,7 +146,8 @@ solvers = {
 # concurrency
 concurrency = {
     "workers": Workers,
-    "pool": PermanentPool
+    "map_pool": MapPool,
+    "apply_pool": ApplyPool
 }
 
 queues = {

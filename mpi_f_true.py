@@ -57,7 +57,7 @@ for key in configuration["solvers"].solvers.keys():
 # --
 cnf_path = static.cnfs[key_generator.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
-rs = np.random.RandomState(43)
+rs = np.random.RandomState()
 
 cg = CaseGenerator(key_generator, cnf, rs)
 
