@@ -37,30 +37,23 @@ rc.debugger = Debugger(output.get_debug_path(), args.v)
 backdoor = Backdoor.load(args.backdoor)
 backdoor.check(key_generator)
 
-for key in configuration["solvers"].solvers.keys():
-    configuration["solvers"].get(key).check_installation()
+solvers = configuration["solvers"]
+for key in solvers.solvers.keys():
+    solvers.get(key).check_installation()
 
 # --
 cnf_path = static.cnfs[key_generator.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
-rs = np.random.RandomState(43)
+rs = np.random.RandomState()
 
 cg = CaseGenerator(key_generator, cnf, rs)
 
 rc.logger.deferred_write("-- key generator: %s\n" % key_generator.tag)
+rc.logger.deferred_write("-- solver: %s\n" % solvers.get("main").name)
+rc.logger.deferred_write("-- pf type: %s\n" % predictive_f.type)
 rc.logger.deferred_write("-- selection: %s\n" % predictive_f.selection)
 rc.logger.deferred_write("-- backdoor: %s\n" % backdoor)
 rc.logger.write("------------------------------------------------------\n")
-
-# with open(log_path, 'w+') as f:
-#     f.write("-- key generator: %s\n" % algorithm.tag)
-#     f.write("-- solver: %s\n" % pf_p["solver_wrapper"].info["tag"])
-#     f.write("-- pf type: %s\n" % p_function.type)
-#     if p_function.type == "ibs":
-#         f.write("-- time limit: %s\n" % pf_p["time_limit"])
-#     f.write("-- samples size: %d\n" % pf_p["N"])
-#     f.write("-- backdoor: %s\n" % backdoor)
-#     f.write("------------------------------------------------------\n")
 
 c_out = predictive_f.compute(cg, backdoor)
 r = predictive_f.calculate(cg, backdoor, c_out)

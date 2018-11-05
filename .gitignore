@@ -3,6 +3,7 @@
 
 # Log files
 output/_logs
+output/_lie_logs
 
 # Solvers
 lingeling

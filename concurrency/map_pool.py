@@ -12,8 +12,6 @@ def task_function(task):
 class MapPool:
     def __init__(self, **kwargs):
         self.thread_count = kwargs["thread_count"]
-        self.task_queue = kwargs["task_queue"]
-
         self.pool = Pool(processes=self.thread_count)
 
         signal.signal(signal.SIGINT, self.__signal_handler)
@@ -23,18 +21,16 @@ class MapPool:
             self.pool.terminate()
             exit(s)
 
-    def solve(self, filler):
-        process_count, remainder = divmod(self.thread_count, filler.get_complexity())
+    def solve(self, tasks, complexity=1):
+        process_count, remainder = divmod(self.thread_count, complexity)
 
         if process_count == 0 or remainder != 0:
             raise Exception("Incorrect number of threads or workers")
         if process_count != self.thread_count:
             raise Exception("Pool don't support resizing")
 
-        self.task_queue.fill(filler)
-
         start_work_time = now()
-        result = self.pool.map_async(task_function, self.task_queue)
+        result = self.pool.map_async(task_function, tasks)
 
         while not result.ready():
             result.wait()
@@ -42,7 +38,7 @@ class MapPool:
         if result.successful():
             return result.get(), now() - start_work_time
         else:
-            rc.debugger.write(2, 3, "Pool solving was completed unsuccessfully")
+            rc.debugger.write(0, 1, "Pool solving was completed unsuccessfully")
             raise Exception("Pool solving was completed unsuccessfully")
 
     def terminate(self):

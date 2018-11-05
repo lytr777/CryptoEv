@@ -68,10 +68,14 @@ class Backdoor(VariableSet):
 
     def generate_substitution(self, random_state):
         substitution = CnfSubstitution()
-        values = random_state.randint(2, size=self.length)
+        values = random_state.randint(2, size=self.__len__())
+        j = 0
         for i, var in enumerate(self.vars):
             if self.mask[i]:
-                substitution.substitute(var, not values[i])
+                substitution.substitute(var, not values[j])
+                j += 1
+
+        assert j == len(values)
 
         return substitution
 

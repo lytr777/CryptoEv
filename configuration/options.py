@@ -36,7 +36,6 @@ from solver.painless import PainlessSolver
 from solver.plingeling import PlingelingSolver
 from solver.treengeling import TreengelingSolver
 
-from concurrency.module.queue_gen import QueueOfGeneratedTasks
 from concurrency.module.task_queue import TaskQueue
 from concurrency.workers import Workers
 from concurrency.map_pool import MapPool
@@ -153,7 +152,6 @@ concurrency = {
 }
 
 queues = {
-    "generate": QueueOfGeneratedTasks,
     "task": TaskQueue
 }
 

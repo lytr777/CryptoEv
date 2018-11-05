@@ -1,22 +1,6 @@
-from concurrency.module.filler import TaskFiller
-from model.case_generator import BackdoorCaseGenerator
-from predictive_function import PredictiveFunction, TaskGenerator
+from predictive_function import PredictiveFunction
+from task import MainTask, InitTask
 from constants.runtime import runtime_constants as rc
-
-
-class GADTask:
-    def __init__(self, **kwargs):
-        self.bcg = kwargs["bcg"]
-        self.solvers = kwargs["solvers"]
-        self.init_case = kwargs["init_case"]
-
-    def solve(self):
-        # main
-        main_case = self.bcg.generate(self.init_case.solution, rnd="b")
-        main_report = self.solvers.solve("main", main_case.get_cnf())
-        main_case.mark_solved(main_report)
-
-        return main_case.get_status(short=True), main_case.time
 
 
 class GuessAndDetermine(PredictiveFunction):
@@ -26,14 +10,6 @@ class GuessAndDetermine(PredictiveFunction):
         PredictiveFunction.__init__(self, **kwargs)
         self.decomposition = kwargs["decomposition"] if ("decomposition" in kwargs) else None
 
-    def solve_init(self, bcg, solvers):
-        init_case = bcg.generate_init()
-        init_report = solvers.solve("init", init_case.get_cnf())
-
-        init_case.mark_solved(init_report)
-        init_case.check_solution()
-        return init_case
-
     def compute(self, cg, backdoor, cases=()):
         cases = list(cases)
 
@@ -41,29 +17,34 @@ class GuessAndDetermine(PredictiveFunction):
         concurrency = rc.configuration["concurrency"]
 
         rc.debugger.deferred_write(1, 0, "compute for backdoor: %s" % backdoor)
+        case_count = self.selection.get_N() - len(cases)
 
-        bcg = BackdoorCaseGenerator(cg, backdoor)
-        init_case = self.solve_init(bcg, solvers)
-
-        rc.debugger.write(1, 0, "creating task generators")
-        generator = TaskGenerator(
-            GADTask,
-            bcg=bcg,
-            solvers=solvers,
-            init_case=init_case
+        # init
+        init_task = InitTask(
+            case=cg.generate_init(),
+            solver=solvers.get("init")
         )
+        init_case = init_task.solve()
 
-        rc.debugger.write(1, 0, "creating task filler")
-        filler = TaskFiller(
-            generator=generator,
-            complexity=solvers.get_workers("main"),
-            count=self.selection.get_N() - len(cases)
-        )
+        # main
+        main_solver = solvers.get("main")
+        rc.debugger.write(1, 0, "generating main cases...")
+
+        main_tasks = []
+        for i in range(case_count):
+            main_task = MainTask(
+                case=cg.generate(backdoor, init_case.solution, rnd="b"),
+                solver=main_solver
+            )
+            main_tasks.append(main_task)
 
         rc.debugger.write(1, 0, "solving...")
-        solved, time = concurrency.solve(filler)
+        solved, time = concurrency.solve(main_tasks, solvers.get_workers("main"))
         cases.extend(solved)
+
         rc.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
+        if case_count != len(solved):
+            rc.debugger.write(0, 0, "warning! case_count != len(solved)")
         rc.debugger.write(1, 0, "spent time: %f" % time)
 
         return cases, time

@@ -1,16 +1,5 @@
+from predictive_function.task import MainTask
 from constants.runtime import runtime_constants as rc
-
-
-class TrueTask:
-    def __init__(self, **kwargs):
-        self.case = kwargs["case"]
-        self.solvers = kwargs["solvers"]
-
-    def solve(self):
-        report = self.solvers.solve("main", self.case.get_cnf())
-        self.case.mark_solved(report)
-
-        return self.case.get_status(short=True), self.case.time
 
 
 class TaskReader:
@@ -19,7 +8,7 @@ class TaskReader:
         self.backdoor = kwargs["backdoor"]
 
     def read(self, path_i):
-        solvers = rc.configuration["solvers"]
+        main_solver = rc.configuration["solvers"].get("main")
 
         tasks = []
         with open(path_i, 'r') as f:
@@ -35,11 +24,9 @@ class TaskReader:
                 self.backdoor.set_values(solution, self.__from_str(bd_str))
                 self.cg.key_stream.set_values(solution, self.__from_str(ks_str))
 
-                case = self.cg.generate(self.backdoor, solution)
-
-                tasks.append(TrueTask(
-                    case=case,
-                    solvers=solvers
+                tasks.append(MainTask(
+                    case=self.cg.generate(self.backdoor, solution),
+                    solver=main_solver
                 ))
 
         return tasks

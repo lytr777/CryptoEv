@@ -1,44 +1,6 @@
-from concurrency.module.filler import TaskFiller
-from model.case_generator import BackdoorCaseGenerator
-from predictive_function import PredictiveFunction, TaskGenerator
+from predictive_function import PredictiveFunction
+from task import InitTask, MainTask
 from constants.runtime import runtime_constants as rc
-
-
-class IBSTask:
-    def __init__(self, **kwargs):
-        self.bcg = kwargs["bcg"]
-        self.solvers = kwargs["solvers"]
-
-    def solve(self):
-        # init
-        init_case = self.bcg.generate_init()
-        try:
-            init_report = self.solvers.solve("init", init_case.get_cnf())
-            init_case.mark_solved(init_report)
-            init_case.check_solution()
-        except Exception as e:
-            rc.debugger.write(2, 3, "error while solving init case:\n%s" % e)
-
-        # main
-        main_case = self.bcg.generate(init_case.solution)
-        try:
-            main_report = self.solvers.solve("main", main_case.get_cnf())
-            main_case.mark_solved(main_report)
-        except Exception as e:
-            rc.debugger.write(2, 3, "error while solving init case:\n%s" % e)
-
-        if main_case.get_status(short=True) == "SAT":
-            check_case = self.bcg.generate_check(main_case.solution)
-            try:
-                check_report = self.solvers.solve("init", check_case.get_cnf())
-                check_case.mark_solved(check_report)
-
-                if check_case.get_status(short=True) != "SAT":
-                    main_case.status = "UNSATISFIABLE"
-            except Exception as e:
-                rc.debugger.write(2, 3, "error while solving check case:\n%s" % e)
-
-        return main_case.get_status(short=True), main_case.time
 
 
 class InverseBackdoorSets(PredictiveFunction):
@@ -56,26 +18,48 @@ class InverseBackdoorSets(PredictiveFunction):
 
         rc.debugger.deferred_write(1, 0, "compute for backdoor: %s" % backdoor)
         rc.debugger.deferred_write(1, 0, "use time limit: %s" % solvers.get_tl("main"))
+        case_count = self.selection.get_N() - len(cases)
 
-        rc.debugger.write(1, 0, "creating task generators")
-        generator = TaskGenerator(
-            IBSTask,
-            solvers=solvers,
-            bcg=BackdoorCaseGenerator(cg, backdoor)
-        )
+        # init
+        init_solver = solvers.get("init")
+        rc.debugger.write(1, 0, "generating init cases...")
 
-        rc.debugger.write(1, 0, "creating task filler")
-        filler = TaskFiller(
-            generator=generator,
-            complexity=solvers.get_workers("main"),
-            count=self.selection.get_N() - len(cases)
-        )
+        init_tasks, init_cases = [], []
+        for i in range(case_count):
+            case = cg.generate_init()
+            init_cases.append(case)
+
+            init_task = InitTask(
+                case=case,
+                solver=init_solver
+            )
+            init_tasks.append(init_task)
+
+        init_solved, init_time = concurrency.solve(init_tasks)
+        rc.debugger.write(1, 0, "has been solved %d init cases" % len(init_solved))
+        if case_count != len(init_solved):
+            rc.debugger.write(0, 0, "warning! case_count != len(init_solved)")
+
+        # main
+        main_solver = solvers.get("main")
+        rc.debugger.write(1, 0, "generating main cases...")
+
+        main_tasks = []
+        for init_case in init_solved:
+            main_task = MainTask(
+                case=cg.generate(backdoor, init_case.solution),
+                solver=main_solver
+            )
+            main_tasks.append(main_task)
 
         rc.debugger.write(1, 0, "solving...")
-        solved, time = concurrency.solve(filler)
+        solved, time = concurrency.solve(main_tasks, solvers.get_workers("main"))
         cases.extend(solved)
+
         rc.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
-        rc.debugger.write(1, 0, "spent time: %f" % time)
+        if case_count != len(solved):
+            rc.debugger.write(0, 0, "warning! case_count != len(solved)")
+        rc.debugger.write(1, 0, "spent time: %f" % (init_time + time))
 
         return cases, time
 

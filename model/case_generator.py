@@ -44,18 +44,3 @@ class CaseGenerator:
             return o.generate_substitution(self.random_state)
         else:
             return o.get_substitution(solution)
-
-
-class BackdoorCaseGenerator:
-    def __init__(self, cg, backdoor):
-        self.cg = cg
-        self.backdoor = backdoor
-
-    def generate_init(self):
-        return self.cg.generate_init()
-
-    def generate(self, solution, rnd=""):
-        return self.cg.generate(self.backdoor, solution, rnd)
-
-    def generate_check(self, solution):
-        return self.cg.generate(self.cg.secret_key, solution)

@@ -8,8 +8,8 @@ class TaskQueue:
 
         return self.tasks.pop(0)
 
-    def fill(self, filler):
-        self.tasks = filler.get_tasks()
+    def fill(self, tasks):
+        self.tasks = tasks
 
     def __len__(self):
         return len(self.tasks)

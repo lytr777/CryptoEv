@@ -13,7 +13,6 @@ from output.module.logger import Logger
 from constants.runtime import runtime_constants as rc
 from model.case_generator import CaseGenerator
 from model.backdoor import Backdoor
-from true.task_filler import TaskFiller
 from true.task_reader import TaskReader
 from true.task_writer import TaskWriter
 from util.parse.cnf_parser import CnfParser
@@ -28,7 +27,7 @@ args = parser.parse_args()
 path, configuration = configurator.load(args.cp)
 rc.configuration = configuration
 
-chuck_size = 50
+chuck_size = 20
 
 predictive_f = rc.configuration["predictive_function"]
 key_generator = predictive_f.key_generator
@@ -76,8 +75,9 @@ rc.debugger.write(0, 0, "Each file will contain %d instances" % chuck_size)
 tw = TaskWriter(chuck_size=chuck_size, cg=cg, backdoor=backdoor)
 
 
-def tw_write(j):
-    return tw.write(j)
+def tw_write(tw_args):
+    path_j, init_cases = tw_args
+    return tw.write(path_j, init_cases)
 
 
 solvers = rc.configuration["solvers"]
@@ -87,7 +87,8 @@ pool = Pool(processes=concurrency.thread_count)
 ress, files = [], []
 for i in range(file_count):
     path_i = "./_tmp/chunk_%d" % i
-    res = pool.apply_async(tw_write, (path_i,))
+    ic = tw.prepare()
+    res = pool.apply_async(tw_write, ((path_i, ic),))
     ress.append(res)
 
 while len(ress) > 0:
@@ -114,13 +115,8 @@ for path_i in files:
     rc.debugger.deferred_write(1, 0, "compute for backdoor: %s" % backdoor)
     rc.debugger.deferred_write(1, 0, "use time limit: %s" % solvers.get_tl("main"))
 
-    filler = TaskFiller(
-        tasks=tasks,
-        complexity=solvers.get_workers("main"),
-    )
-
     rc.debugger.write(1, 0, "solving...")
-    solved, time = concurrency.solve(filler)
+    solved, time = concurrency.solve(tasks)
 
     rc.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
     rc.debugger.write(1, 0, "spent time: %f" % time)
@@ -134,7 +130,7 @@ value, pf_log = r[0], r[1]
 rc.logger.write(pf_log)
 rc.logger.write("true value: %.7g\n" % value)
 
-tw.clean(*files)
+# tw.clean(*files)
 configuration["concurrency"].terminate()
 configuration["output"].close()
 

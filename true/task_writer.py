@@ -10,29 +10,26 @@ class TaskWriter:
         self.cg = kwargs["cg"]
         self.backdoor = kwargs["backdoor"]
 
-    def write(self, path_i):
-        solvers = rc.configuration["solvers"]
+    def prepare(self):
+        init_cases = []
+        for j in range(self.chuck_size):
+            init_cases.append(self.cg.generate_init())
 
-        s_time, w_time = 0, 0
+        return init_cases
+
+    def write(self, path_i, init_cases):
+        solvers = rc.configuration["solvers"]
         file_i = open(path_i, "w+")
 
-        print "start write to: %s" % path_i
-        for j in range(self.chuck_size):
-            init_case = self.cg.generate_init()
-            cnf_j = init_case.get_cnf()
-
-            s1 = now()
-            init_report = solvers.solve("init", cnf_j)
-            s_time += now() - s1
+        for init_case in init_cases:
+            init_report = solvers.solve("init", init_case.get_cnf())
 
             init_case.mark_solved(init_report)
 
-            w1 = now()
             bd_value = self.backdoor.get_values(init_case.solution)
             ks_value = self.cg.key_stream.get_values(init_case.solution)
             bs_str, ks_str = self.__to_str(bd_value), self.__to_str(ks_value)
             file_i.write("%s -> %s\n" % (bs_str, ks_str))
-            w_time += now() - w1
 
         file_i.close()
         return path_i

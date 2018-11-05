@@ -85,8 +85,8 @@ class Workers:
             if worker.isAlive():
                 worker.join()
 
-    def solve(self, filler):
-        worker_count, remainder = divmod(self.thread_count, filler.get_complexity())
+    def solve(self, tasks, complexity=1):
+        worker_count, remainder = divmod(self.thread_count, complexity)
 
         if worker_count == 0 or remainder != 0:
             raise Exception("Incorrect number of threads or workers")
@@ -103,14 +103,13 @@ class Workers:
             self.__clear_list(self.result_list)
         self.result_lock.release()
 
+        task_count, result_len = len(tasks), 0
+        start_work_time = now()
+
         self.task_cond.acquire()
-        self.task_queue.fill(filler)
+        self.task_queue.fill(tasks)
         self.task_cond.notify_all()
         self.task_cond.release()
-
-        start_work_time = now()
-        task_count = filler.get_count()
-        result_len = 0
 
         while task_count > result_len:
             sleep(self.sleep_time)
