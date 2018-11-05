@@ -18,7 +18,7 @@ backdoor_path = "asg72_bd"
 log_path = "./output/_logs/asg_72_76/cryptotask_reports/report_%d"
 
 
-class BackdoorSort:
+class BackdoorAssignment:
     def __init__(self, algorithm, backdoor):
         self.algorithm = algorithm
         self.backdoor = backdoor
@@ -62,7 +62,7 @@ for j in range(start_j, task_count + start_j):
     log_file.write("\ntasks:\n")
     log_file.flush()
 
-    bs = BackdoorSort(key_generator, bd)
+    ba = BackdoorAssignment(key_generator, bd)
 
     init_case = cg.generate_init()
     init_report = solver.solve(init_case.get_cnf())
@@ -72,7 +72,7 @@ for j in range(start_j, task_count + start_j):
 
     start_time, i = now(), 1
     task_solution = init_report.solution
-    for key in bs:
+    for key in ba:
         task_solution[:len(key)] = key
 
         task = cg.generate(bd, task_solution)
@@ -90,5 +90,5 @@ for j in range(start_j, task_count + start_j):
 
     time = now() - start_time
     log_file.write("\ntime: %f\n" % time)
-    log_file.write("\nav time: %f\n" % (time / (i - 1)))
+    log_file.write("av time: %f\n" % (time / (i - 1)))
     log_file.close()

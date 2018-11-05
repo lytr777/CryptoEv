@@ -21,13 +21,30 @@ class VariableSet:
     def __str__(self):
         return str(self.vars)
 
+    def get_values(self, solution):
+        if len(solution) < self.max:
+            raise Exception("Solution has too few variables: %d" % len(solution))
+
+        values = []
+        for var in self.vars:
+            values.append(solution[var - 1])
+
+        return values
+
+    def set_values(self, solution, values):
+        if len(solution) < self.max:
+            raise Exception("Solution has too few variables: %d" % len(solution))
+
+        for i, var in enumerate(self.vars):
+            solution[var - 1] = values[i]
+
     def get_substitution(self, solution):
         if len(solution) < self.max:
             raise Exception("Solution has too few variables: %d" % len(solution))
 
         substitution = CnfSubstitution()
-        for number in self.vars:
-            substitution.substitute(number, not solution[number - 1])
+        for var in self.vars:
+            substitution.substitute(var, not solution[var - 1])
 
         return substitution
 

@@ -27,6 +27,34 @@ class Backdoor(VariableSet):
     def __copy__(self):
         return self.get_copy(self.mask)
 
+    def __iter__(self):
+        for i in range(self.length):
+            if self.mask[i]:
+                yield self.vars[i]
+
+    def get_values(self, solution):
+        if len(solution) < self.max:
+            raise Exception("Solution has too few variables: %d" % len(solution))
+
+        values = []
+        for i, var in enumerate(self.vars):
+            if self.mask[i]:
+                values.append(solution[var - 1])
+
+        return values
+
+    def set_values(self, solution, values):
+        if len(solution) < self.max:
+            raise Exception("Solution has too few variables: %d" % len(solution))
+
+        j = 0
+        for i, var in enumerate(self.vars):
+            if self.mask[i]:
+                solution[var - 1] = values[j]
+                j += 1
+
+        assert j == len(values)
+
     def get_substitution(self, solution):
         if len(solution) < self.max:
             raise Exception("Solution has too few variables: %d" % len(solution))
