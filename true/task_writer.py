@@ -1,5 +1,4 @@
 import os
-from time import time as now
 
 from constants.runtime import runtime_constants as rc
 

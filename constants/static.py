@@ -22,7 +22,7 @@ solver_paths = {
     "lingeling": "./lingeling/lingeling",
     "treengeling": "./lingeling/treengeling",
     "plingeling": "./lingeling/plingeling",
-    "rokk": "./rokk/binary/rokk.py",
+    "rokk": "./rokk/binary/rokk",
     "cryptominisat": "./cryptominisat/build/cryptominisat5",
 }
 

@@ -3,6 +3,7 @@ import re
 import subprocess
 import threading
 
+from time import time as now
 from solver_net import SolverSettings
 from constants.static import solver_paths
 from model.solver_report import SolverReport
@@ -40,18 +41,21 @@ class Solver:
         for i in range(g("attempts")):
             if report is None or report.check():
                 rc.debugger.write(3, 2, "%s start solving %s case" % (thread_name, self.tag))
-
+                st = now()
                 sp = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output, err = sp.communicate(cnf)
+                time = now() - st
                 if len(err) != 0 and self.__check_code(sp.returncode):
                     rc.debugger.write(1, 2, "%s didn't solve %s case:\n%s" % (thread_name, self.tag, err))
                     raise Exception(err)
 
                 try:
                     report = self.parse_out(output)
+                    if report.status == "INDETERMINATE":
+                        report.time = time
                 except KeyError:
                     rc.debugger.write(1, 2, "%s error while parsing %s case" % (thread_name, self.tag))
-                    report = SolverReport("INDETERMINATE", 5.)
+                    report = SolverReport("INDETERMINATE", time)
                 rc.debugger.write(3, 2, "%s solved %s case with status: %s" % (thread_name, self.tag, report.status))
 
         if report.check():
