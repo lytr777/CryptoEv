@@ -12,6 +12,7 @@ cnfs = {
     "present_6_2kp": "./templates/Present_6_2KP.cnf",
     "asg_72_76": "./templates/ASG_72_76.cnf",
     "asg_96_112": "./templates/ASG_96_112.cnf",
+    "asg_192_200": "./templates/ASG_192_200.cnf",
 
     "volfram": "./templates/Volfram.cnf",
     "geffe": "./templates/Geffe.cnf",

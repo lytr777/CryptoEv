@@ -22,6 +22,7 @@ from key_generators.present_6_1kp import Present_6_1KP
 from key_generators.present_6_2kp import Present_6_2KP
 from key_generators.asg_72_76 import ASG_72_76
 from key_generators.asg_96_112 import ASG_96_112
+from key_generators.asg_192_200 import ASG_192_200
 from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
 from predictive_function.module.corrector import MassCorrector, MaxCorrector, RulerCorrector
@@ -35,6 +36,7 @@ from solver.minisat import MinisatSolver
 from solver.painless import PainlessSolver
 from solver.plingeling import PlingelingSolver
 from solver.treengeling import TreengelingSolver
+from solver.rokk import RokkSolver
 
 from concurrency.module.task_queue import TaskQueue
 from concurrency.workers import Workers
@@ -112,6 +114,7 @@ def get_key_generators(name):
         # ASG
         "asg_72_76": ASG_72_76,
         "asg_96_112": ASG_96_112,
+        "asg_192_200": ASG_192_200,
         # Other
         "volfram": Volfram,
         "geffe": Geffe
@@ -141,6 +144,7 @@ solvers = {
     "plingeling": PlingelingSolver,
     "treengeling": TreengelingSolver,
     "cryptominisat": CryptoMinisatSolver,
+    "rokk": RokkSolver,
     "painless": PainlessSolver
 }
 
