@@ -28,7 +28,6 @@ class MainTask(Task):
         try:
             report = self.solver.solve(self.case.get_cnf())
             self.case.mark_solved(report)
-            self.case.check_solution()
         except Exception as e:
             rc.debugger.write(0, 2, "error while solving main case:\n%s" % e)
 

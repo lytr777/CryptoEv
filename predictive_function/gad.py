@@ -10,28 +10,15 @@ class GuessAndDetermine(PredictiveFunction):
         PredictiveFunction.__init__(self, **kwargs)
         self.decomposition = kwargs["decomposition"] if ("decomposition" in kwargs) else None
 
-    def compute(self, cg, backdoor, cases=()):
-        cases = list(cases)
-
+    def __main_phase(self, cg, backdoor, init_case, count):
         solvers = rc.configuration["solvers"]
         concurrency = rc.configuration["concurrency"]
 
-        rc.debugger.deferred_write(1, 0, "compute for backdoor: %s" % backdoor)
-        case_count = self.selection.get_N() - len(cases)
-
-        # init
-        init_task = InitTask(
-            case=cg.generate_init(),
-            solver=solvers.get("init")
-        )
-        init_case = init_task.solve()
-
-        # main
         main_solver = solvers.get("main")
         rc.debugger.write(1, 0, "generating main cases...")
 
         main_tasks = []
-        for i in range(case_count):
+        for i in range(count):
             main_task = MainTask(
                 case=cg.generate(backdoor, init_case.solution, rnd="b"),
                 solver=main_solver
@@ -40,14 +27,43 @@ class GuessAndDetermine(PredictiveFunction):
 
         rc.debugger.write(1, 0, "solving...")
         solved, time = concurrency.solve(main_tasks, solvers.get_workers("main"))
-        cases.extend(solved)
 
         rc.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
-        if case_count != len(solved):
-            rc.debugger.write(0, 0, "warning! case_count != len(solved)")
+        if count != len(solved):
+            rc.debugger.deferred_write(0, 0, "warning! count != len(solved)")
         rc.debugger.write(1, 0, "spent time: %f" % time)
 
-        return cases, time
+        return solved, time
+
+    def compute(self, cg, backdoor, cases=()):
+        cases = list(cases)
+
+        solvers = rc.configuration["solvers"]
+        rc.debugger.write(1, 0, "compute for backdoor: %s" % backdoor)
+
+        # init
+        init_task = InitTask(
+            case=cg.generate_init(),
+            solver=solvers.get("init")
+        )
+        init_case = init_task.solve()
+
+        all_time = 0
+        while len(cases) < self.selection.get_N():
+            all_case_count = self.selection.get_N() - len(cases)
+
+            if all_case_count > self.chunk_size:
+                case_count = self.chunk_size
+            else:
+                case_count = all_case_count
+
+            solved, time = self.__main_phase(cg, backdoor, init_case, case_count)
+
+            cases.extend(solved)
+            all_time += time
+
+        rc.debugger.write(1, 0, "spent time: %f" % all_time)
+        return cases, all_time
 
     def calculate(self, cg, backdoor, compute_out):
         cases, time = compute_out

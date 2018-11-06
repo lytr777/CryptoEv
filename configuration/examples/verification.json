@@ -15,7 +15,7 @@
     "type": "apply_pool_vf",
     "thread_count": 36,
     "task_queue": {
-      "name": "generate"
+      "name": "task"
     }
   },
   "output": {

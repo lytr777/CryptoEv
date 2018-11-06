@@ -1,12 +1,13 @@
 {
   "predictive_function": {
     "type": "ibs",
+    "chunk_size": 500,
     "key_generator": {
       "name": "asg_72_76"
     },
     "selection": {
       "name": "const",
-      "value": 20
+      "value": 10000
     },
     "corrector": {
       "name": "mass",
@@ -39,7 +40,7 @@
     "type": "apply_pool",
     "thread_count": 36,
     "task_queue": {
-      "name": "generate"
+      "name": "task"
     }
   },
   "output": {

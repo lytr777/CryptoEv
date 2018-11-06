@@ -10,37 +10,30 @@ class InverseBackdoorSets(PredictiveFunction):
         PredictiveFunction.__init__(self, **kwargs)
         self.corrector = kwargs["corrector"] if ("corrector" in kwargs) else None
 
-    def compute(self, cg, backdoor, cases=()):
-        cases = list(cases)
-
-        solvers = rc.configuration["solvers"]
-        concurrency = rc.configuration["concurrency"]
-
-        rc.debugger.deferred_write(1, 0, "compute for backdoor: %s" % backdoor)
-        rc.debugger.deferred_write(1, 0, "use time limit: %s" % solvers.get_tl("main"))
-        case_count = self.selection.get_N() - len(cases)
-
-        # init
-        init_solver = solvers.get("init")
+    def __init_phase(self, cg, count):
+        init_solver = rc.configuration["solvers"].get("init")
         rc.debugger.write(1, 0, "generating init cases...")
 
-        init_tasks, init_cases = [], []
-        for i in range(case_count):
-            case = cg.generate_init()
-            init_cases.append(case)
-
+        init_tasks = []
+        for i in range(count):
             init_task = InitTask(
-                case=case,
+                case=cg.generate_init(),
                 solver=init_solver
             )
             init_tasks.append(init_task)
 
+        concurrency = rc.configuration["concurrency"]
         init_solved, init_time = concurrency.solve(init_tasks)
         rc.debugger.write(1, 0, "has been solved %d init cases" % len(init_solved))
-        if case_count != len(init_solved):
-            rc.debugger.write(0, 0, "warning! case_count != len(init_solved)")
+        if count != len(init_solved):
+            rc.debugger.write(0, 0, "warning! count != len(init_solved)")
 
-        # main
+        return init_solved, init_time
+
+    def __main_phase(self, cg, backdoor, init_solved):
+        solvers = rc.configuration["solvers"]
+        concurrency = rc.configuration["concurrency"]
+
         main_solver = solvers.get("main")
         rc.debugger.write(1, 0, "generating main cases...")
 
@@ -54,14 +47,36 @@ class InverseBackdoorSets(PredictiveFunction):
 
         rc.debugger.write(1, 0, "solving...")
         solved, time = concurrency.solve(main_tasks, solvers.get_workers("main"))
-        cases.extend(solved)
-
         rc.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
-        if case_count != len(solved):
-            rc.debugger.write(0, 0, "warning! case_count != len(solved)")
-        rc.debugger.write(1, 0, "spent time: %f" % (init_time + time))
+        if len(init_solved) != len(solved):
+            rc.debugger.write(0, 0, "warning! len(init_solved) != len(solved)")
 
-        return cases, time
+        return solved, time
+
+    def compute(self, cg, backdoor, cases=()):
+        cases = list(cases)
+
+        solvers = rc.configuration["solvers"]
+        rc.debugger.deferred_write(1, 0, "compute for backdoor: %s" % backdoor)
+        rc.debugger.deferred_write(1, 0, "use time limit: %s" % solvers.get_tl("main"))
+
+        all_time = 0
+        while len(cases) < self.selection.get_N():
+            all_case_count = self.selection.get_N() - len(cases)
+
+            if all_case_count > self.chunk_size:
+                case_count = self.chunk_size
+            else:
+                case_count = all_case_count
+
+            init_solved, init_time = self.__init_phase(cg, case_count)
+            solved, time = self.__main_phase(cg, backdoor, init_solved)
+
+            cases.extend(solved)
+            all_time += init_time + time
+
+        rc.debugger.write(1, 0, "spent time: %f" % all_time)
+        return cases, all_time
 
     def calculate(self, cg, backdoor, compute_out):
         cases, time = compute_out

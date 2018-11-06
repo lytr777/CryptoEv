@@ -14,6 +14,7 @@ class PredictiveFunction:
     type = None
 
     def __init__(self, **kwargs):
+        self.chunk_size = kwargs["chunk_size"]
         self.selection = kwargs["selection"]
         self.key_generator = kwargs["key_generator"]
 
