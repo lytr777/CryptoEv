@@ -62,8 +62,8 @@ class Corrector:
 
         perhaps.sort()
         if len(exactly) == 0:
-            exactly.append(perhaps[0])
-            perhaps.pop(0)
+            time = perhaps.pop(0)
+            exactly.append(time)
 
         n = len(det_times) + len(ind_times)
         best = (min_tl, min_tl * n / len(exactly))
@@ -137,7 +137,8 @@ class RulerCorrector(Corrector):
         if len(det_times) == 0:
             return tl, 0
 
-        best_tl = self.choose_best_tl(self.lower_bound, det_times, ind_times)
+        min_tl = max(self.lower_bound, min(det_times))
+        best_tl = self.choose_best_tl(min_tl, det_times, ind_times)
 
         dis_count = 0
         for i in range(len(cases)):
