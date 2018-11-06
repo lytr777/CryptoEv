@@ -51,29 +51,38 @@ if args.mpi_debug:
 backdoor = Backdoor.load(args.backdoor)
 backdoor.check(key_generator)
 
-for key in configuration["solvers"].solvers.keys():
-    configuration["solvers"].get(key).check_installation()
+solvers = configuration["solvers"]
+for key in solvers.solvers.keys():
+    solvers.get(key).check_installation()
 
 # --
 cnf_path = static.cnfs[key_generator.tag]
 cnf = CnfParser().parse_for_path(cnf_path)
-rs = np.random.RandomState()
-
-cg = CaseGenerator(key_generator, cnf, rs)
 
 if rank == 0:
-    rc.logger.deferred_write("-- key generator: %s\n" % key_generator.tag)
-    rc.logger.deferred_write("-- selection: %s\n" % predictive_f.selection)
-    rc.logger.deferred_write("-- backdoor: %s\n" % backdoor)
-    rc.logger.write("------------------------------------------------------\n")
+    ri_list = np.random.randint(2**32 - 1, size=size)
+else:
+    ri_list = []
+ri_list = comm.bcast(ri_list, root=0)
+rs = np.random.RandomState(ri_list[rank])
+
+cg = CaseGenerator(key_generator, cnf, rs)
 
 predictive_f.selection.set_mpi_sett(size, rank)
 
 if rank == 0:
-    start_work_time = now()
-    c_out = predictive_f.compute(cg, backdoor)
+    rc.logger.deferred_write("-- key generator: %s\n" % key_generator.tag)
+    rc.logger.deferred_write("-- solver: %s\n" % solvers.get("main").name)
+    rc.logger.deferred_write("-- pf type: %s\n" % predictive_f.type)
+    rc.logger.deferred_write("-- selection: %s\n" % predictive_f.selection)
+    rc.logger.deferred_write("-- backdoor: %s\n" % backdoor)
+    rc.logger.write("------------------------------------------------------\n")
 
-    cases = comm.gather(c_out[0], root=0)
+start_work_time = now()
+c_out = predictive_f.compute(cg, backdoor)
+cases = comm.gather(c_out[0], root=0)
+
+if rank == 0:
     cases = np.concatenate(cases)
 
     time = now() - start_work_time
@@ -83,8 +92,5 @@ if rank == 0:
     rc.logger.write(pf_log)
     rc.logger.write("true value: %.7g\n" % value)
     configuration["output"].close()
-else:
-    c_out = predictive_f.compute(cg, backdoor)
-    cases = comm.gather(c_out[0], root=0)
 
 configuration["concurrency"].terminate()
