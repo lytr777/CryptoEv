@@ -52,17 +52,22 @@ mpiexec -n node_count python2.7 mpi_main.py [-cp tag/path] [-v 0] [-d str] [-b f
   - *mf_calls* – по числу вызовов оценочной функции
   - *locals* – по числу найденых минимумов с установленным числом стагнаций
   - *mf_value* – при достижении требуемого значения
+  - *time* – по лимиту времени (формат: dd:hh:mm:ss)
 
 ### Параметры оценочной функции (predictive_function)
 * **type** – используемая оценочная функция
   - *gad* – Guess-and-Determine
   - *ibs* – Inverse Backdoor Sets
+* **chunk_size** – количество задач для одновременно вычисления
 * **key_generator** – криптографический алгоритм
   - *a5_1* – A5/1
   - *bivium* – Bivium
   - *trivium_64* – Trivium 64
   - *trivium_96* – Trivium 96
   - *e0* – E0
+  - *asg_72_76* – ASG_72_76
+  - *asg_96_112* – ASG_96_112
+  - *asg_192_200* – ASG_192_200
 * **selection** – инструмент для определения объема выборки
   - *const* – постоянная выборка
   - *function* – изменяющаяся посредством выбранной функции
@@ -70,6 +75,7 @@ mpiexec -n node_count python2.7 mpi_main.py [-cp tag/path] [-v 0] [-d str] [-b f
   - *none* – без корректировки
   - *mass* – по принципу центра масс
   - *max* – выбор максимального
+  - *ruler* – полная минимизация возможного значения
 
 ### Параметры SAT-solver'ов (solvers)
 * **type** – используемый контейнер для SAT-solver
@@ -81,6 +87,7 @@ mpiexec -n node_count python2.7 mpi_main.py [-cp tag/path] [-v 0] [-d str] [-b f
   - *plingeling* – Plingeling
   - *painless* – Painless
   - *minisat* – Minisat
+  - *rokk* – RoKK
   - *cryptominisat* – CryptoMinisat
 #### Внутренние настройки SAT-solver'ов
   - *workers* – число потоков на один SAT-solver
@@ -92,13 +99,15 @@ mpiexec -n node_count python2.7 mpi_main.py [-cp tag/path] [-v 0] [-d str] [-b f
 ### Параметры многопоточности (concurrency)
 * **type** – используемый алгоритм для параллельных вычислений
   - *workers* – посредством потоков, которые забирают задачи из предоставленного списка
+  - *apply_pool* – c помощью Pool, используя метод apply_async()
+  - *map_pool* – c помощью Pool, используя метод map_async()
 * **thread_count** – общее число потоков, выделенных программе на одном узле
 * **task_queue** – структура для списка задач
-  - *generate* – очередь которая генерирует задачи с помощью заданого генератора
+  - *task* – обычная очередь со списком задач
 
 ### Параметры системы для записи результатов (output)
 * **type** – используемая структура записи
-  - *storage* – посредством потоков, которые забирают задачи из предоставленного списка
+  - *storage* – хранит логи по пути ./output/_logs в формате <*start_time*-*end_time*>
 * **log_name** – имя файла для логирования
 * **debug_name** – имя файла для отладки
 * **src_dump** – список сохраняемых файлов для последующего востановления конфигурации эксперимента
