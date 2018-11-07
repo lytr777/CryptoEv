@@ -5,9 +5,6 @@ from time import time as now
 from constants.runtime import runtime_constants as rc
 from algorithm import MetaAlgorithm, Condition
 from model.backdoor import Backdoor
-from model.case_generator import CaseGenerator
-from util.parse.cnf_parser import CnfParser
-from constants import static
 
 
 class MPIEvolutionAlgorithm(MetaAlgorithm):
@@ -30,13 +27,6 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
         rc.debugger.write(0, 0, "MPI Evolution start on %d nodes" % self.size)
 
         predictive_f = rc.configuration["predictive_function"]
-        key_generator = predictive_f.key_generator
-        cnf_path = static.cnfs[key_generator.tag]
-        cnf = CnfParser().parse_for_path(cnf_path)
-        rs = np.random.RandomState()
-
-        cg = CaseGenerator(key_generator, cnf, rs)
-
         predictive_f.selection.set_mpi_sett(self.size, self.rank)
 
         if self.rank == 0:
@@ -71,14 +61,14 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
                         rc.debugger.write(2, 1, "sending backdoor... %s" % p)
                         self.comm.bcast(p.pack(), root=0)
-                        c_out = predictive_f.compute(cg, p)
+                        c_out = predictive_f.compute(p)
 
                         cases = self.comm.gather(c_out[0], root=0)
                         rc.debugger.write(2, 1, "been gathered cases from %d nodes" % len(cases))
                         cases = np.concatenate(cases)
 
                         time = now() - start_work_time
-                        r = predictive_f.calculate(cg, p, (cases, time))
+                        r = predictive_f.calculate(p, (cases, time))
 
                         value, pf_log = r[0], r[1]
                         condition.increase("pf_calls")
@@ -124,7 +114,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
                 p = Backdoor.unpack(array)
                 rc.debugger.write(2, 1, "been received backdoor: %s" % p)
-                c_out = predictive_f.compute(cg, p)
+                c_out = predictive_f.compute(p)
 
                 rc.debugger.write(2, 1, "sending %d cases... " % len(c_out[0]))
                 self.comm.gather(c_out[0], root=0)

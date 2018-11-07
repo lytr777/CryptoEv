@@ -56,17 +56,20 @@ for key in solvers.solvers.keys():
     solvers.get(key).check_installation()
 
 # --
-cnf_path = static.cnfs[key_generator.tag]
-cnf = CnfParser().parse_for_path(cnf_path)
-
 if rank == 0:
-    ri_list = np.random.randint(2**32 - 1, size=size)
+    ri_list = np.random.randint(2 ** 32 - 1, size=size)
 else:
     ri_list = []
 ri_list = comm.bcast(ri_list, root=0)
 rs = np.random.RandomState(ri_list[rank])
 
-cg = CaseGenerator(key_generator, cnf, rs)
+cnf_path = static.cnfs[key_generator.tag]
+rc.cnf = CnfParser().parse_for_path(cnf_path)
+
+rc.case_generator = CaseGenerator(
+    random_state=rs,
+    algorithm=key_generator,
+)
 
 predictive_f.selection.set_mpi_sett(size, rank)
 
@@ -79,14 +82,14 @@ if rank == 0:
     rc.logger.write("------------------------------------------------------\n")
 
 start_work_time = now()
-c_out = predictive_f.compute(cg, backdoor)
+c_out = predictive_f.compute(backdoor)
 cases = comm.gather(c_out[0], root=0)
 
 if rank == 0:
     cases = np.concatenate(cases)
 
     time = now() - start_work_time
-    r = predictive_f.calculate(cg, backdoor, (cases, time))
+    r = predictive_f.calculate(backdoor, (cases, time))
 
     value, pf_log = r[0], r[1]
     rc.logger.write(pf_log)

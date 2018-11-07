@@ -10,19 +10,21 @@ class InverseBackdoorSets(PredictiveFunction):
         PredictiveFunction.__init__(self, **kwargs)
         self.corrector = kwargs["corrector"] if ("corrector" in kwargs) else None
 
-    def __init_phase(self, cg, count):
-        init_solver = rc.configuration["solvers"].get("init")
+    def __init_phase(self, count):
+        concurrency = rc.configuration["concurrency"]
+        rc.configuration["solvers"].get("init")
+        cg = rc.case_generator
         rc.debugger.write(1, 0, "generating init cases...")
 
         init_tasks = []
         for i in range(count):
             init_task = InitTask(
-                case=cg.generate_init(),
-                solver=init_solver
+                solver=rc.configuration["solvers"].get("init"),
+                substitutions=cg.get_init_substitutions(),
+                algorithm=cg.algorithm
             )
             init_tasks.append(init_task)
 
-        concurrency = rc.configuration["concurrency"]
         init_solved, init_time = concurrency.solve(init_tasks)
         rc.debugger.write(1, 0, "has been solved %d init cases" % len(init_solved))
         if count != len(init_solved):
@@ -30,18 +32,19 @@ class InverseBackdoorSets(PredictiveFunction):
 
         return init_solved, init_time
 
-    def __main_phase(self, cg, backdoor, init_solved):
-        solvers = rc.configuration["solvers"]
+    def __main_phase(self, backdoor, init_solved):
         concurrency = rc.configuration["concurrency"]
-
-        main_solver = solvers.get("main")
+        solvers = rc.configuration["solvers"]
+        cg = rc.case_generator
         rc.debugger.write(1, 0, "generating main cases...")
 
         main_tasks = []
         for init_case in init_solved:
+            main_subs = cg.get_substitutions(backdoor, init_case.solution)
             main_task = MainTask(
-                case=cg.generate(backdoor, init_case.solution),
-                solver=main_solver
+                solver=solvers.get("main"),
+                substitutions=main_subs,
+                algorithm=cg.algorithm
             )
             main_tasks.append(main_task)
 
@@ -53,7 +56,7 @@ class InverseBackdoorSets(PredictiveFunction):
 
         return solved, time
 
-    def compute(self, cg, backdoor, cases=()):
+    def compute(self, backdoor, cases=()):
         cases = list(cases)
 
         solvers = rc.configuration["solvers"]
@@ -69,8 +72,8 @@ class InverseBackdoorSets(PredictiveFunction):
             else:
                 case_count = all_case_count
 
-            init_solved, init_time = self.__init_phase(cg, case_count)
-            solved, time = self.__main_phase(cg, backdoor, init_solved)
+            init_solved, init_time = self.__init_phase(case_count)
+            solved, time = self.__main_phase(backdoor, init_solved)
 
             cases.extend(solved)
             all_time += init_time + time
@@ -78,9 +81,10 @@ class InverseBackdoorSets(PredictiveFunction):
         rc.debugger.write(1, 0, "spent time: %f" % all_time)
         return cases, all_time
 
-    def calculate(self, cg, backdoor, compute_out):
+    def calculate(self, backdoor, compute_out):
         cases, time = compute_out
         solvers = rc.configuration["solvers"]
+        cg = rc.case_generator
 
         rc.debugger.write(1, 0, "counting time stat...")
         time_stat, log = self.get_time_stat(cases)

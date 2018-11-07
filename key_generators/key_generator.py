@@ -29,8 +29,8 @@ class KeyGenerator:
     def __len__(self):
         return self.key_stream_start + self.key_stream_len - 1
 
-    def add_substitution(self, name, substitution):
-        self.substitutions[name] = substitution
+    def substitute(self, **kwargs):
+        self.substitutions = kwargs
 
     def get_cnf(self):
         return self.cnf.to_str(self.substitutions.values())

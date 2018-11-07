@@ -1,12 +1,16 @@
 import argparse
+import numpy as np
 
 from configuration import configurator
+from constants import static
+from model.case_generator import CaseGenerator
 
 from util import conclusion
 from output.module.logger import Logger
 from output.module.debugger import Debugger
-from model.backdoor import SecretKey, Backdoor
+from model.backdoor import SecretKey
 from constants.runtime import runtime_constants as rc
+from util.parse.cnf_parser import CnfParser
 
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('-cp', metavar='tag/path', type=str, default="base", help='tag or path to configuration file')
@@ -45,7 +49,13 @@ if args.backdoor is not None:
 for key in configuration["solvers"].solvers.keys():
     configuration["solvers"].get(key).check_installation()
 
-# if args.restore:
+cnf_path = static.cnfs[key_generator.tag]
+rc.cnf = CnfParser().parse_for_path(cnf_path)
+
+rc.case_generator = CaseGenerator(
+    algorithm=key_generator,
+    random_state=np.random.RandomState()
+)
 
 algorithm = configuration["algorithm"]
 rc.logger.write(algorithm.get_info())

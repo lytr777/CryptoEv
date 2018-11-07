@@ -1,15 +1,6 @@
 from constants.runtime import runtime_constants as rc
 
 
-class TaskGenerator:
-    def __init__(self, task, **kwargs):
-        self.task = task
-        self.kwargs = kwargs
-
-    def generate(self):
-        return self.task(**self.kwargs)
-
-
 class PredictiveFunction:
     type = None
 
@@ -18,10 +9,10 @@ class PredictiveFunction:
         self.selection = kwargs["selection"]
         self.key_generator = kwargs["key_generator"]
 
-    def compute(self, cg, backdoor, cases):
+    def compute(self, backdoor, cases):
         raise NotImplementedError
 
-    def calculate(self, cg, backdoor, compute_out):
+    def calculate(self, backdoor, compute_out):
         raise NotImplementedError
 
     def correct_selection(self, backdoor, value, cases):

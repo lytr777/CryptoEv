@@ -1,12 +1,8 @@
-import numpy as np
 from copy import copy
 from time import time as now
 
 from constants.runtime import runtime_constants as rc
 from algorithm import MetaAlgorithm, Condition
-from model.case_generator import CaseGenerator
-from util.parse.cnf_parser import CnfParser
-from constants import static
 
 
 class EvolutionAlgorithm(MetaAlgorithm):
@@ -23,12 +19,6 @@ class EvolutionAlgorithm(MetaAlgorithm):
         start_time = now()
 
         predictive_f = rc.configuration["predictive_function"]
-        key_generator = predictive_f.key_generator
-        cnf_path = static.cnfs[key_generator.tag]
-        cnf = CnfParser().parse_for_path(cnf_path)
-        rs = np.random.RandomState()
-
-        cg = CaseGenerator(key_generator, cnf, rs)
 
         # if self.mutation_f == LevelMutation:
         #     self.mutation_f = LevelMutation(cnf, algorithm)
@@ -60,8 +50,8 @@ class EvolutionAlgorithm(MetaAlgorithm):
                 else:
                     hashed = False
 
-                    c_out = predictive_f.compute(cg, p)
-                    r = predictive_f.calculate(cg, p, c_out)
+                    c_out = predictive_f.compute(p)
+                    r = predictive_f.calculate(p, c_out)
                     condition.increase("pf_calls")
                     value, pf_log = r[0], r[1]
                     rc.value_hash[key] = r[0], len(r[2])
@@ -69,8 +59,8 @@ class EvolutionAlgorithm(MetaAlgorithm):
                     p_v = (p, r[0], r[2])
                     if self.comparator.compare(best, p_v) < 0 and len(best[2]) < len(p_v[2]):
                         ad_key = str(best[0])
-                        ad_c_out = predictive_f.compute(cg, best[0], best[2])
-                        ad_r = predictive_f.calculate(cg, best[0], ad_c_out)
+                        ad_c_out = predictive_f.compute(best[0], best[2])
+                        ad_r = predictive_f.calculate(best[0], ad_c_out)
                         updated_logs[ad_key] = ad_r[1]
 
                         best = (best[0], ad_r[0], ad_r[2])

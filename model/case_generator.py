@@ -3,44 +3,43 @@ from backdoor import SecretKey
 
 
 class CaseGenerator:
-    def __init__(self, algorithm, cnf, random_state):
-        self.algorithm = algorithm
-        self.cnf = cnf
-        self.random_state = random_state
+    def __init__(self, **kwargs):
+        self.algorithm = kwargs["algorithm"]
+        self.random_state = kwargs["random_state"]
 
-        self.secret_key = SecretKey(algorithm)
-        self.key_stream = KeyStream(algorithm)
-        self.public_key = PublicKey(algorithm) if hasattr(algorithm, 'public_key_len') else None
+        self.secret_key = SecretKey(self.algorithm)
+        self.key_stream = KeyStream(self.algorithm)
+        self.public_key = PublicKey(self.algorithm) if hasattr(self.algorithm, 'public_key_len') else None
 
-    def generate_init(self):
-        case = self.algorithm(self.cnf)
-
-        sk_substitution = self.secret_key.generate_substitution(self.random_state)
-        case.add_substitution("secret_key", sk_substitution)
+    def get_init_substitutions(self):
+        init_substitutions = {
+            "secret_key": self.secret_key.generate_substitution(self.random_state)
+        }
 
         if self.public_key is not None:
-            pk_substitution = self.public_key.generate_substitution(self.random_state)
-            case.add_substitution("public_key", pk_substitution)
+            init_substitutions["public_key"] = self.public_key.generate_substitution(self.random_state)
 
-        return case
+        return init_substitutions
 
-    def generate(self, backdoor, solution, rnd=""):
-        case = self.algorithm(self.cnf)
+    def get_substitutions(self, backdoor, solution, rnd=""):
+        substitutions = {
+            "key_stream": self.__substitution(self.key_stream, 's', solution, rnd),
+            "backdoor": self.__substitution(backdoor, 'b', solution, rnd)
+        }
 
         if self.public_key is not None:
-            pk_substitution = self.__substitution(self.public_key, 'p', solution, rnd)
-            case.add_substitution("public_key", pk_substitution)
+            substitutions["public_key"] = self.__substitution(self.public_key, 'p', solution, rnd)
 
-        bd_substitution = self.__substitution(backdoor, 'b', solution, rnd)
-        case.add_substitution("backdoor", bd_substitution)
+        return substitutions
 
-        ks_substitution = self.__substitution(self.key_stream, 's', solution, rnd)
-        case.add_substitution("key_stream", ks_substitution)
-
+    @staticmethod
+    def generate(algorithm, cnf, substitutions):
+        case = algorithm(cnf)
+        case.substitute(**substitutions)
         return case
 
     def __substitution(self, o, c, solution, rnd):
-        if rnd.__contains__(c):
+        if c in rnd:
             return o.generate_substitution(self.random_state)
         else:
             return o.get_substitution(solution)

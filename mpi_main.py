@@ -2,12 +2,15 @@ import argparse
 import numpy as np
 from mpi4py import MPI
 
+from constants import static
+from model.case_generator import CaseGenerator
 from util import conclusion
 from configuration import configurator
 from output.module.logger import Logger
 from output.module.debugger import Debugger
 from model.backdoor import SecretKey, Backdoor
 from constants.runtime import runtime_constants as rc
+from util.parse.cnf_parser import CnfParser
 
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('-cp', metavar='tag/path', type=str, default="base", help='tag or path to configuration file')
@@ -22,6 +25,7 @@ path, configuration = configurator.load(args.cp, mpi=True)
 rc.configuration = configuration
 
 comm = MPI.COMM_WORLD
+size = comm.Get_size()
 rank = comm.Get_rank()
 
 key_generator = configuration["predictive_function"].key_generator
@@ -56,6 +60,21 @@ if args.backdoor is not None:
 
 for key in configuration["solvers"].solvers.keys():
     configuration["solvers"].get(key).check_installation()
+
+if rank == 0:
+    ri_list = np.random.randint(2 ** 32 - 1, size=size)
+else:
+    ri_list = []
+ri_list = comm.bcast(ri_list, root=0)
+rs = np.random.RandomState(ri_list[rank])
+
+cnf_path = static.cnfs[key_generator.tag]
+rc.cnf = CnfParser().parse_for_path(cnf_path)
+
+rc.case_generator = CaseGenerator(
+    random_state=rs,
+    algorithm=key_generator,
+)
 
 algorithm = configuration["algorithm"]
 if rank == 0:

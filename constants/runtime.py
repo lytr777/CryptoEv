@@ -8,6 +8,8 @@ class RuntimeConstants:
         self.logger = LoggerStub()
         self.value_hash = {}
         self.configuration = {}
+        self.case_generator = None
+        self.cnf = None
 
 
 runtime_constants = RuntimeConstants()

@@ -41,12 +41,13 @@ solvers = configuration["solvers"]
 for key in solvers.solvers.keys():
     solvers.get(key).check_installation()
 
-# --
 cnf_path = static.cnfs[key_generator.tag]
-cnf = CnfParser().parse_for_path(cnf_path)
-rs = np.random.RandomState()
+rc.cnf = CnfParser().parse_for_path(cnf_path)
 
-cg = CaseGenerator(key_generator, cnf, rs)
+rc.case_generator = CaseGenerator(
+    algorithm=key_generator,
+    random_state=np.random.RandomState()
+)
 
 rc.logger.deferred_write("-- key generator: %s\n" % key_generator.tag)
 rc.logger.deferred_write("-- solver: %s\n" % solvers.get("main").name)
@@ -55,8 +56,8 @@ rc.logger.deferred_write("-- selection: %s\n" % predictive_f.selection)
 rc.logger.deferred_write("-- backdoor: %s\n" % backdoor)
 rc.logger.write("------------------------------------------------------\n")
 
-c_out = predictive_f.compute(cg, backdoor)
-r = predictive_f.calculate(cg, backdoor, c_out)
+c_out = predictive_f.compute(backdoor)
+r = predictive_f.calculate(backdoor, c_out)
 value, pf_log = r[0], r[1]
 
 rc.logger.write(pf_log)

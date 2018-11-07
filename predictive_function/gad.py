@@ -10,18 +10,19 @@ class GuessAndDetermine(PredictiveFunction):
         PredictiveFunction.__init__(self, **kwargs)
         self.decomposition = kwargs["decomposition"] if ("decomposition" in kwargs) else None
 
-    def __main_phase(self, cg, backdoor, init_case, count):
-        solvers = rc.configuration["solvers"]
+    def __main_phase(self, backdoor, init_case, count):
         concurrency = rc.configuration["concurrency"]
-
-        main_solver = solvers.get("main")
+        solvers = rc.configuration["solvers"]
+        cg = rc.case_generator
         rc.debugger.write(1, 0, "generating main cases...")
 
         main_tasks = []
         for i in range(count):
+            main_subs = cg.get_substitutions(backdoor, init_case.solution)
             main_task = MainTask(
-                case=cg.generate(backdoor, init_case.solution, rnd="b"),
-                solver=main_solver
+                solver=solvers.get("main"),
+                substitutions=main_subs,
+                algorithm=cg.algorithm
             )
             main_tasks.append(main_task)
 
@@ -35,16 +36,17 @@ class GuessAndDetermine(PredictiveFunction):
 
         return solved, time
 
-    def compute(self, cg, backdoor, cases=()):
+    def compute(self, backdoor, cases=()):
         cases = list(cases)
 
-        solvers = rc.configuration["solvers"]
+        cg = rc.case_generator
         rc.debugger.write(1, 0, "compute for backdoor: %s" % backdoor)
 
         # init
         init_task = InitTask(
-            case=cg.generate_init(),
-            solver=solvers.get("init")
+            solver=rc.configuration["solvers"].get("init"),
+            substitutions=cg.get_init_substitutions(),
+            algorithm=cg.algorithm
         )
         init_case = init_task.solve()
 
@@ -57,7 +59,7 @@ class GuessAndDetermine(PredictiveFunction):
             else:
                 case_count = all_case_count
 
-            solved, time = self.__main_phase(cg, backdoor, init_case, case_count)
+            solved, time = self.__main_phase(backdoor, init_case, case_count)
 
             cases.extend(solved)
             all_time += time
@@ -65,7 +67,7 @@ class GuessAndDetermine(PredictiveFunction):
         rc.debugger.write(1, 0, "spent time: %f" % all_time)
         return cases, all_time
 
-    def calculate(self, cg, backdoor, compute_out):
+    def calculate(self, backdoor, compute_out):
         cases, time = compute_out
         
         rc.debugger.write(1, 0, "counting time stat...")
