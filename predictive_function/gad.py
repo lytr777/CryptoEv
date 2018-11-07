@@ -79,13 +79,8 @@ class GuessAndDetermine(PredictiveFunction):
         times_sum = 0
         for _, time in cases:
             times_sum += time
-        
-        partially_value = (2 ** len(backdoor)) * times_sum
 
-        # additional decomposition?
-        #
-        
-        value = partially_value / len(cases)
+        value = (2 ** len(backdoor)) * times_sum / len(cases)
         rc.debugger.write(1, 0, "value: %.7g\n" % value)
 
         log += "%s\n" % time_stat

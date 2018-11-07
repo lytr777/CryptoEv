@@ -31,11 +31,16 @@ output.create(
 rc.logger = Logger(output.get_log_path())
 rc.debugger = Debugger(output.get_debug_path(), args.v)
 
-if args.backdoor is None:
-    backdoor = SecretKey(key_generator)
-else:
-    backdoor = Backdoor.load(args.backdoor)
-    backdoor.check(key_generator)
+backdoor = SecretKey(key_generator)
+if args.backdoor is not None:
+    with open(args.backdoor, 'r') as f:
+        variables = [int(var) for var in f.readline().split(' ')]
+        mask = [0] * backdoor.length
+        for var in variables:
+            mask[var - 1] = 1
+
+        backdoor = backdoor.get_copy(mask)
+        backdoor.check(key_generator)
 
 for key in configuration["solvers"].solvers.keys():
     configuration["solvers"].get(key).check_installation()
