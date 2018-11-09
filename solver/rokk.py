@@ -33,7 +33,7 @@ class RokkSolver(Solver):
 
     def parse_out(self, output):
         output = output.split('\n')
-        status, time, solution = "", self.min_time, ""
+        status, time, solution = "UNKNOWN", self.min_time, ""
         for i in range(len(output)):
             if output[i].startswith("c s") or output[i].startswith("s"):
                 status = output[i].split(' ')[-1]
