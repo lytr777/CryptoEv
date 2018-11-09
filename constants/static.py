@@ -7,6 +7,7 @@ cnfs = {
     "trivium_64": "./templates/Trivium_64.cnf",
     "trivium_96": "./templates/Trivium_96.cnf",
     "bivium": "./templates/Bivium.cnf",
+    "trivium": "./templates/Trivium.cnf",
     "present_5_2kp": "./templates/Present_5_2KP.cnf",
     "present_6_1kp": "./templates/Present_6_1KP.cnf",
     "present_6_2kp": "./templates/Present_6_2KP.cnf",
