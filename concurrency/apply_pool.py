@@ -45,11 +45,8 @@ class ApplyPool:
                     if res.successful():
                         result.append(res.get())
                     else:
-                        try:
-                            result.append(res.get())
-                        except Exception as e:
-                            rc.debugger.write(0, 1, "Pool solving was completed unsuccessfully: %s" % e)
-                        raise Exception("Pool solving was completed unsuccessfully")
+                        rc.debugger.write(0, 1, "Pool solving was completed unsuccessfully")
+                        result.append(res.get())
                 else:
                     i += 1
 
