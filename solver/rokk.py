@@ -32,6 +32,7 @@ class RokkSolver(Solver):
         return l_args
 
     def parse_out(self, output):
+        print len(output)
         output = output.split('\n')
         status, time, solution = "UNKNOWN", self.min_time, ""
         for i in range(len(output)):
@@ -45,6 +46,7 @@ class RokkSolver(Solver):
                 for var in solution_line[1:]:
                     solution += "%s " % var
 
+        print status
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
             report.parse_solution(solution, self.spaces)
