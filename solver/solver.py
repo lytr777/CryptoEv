@@ -37,7 +37,6 @@ class Solver:
         l_args = self.get_arguments(args, g("workers"), tl, g("simplify"))
         thread_name = threading.current_thread().name
 
-        print l_args
         report = None
         for i in range(g("attempts")):
             if report is None or report.check():
