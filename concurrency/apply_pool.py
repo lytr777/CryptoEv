@@ -41,11 +41,14 @@ class ApplyPool:
             i = 0
             while i < len(res_list):
                 if res_list[i].ready():
-                    if res_list[i].successful():
-                        res = res_list.pop(i)
+                    res = res_list.pop(i)
+                    if res.successful():
                         result.append(res.get())
                     else:
-                        rc.debugger.write(0, 1, "Pool solving was completed unsuccessfully")
+                        try:
+                            result.append(res.get())
+                        except Exception as e:
+                            rc.debugger.write(0, 1, "Pool solving was completed unsuccessfully: %s" % e)
                         raise Exception("Pool solving was completed unsuccessfully")
                 else:
                     i += 1

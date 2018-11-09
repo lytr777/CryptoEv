@@ -2,9 +2,12 @@
   "algorithm": {
     "type": "evolution",
     "strategy": {
-      "name": "plus",
+      "name": "genetic",
       "mu": 1,
-      "lambda": 1
+      "lambda": 1,
+      "m": 4,
+      "l": 2,
+      "c": 4
     },
     "mutation_function": {
       "name": "uniform",
@@ -13,28 +16,29 @@
     "crossover_function": {
       "name": "one-point"
     },
-    "stagnation_limit": 200,
+    "stagnation_limit": 300,
     "comparator": {
       "name": "max_min"
     },
     "stop_condition": {
       "name": "time",
-      "limit": "18:50:00"
+      "limit": "24:00:00"
     }
   },
   "predictive_function": {
     "type": "ibs",
+    "chunk_size": 1000,
     "key_generator": {
       "name": "asg_96_112"
     },
     "selection": {
       "name": "function",
       "value": 1000,
-      "min_N": 300,
+      "min_N": 500,
       "max_N": 1000
     },
     "corrector": {
-      "name": "mass",
+      "name": "ruler",
       "coef": 0.1,
       "lower_bound": 0.001
     }
@@ -42,7 +46,7 @@
   "solvers": {
     "type": "net",
     "init_solver": {
-      "name": "lingeling",
+      "name": "rokk",
       "tag": "init",
       "tl_util": false,
       "tl": 0,
@@ -51,10 +55,10 @@
       "simplify": false
     },
     "main_solver": {
-      "name": "lingeling",
+      "name": "rokk",
       "tag": "main",
-      "tl_util": false,
-      "tl": 30,
+      "tl_util": true,
+      "tl": 10,
       "workers": 1,
       "attempts": 5,
       "simplify": true

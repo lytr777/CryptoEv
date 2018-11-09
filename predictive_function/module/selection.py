@@ -54,24 +54,24 @@ class AdaptiveFunction(Selection):
         self.f = percent_function
         self.last_N = self.min_N
 
-    def get_N(self, case=None):
-        if case is not None:
-            self.correct_by(case)
+    def get_N(self, data=None):
+        if data is not None:
+            self.correct_by(data)
         return self.split_selection(self.last_N)
 
-    def correct_by(self, case):
-        if len(case) < 3:
+    def correct_by(self, data):
+        if len(data) < 3:
             raise Exception("Missing times")
 
-        if len(case[2]) == 0:
+        if len(data[2]) == 0:
             return
 
         old_N, k = self.last_N, 0.
-        for status, _ in case[2]:
+        for status, _ in data[2]:
             if status == "SAT" or status == "UNSAT":
                 k += 1
 
-        value = k / len(case[2])
+        value = k / len(data[2])
         for n in range(self.last_N, self.max_N):
             if value >= self.f(n):
                 self.last_N = n
@@ -96,7 +96,7 @@ class ConstSelection(Selection):
     def get_N(self, case=None):
         return self.split_selection(self.value)
 
-    def correct_by(self, case):
+    def correct_by(self, data):
         return self.value
 
     def reset(self):

@@ -137,8 +137,13 @@ class RulerCorrector(Corrector):
         if len(det_times) == 0:
             return tl, 0
 
-        min_tl = max(self.lower_bound, min(det_times))
-        best_tl = self.choose_best_tl(min_tl, det_times, ind_times)
+        det_times.sort()
+        k = int(0.1 * len(cases))
+        if len(det_times) <= k:
+            best_tl = det_times[-1]
+        else:
+            min_tl = max(self.lower_bound, det_times[k - 1])
+            best_tl = self.choose_best_tl(min_tl, det_times, ind_times)
 
         dis_count = 0
         for i in range(len(cases)):
