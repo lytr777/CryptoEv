@@ -14,7 +14,8 @@
       "scale": 1.0
     },
     "crossover_function": {
-      "name": "one-point"
+      "name": "uniform",
+      "p": 0.2
     },
     "stagnation_limit": 300,
     "comparator": {
@@ -22,14 +23,14 @@
     },
     "stop_condition": {
       "name": "time",
-      "limit": "24:00:00"
+      "limit": "12:00:00"
     }
   },
   "predictive_function": {
     "type": "ibs",
     "chunk_size": 1000,
     "key_generator": {
-      "name": "asg_96_112"
+      "name": "asg_72_76"
     },
     "selection": {
       "name": "function",
