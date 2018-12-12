@@ -85,7 +85,7 @@ class AdaptiveFunction(Selection):
         return self.min_N
 
     def __str__(self):
-        return "adaptive from %d to %d" % (self.min_N, self.max_N)
+        return "%d to %d" % (self.min_N, self.max_N)
 
 
 class ConstSelection(Selection):
@@ -103,4 +103,4 @@ class ConstSelection(Selection):
         pass
 
     def __str__(self):
-        return "const (%d)" % self.value
+        return str(self.value)

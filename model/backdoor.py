@@ -91,10 +91,12 @@ class Backdoor(VariableSet):
 
         for var in self.vars:
             if ks_st <= var <= ks_end:
-                raise Exception("Backdoor intersect with key stream")
+                rng = "%d <= %d <= %d" % (ks_st, var, ks_end)
+                raise Exception("Backdoor intersect with key stream: %s" % rng)
 
             if pk_st <= var <= pk_end:
-                raise Exception("Backdoor intersect with public key")
+                rng = "%d <= %d <= %d" % (pk_st, var, pk_end)
+                raise Exception("Backdoor intersect with public key: %s" % rng)
 
     def snapshot(self):
         variables = []

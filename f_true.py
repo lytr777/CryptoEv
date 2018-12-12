@@ -52,6 +52,7 @@ rc.case_generator = CaseGenerator(
 rc.logger.deferred_write("-- key generator: %s\n" % key_generator.tag)
 rc.logger.deferred_write("-- solver: %s\n" % solvers.get("main").name)
 rc.logger.deferred_write("-- pf type: %s\n" % predictive_f.type)
+rc.logger.deferred_write("-- time limit: %s\n" % solvers.get_tl("main"))
 rc.logger.deferred_write("-- selection: %s\n" % predictive_f.selection)
 rc.logger.deferred_write("-- backdoor: %s\n" % backdoor)
 rc.logger.write("------------------------------------------------------\n")

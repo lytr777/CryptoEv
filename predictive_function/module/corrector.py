@@ -43,22 +43,22 @@ class Corrector:
     name = "corrector"
 
     def __init__(self, **kwargs):
-        self.lower_bound = kwargs["lower_bound"]
+        self.min_tl = kwargs["min_tl"]
 
     def correct(self, cases, tl, **kwargs):
         raise NotImplementedError
 
     @staticmethod
-    def choose_best_tl(min_tl, det_times, ind_times):
+    def choose_best_tl(bound, det_times, ind_times):
         exactly, perhaps = [], []
         for time in det_times:
-            if time <= min_tl:
+            if time <= bound:
                 exactly.append(time)
             else:
                 perhaps.append(time)
 
         if len(perhaps) == 0:
-            return min_tl
+            return bound
 
         perhaps.sort()
         if len(exactly) == 0:
@@ -66,7 +66,7 @@ class Corrector:
             exactly.append(time)
 
         n = len(det_times) + len(ind_times)
-        best = (min_tl, min_tl * n / len(exactly))
+        best = (bound, bound * n / len(exactly))
 
         for i in range(len(perhaps)):
             value = perhaps[i] * n / (len(exactly) + i + 1)
@@ -104,7 +104,7 @@ class MassCorrector(Corrector):
             time_sum += it
 
         new_tl = time_sum / (coef * len(det_times) + len(ind_times))
-        new_tl = max(self.lower_bound, new_tl)
+        new_tl = max(self.min_tl, new_tl)
         best_tl = self.choose_best_tl(new_tl, det_times, ind_times)
 
         dis_count = 0
@@ -117,7 +117,7 @@ class MassCorrector(Corrector):
 
 class MaxCorrector(Corrector):
     def correct(self, cases, tl, **kwargs):
-        min_tl = self.lower_bound
+        min_tl = self.min_tl
         for case in cases:
             if check_sat(get_status(case)) or check_unsat(get_status(case)):
                 min_tl = max(get_time(case), min_tl)
@@ -126,6 +126,10 @@ class MaxCorrector(Corrector):
 
 
 class RulerCorrector(Corrector):
+    def __init__(self, **kwargs):
+        Corrector.__init__(self, **kwargs)
+        self.limiter = kwargs["limiter"] if "limiter" in kwargs else 0.1
+
     def correct(self, cases, tl, **kwargs):
         det_times, ind_times = [], []
         for case in cases:
@@ -142,7 +146,7 @@ class RulerCorrector(Corrector):
         if len(det_times) <= k:
             best_tl = det_times[-1]
         else:
-            min_tl = max(self.lower_bound, det_times[k - 1])
+            min_tl = max(self.min_tl, det_times[k - 1])
             best_tl = self.choose_best_tl(min_tl, det_times, ind_times)
 
         dis_count = 0
