@@ -34,7 +34,7 @@
     "corrector": {
       "name": "mass",
       "coef": 0.1,
-      "lower_bound": 0.001
+      "min_tl": 0.001
     }
   },
   "solvers": {
@@ -67,6 +67,7 @@
   },
   "output": {
     "type": "storage",
+    "base_path": "./output/_logs",
     "log_name": "log",
     "debug_name": "debug",
     "src_dump": [

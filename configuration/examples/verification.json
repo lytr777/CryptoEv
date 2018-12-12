@@ -20,6 +20,7 @@
   },
   "output": {
     "type": "storage",
+    "base_path": "./output/_logs",
     "log_name": "log",
     "debug_name": "debug",
     "src_dump": [
