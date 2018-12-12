@@ -30,10 +30,10 @@
     "type": "ibs",
     "chunk_size": 1000,
     "key_generator": {
-      "name": "asg_72_76"
+      "name": "present_5_2kp"
     },
     "selection": {
-      "name": "function",
+      "name": "const",
       "value": 1000,
       "min_N": 500,
       "max_N": 1000
