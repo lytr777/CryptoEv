@@ -27,8 +27,8 @@
       "simplify": false
     },
     "main_solver": {
-      "name": "lingeling",
-      "tag": "rokk",
+      "name": "rokk",
+      "tag": "main",
       "tl_util": true,
       "tl": 10,
       "workers": 1,
