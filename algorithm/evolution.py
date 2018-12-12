@@ -20,9 +20,6 @@ class EvolutionAlgorithm(MetaAlgorithm):
 
         predictive_f = rc.configuration["predictive_function"]
 
-        # if self.mutation_f == LevelMutation:
-        #     self.mutation_f = LevelMutation(cnf, algorithm)
-
         condition = Condition()
         condition.set("stagnation", 1)
         max_value = float("inf")

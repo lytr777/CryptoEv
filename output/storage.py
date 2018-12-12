@@ -6,7 +6,7 @@ from datetime import datetime
 
 class Storage:
     def __init__(self, **kwargs):
-        self.base_path = "./output/_logs"
+        self.base_path = kwargs["base_path"]
         self.log_name = kwargs["log_name"]
         self.debug_name = kwargs["debug_name"]
         self.src_dump = kwargs["src_dump"]
