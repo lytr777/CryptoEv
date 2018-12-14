@@ -77,3 +77,11 @@ class SolverNet:
 
     def set_debugger(self, tag, obj):
         self.set_params(tag, debugger=obj)
+
+    def __iter__(self):
+        for solver in self.solvers.values():
+            yield solver
+
+    def __str__(self):
+        s = ', '.join(['%s(%s)' % (v, k) for k, v in self.solvers.items()])
+        return "solvers: %s" % s

@@ -14,17 +14,19 @@ class Solver:
     name = "solver"
 
     def __init__(self, info, **kwargs):
+        self.dir = info["dir"]
+        self.name = info["name"]
+        self.script = info["script"]
+
         self.tag = kwargs["tag"]
-        self.info = info
-        self.solver_path = solver_paths[self.info["name"]]
-        self.name = self.info["name"]
+        self.solver_path = solver_paths[self.name]
         self.spaces = re.compile('[\t ]+')
 
         self.sett = SolverSettings(**kwargs)
 
     def check_installation(self):
-        if not os.path.isdir(self.info["dir"]) or not os.path.exists(self.solver_path):
-            args = (self.info["name"], self.info["script"])
+        if not os.path.isdir(self.dir) or not os.path.exists(self.solver_path):
+            args = (self.name, self.script)
             raise Exception("SAT-solver %s is not installed. Try to run %s script." % args)
 
     def solve(self, cnf):

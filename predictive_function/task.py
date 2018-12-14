@@ -10,16 +10,19 @@ class Task:
         self.algorithm = kwargs["algorithm"]
         self.solver = kwargs["solver"]
 
+    def prepare_cnf(self):
+        if rc.cnf is None:
+            print "parsing cnf..."
+            cnf_path = static.cnfs[self.algorithm.tag]
+            rc.cnf = CnfParser().parse_for_path(cnf_path)
+
     def solve(self):
         raise NotImplementedError
 
 
 class InitTask(Task):
     def solve(self):
-        if rc.cnf is None:
-            print "parsing cnf..."
-            cnf_path = static.cnfs[self.algorithm.tag]
-            rc.cnf = CnfParser().parse_for_path(cnf_path)
+        self.prepare_cnf()
 
         case = CaseGenerator.generate(self.algorithm, rc.cnf, self.substitutions)
         report = None
@@ -35,10 +38,7 @@ class InitTask(Task):
 
 class MainTask(Task):
     def solve(self):
-        if rc.cnf is None:
-            print "parsing cnf..."
-            cnf_path = static.cnfs[self.algorithm.tag]
-            rc.cnf = CnfParser().parse_for_path(cnf_path)
+        self.prepare_cnf()
 
         case = CaseGenerator.generate(self.algorithm, rc.cnf, self.substitutions)
         try:

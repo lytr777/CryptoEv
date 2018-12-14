@@ -24,7 +24,7 @@ class KeyGenerator:
         self.solution = []
 
     def __str__(self):
-        return self.name
+        return "key generator: %s" % self.name
 
     def __len__(self):
         return self.key_stream_start + self.key_stream_len - 1

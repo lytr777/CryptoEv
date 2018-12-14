@@ -51,3 +51,7 @@ def load(path, mpi=False):
         data[key] = __substitute(key, data[key], mpi)
 
     return path, data
+
+
+def get_key_generator(tag):
+    return options["key_generator"][tag]

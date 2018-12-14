@@ -37,7 +37,7 @@ class UniformMutation(Mutation):
         return backdoor.get_copy(new_v)
 
     def __str__(self):
-        return "mutation: uniform (%f)" % self.scale
+        return "mutation: uniform (%.1f)" % self.scale
 
 
 # def neighbour_mutation(backdoor):

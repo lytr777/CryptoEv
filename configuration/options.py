@@ -99,29 +99,26 @@ predictive_functions = {
     "ibs": InverseBackdoorSets,
 }
 
-
-def get_key_generators(name):
-    kg = {
-        "a5_1": A5_1,
-        "e0": E0,
-        # Trivium
-        "bivium": Bivium,
-        "trivium_64": Trivium_64,
-        "trivium_96": Trivium_96,
-        "trivium": Trivium,
-        # Present
-        "present_5_2kp": Present_5_2KP,
-        "present_6_1kp": Present_6_1KP,
-        "present_6_2kp": Present_6_2KP,
-        # ASG
-        "asg_72_76": ASG_72_76,
-        "asg_96_112": ASG_96_112,
-        "asg_192_200": ASG_192_200,
-        # Other
-        "volfram": Volfram,
-        "geffe": Geffe
-    }[name]
-    return builder(kg)
+key_generators = {
+    "a5_1": A5_1,
+    "e0": E0,
+    # Trivium
+    "bivium": Bivium,
+    "trivium_64": Trivium_64,
+    "trivium_96": Trivium_96,
+    "trivium": Trivium,
+    # Present
+    "present_5_2kp": Present_5_2KP,
+    "present_6_1kp": Present_6_1KP,
+    "present_6_2kp": Present_6_2KP,
+    # ASG
+    "asg_72_76": ASG_72_76,
+    "asg_96_112": ASG_96_112,
+    "asg_192_200": ASG_192_200,
+    # Other
+    "volfram": Volfram,
+    "geffe": Geffe
+}
 
 
 selection = {
@@ -183,7 +180,7 @@ options = {
     "comparator": __get(comparators),
     "stop_condition": __get(stop_conditions),
 
-    "key_generator": get_key_generators,
+    "key_generator": key_generators,
     "selection": __get(selection),
     "corrector": __get(correctors),
 
