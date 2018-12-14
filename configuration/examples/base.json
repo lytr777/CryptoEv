@@ -29,9 +29,6 @@
   "predictive_function": {
     "type": "ibs",
     "chunk_size": 1000,
-    "key_generator": {
-      "name": "present_5_2kp"
-    },
     "selection": {
       "name": "const",
       "value": 1000,

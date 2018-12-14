@@ -24,9 +24,6 @@
   },
   "predictive_function": {
     "type": "ibs",
-    "key_generator": {
-      "name": "trivium_64"
-    },
     "selection": {
       "name": "const",
       "value": 500

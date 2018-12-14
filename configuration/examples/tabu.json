@@ -12,9 +12,6 @@
   },
   "predictive_function": {
     "type": "ibs",
-    "key_generator": {
-      "name": "a5_1"
-    },
     "selection": {
       "name": "const",
       "value": 1000
