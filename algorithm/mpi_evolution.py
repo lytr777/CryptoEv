@@ -94,7 +94,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                     condition.set("stagnation", 0)
                 else:
                     P_v.sort(cmp=self.comparator.compare)
-                    P = self.strategy.get_next_population((self.mutation.mutate, self.crossover.cross), P_v)
+                    P = self.strategy.get_next_P((self.mutation.mutate, self.crossover.cross), P_v)
                 condition.increase("iteration")
                 condition.set("time", now() - start_time)
 
@@ -129,7 +129,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
     def __restart(self, backdoor):
         P = []
-        for i in range(self.strategy.get_population_size()):
+        for i in range(self.strategy.get_P_size()):
             P.append(copy(backdoor))
 
         return P

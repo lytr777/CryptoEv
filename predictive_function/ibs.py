@@ -12,7 +12,6 @@ class InverseBackdoorSets(PredictiveFunction):
 
     def __init_phase(self, count):
         concurrency = rc.configuration["concurrency"]
-        rc.configuration["solvers"].get("init")
         cg = rc.case_generator
         rc.debugger.write(1, 0, "generating init cases...")
 
@@ -111,6 +110,6 @@ class InverseBackdoorSets(PredictiveFunction):
             value = (2 ** cg.algorithm.secret_key_len) * tl
         rc.debugger.write(1, 0, "value: %.7g" % value)
 
-        self.selection.correct_by((backdoor, value, cases))
+        self.correct_selection(backdoor, value, cases)
         log += "%s\n" % time_stat
         return value, log, cases

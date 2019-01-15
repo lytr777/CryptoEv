@@ -2,14 +2,15 @@ import numpy as np
 
 
 class PopulationRoulette:
-    def __init__(self, alive_count, sorted_P_v):
+    def __init__(self, sorted_P_v):
         self.Q_roulette = []
+        length = len(sorted_P_v)
         s = 0.
-        for i in range(alive_count):
+        for i in range(length):
             v = 0.
-            for j in range(alive_count):
+            for j in range(length):
                 v += sorted_P_v[i][1] / sorted_P_v[j][1]
-            s = s + (1. / v) if (i + 1 < alive_count) else 1.
+            s = s + (1. / v) if (i + 1 < length) else 1.
             self.Q_roulette.append((sorted_P_v[i][0], s))
 
     def get_individual(self, p):
@@ -24,14 +25,11 @@ class EvolutionStrategy:
     def __init__(self, alive_count):
         self.alive_count = alive_count
 
-    def get_population_size(self):
+    def get_P_size(self):
         raise NotImplementedError
 
-    def get_next_population(self, mc_f, sorted_P_v):
+    def get_next_P(self, mc_f, sorted_P_v):
         raise NotImplementedError
-
-    def get_roulette(self, sorted_P_v):
-        return PopulationRoulette(self.alive_count, sorted_P_v)
 
     def get_Q(self, sorted_P_v):
         Q = []
@@ -48,15 +46,15 @@ class MuCommaLambda(EvolutionStrategy):
     def __init__(self, **kwargs):
         self.mu = kwargs["mu"]
         self.lmbda = kwargs["lambda"]
-        EvolutionStrategy.__init__(self, kwargs["mu"])
+        EvolutionStrategy.__init__(self, 0)
 
-    def get_population_size(self):
+    def get_P_size(self):
         return self.lmbda
 
-    def get_next_population(self, mc_f, sorted_P_v):
+    def get_next_P(self, mc_f, sorted_P_v):
         mutation_f = mc_f[0]
         P = []
-        roulette = self.get_roulette(sorted_P_v)
+        roulette = PopulationRoulette(sorted_P_v)
         distribution = np.random.rand(self.lmbda)
         for i in range(self.lmbda):
             q = roulette.get_individual(distribution[i])
@@ -71,14 +69,17 @@ class MuCommaLambda(EvolutionStrategy):
 
 class MuPlusLambda(MuCommaLambda):
     def __init__(self, **kwargs):
-        MuCommaLambda.__init__(self, **kwargs)
+        self.mu = kwargs["mu"]
+        self.lmbda = kwargs["lambda"]
+        EvolutionStrategy.__init__(self, self.mu)
 
-    def get_population_size(self):
+    def get_P_size(self):
         return self.mu + self.lmbda
 
-    def get_next_population(self, mc_f, sorted_P_v):
-        P = MuCommaLambda.get_next_population(self, mc_f, sorted_P_v)
-        P.extend(self.get_Q(sorted_P_v))
+    def get_next_P(self, mc_f, sorted_P_v):
+        P = self.get_Q(sorted_P_v)
+        P.extend(MuCommaLambda.get_next_P(self, mc_f, sorted_P_v))
+
         return P
 
     def __str__(self):
@@ -90,19 +91,17 @@ class Genetic(EvolutionStrategy):
         self.m = kwargs["m"]
         self.l = kwargs["l"]
         self.c = kwargs["c"]
-        EvolutionStrategy.__init__(self, self.m + self.l + self.c)
+        EvolutionStrategy.__init__(self, self.l)
 
-    def get_population_size(self):
+    def get_P_size(self):
         return self.m + self.l + self.c
 
-    def get_next_population(self, mc_f, sorted_P_v):
+    def get_next_P(self, mc_f, sorted_P_v):
         mutation_f = mc_f[0]
         crossover_f = mc_f[1]
-        P = []
-        for i in range(self.l):
-            P.append(sorted_P_v[i][0])
+        P = self.get_Q(sorted_P_v)
 
-        roulette = self.get_roulette(sorted_P_v)
+        roulette = PopulationRoulette(sorted_P_v)
         distribution = np.random.rand(self.m)
         for i in range(self.m):
             q = roulette.get_individual(distribution[i])

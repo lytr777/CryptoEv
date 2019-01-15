@@ -18,7 +18,7 @@ class GuessAndDetermine(PredictiveFunction):
 
         main_tasks = []
         for i in range(count):
-            main_subs = cg.get_substitutions(backdoor, init_case.solution)
+            main_subs = cg.get_substitutions(backdoor, init_case.solution, 'b')
             main_task = MainTask(
                 solver=solvers.get("main"),
                 substitutions=main_subs,
@@ -80,7 +80,7 @@ class GuessAndDetermine(PredictiveFunction):
         rc.debugger.write(1, 0, "calculating value...")
         times_sum = 0
         for _, time in cases:
-            times_sum += time
+            times_sum += float(time)
 
         value = (2 ** len(backdoor)) * times_sum / len(cases)
         rc.debugger.write(1, 0, "value: %.7g\n" % value)
