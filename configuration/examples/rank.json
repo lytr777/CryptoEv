@@ -1,0 +1,92 @@
+{
+  "algorithm": {
+    "type": "parallel_evolution",
+    "strategy": {
+      "name": "genetic",
+      "mu": 1,
+      "lambda": 1,
+      "m": 4,
+      "l": 2,
+      "c": 4
+    },
+    "mutation_function": {
+      "name": "uniform",
+      "scale": 1.0
+    },
+    "crossover_function": {
+      "name": "uniform",
+      "p": 0.2
+    },
+    "stagnation_limit": 300,
+    "comparator": {
+      "name": "max_min"
+    },
+    "stop_condition": {
+      "name": "time",
+      "limit": "12:00:00"
+    },
+    "rank_test": {
+      "name": "mann_whitneyu",
+      "bound": 0.05
+    }
+  },
+  "predictive_function": {
+    "type": "ibs",
+    "chunk_size": 1000,
+    "selection": {
+      "name": "rank",
+      "value": 1000,
+      "min_N": 500,
+      "max_N": 1000,
+      "chunk_N": 100
+    },
+    "corrector": {
+      "name": "ruler",
+      "coef": 0.1,
+      "limiter": 0.1,
+      "min_tl": 0.001
+    }
+  },
+  "solvers": {
+    "type": "net",
+    "init_solver": {
+      "name": "rokk",
+      "tag": "init",
+      "tl_util": false,
+      "tl": 0,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": false
+    },
+    "main_solver": {
+      "name": "rokk",
+      "tag": "main",
+      "tl_util": true,
+      "tl": 10,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": true
+    }
+  },
+  "concurrency": {
+    "type": "apply_pool",
+    "thread_count": 36,
+    "task_queue": {
+      "name": "task"
+    }
+  },
+  "output": {
+    "type": "storage",
+    "base_path": "./output/_logs",
+    "log_name": "log",
+    "debug_name": "debug",
+    "src_dump": [
+      "./configuration/options.py",
+      "./algorithm/module/mutation.py",
+      "./algorithm/module/crossover.py",
+      "./predictive_function/module/selection.py",
+      "./predictive_function/module/corrector.py",
+      "./algorithm/module/comparator.py"
+    ]
+  }
+}

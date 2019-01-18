@@ -220,8 +220,10 @@ class ParallelEvolutionAlgorithm(MetaAlgorithm):
             if key not in keys:
                 keys.add(key)
                 if key not in self.rank_cache:
-                    for pr in range(0, mx, st):
-                        pr_P.append((p, pr + 1))
+                    pr_P.append((p, 0))
+
+                    for pr in range(st, mx, st):
+                        pr_P.append((p, mx + 1))
                     continue
 
                 cases, pv1, pv2 = self.rank_cache[key]
