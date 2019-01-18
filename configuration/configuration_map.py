@@ -10,6 +10,7 @@ configurations = {
     "base_test": "configuration/test/base.json",
     "tabu_test": "configuration/test/tabu.json",
     "true_test": "configuration/test/true.json",
+    "rank_test": "configuration/test/rank.json",
 }
 
 

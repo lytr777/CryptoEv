@@ -82,7 +82,6 @@ class AdaptiveFunction(Selection):
 
     def reset(self):
         self.last_N = self.min_N
-        return self.min_N
 
     def __str__(self):
         return "%d to %d" % (self.min_N, self.max_N)
@@ -97,10 +96,36 @@ class ConstSelection(Selection):
         return self.split_selection(self.value)
 
     def correct_by(self, data):
-        return self.value
+        return self.value, self.value
 
     def reset(self):
         pass
 
     def __str__(self):
         return str(self.value)
+
+
+class RankSelection(Selection):
+    def __init__(self, **kwargs):
+        Selection.__init__(self, **kwargs)
+        self.max_N = kwargs["max_N"]
+        self.chunk_N = kwargs["chunk_N"]
+
+        if self.chunk_N > self.max_N:
+            raise Exception("chunk_N must be less then max_N")
+        elif self.max_N % self.chunk_N != 0:
+            raise Exception("max_N % chunk_N != 0")
+
+        self.k = self.max_N / self.chunk_N
+
+    def get_N(self, case=None):
+        return self.chunk_N
+
+    def correct_by(self, data):
+        return self.chunk_N, self.chunk_N
+
+    def reset(self):
+        pass
+
+    def __str__(self):
+        return "%d by %d" % (self.max_N, self.chunk_N)

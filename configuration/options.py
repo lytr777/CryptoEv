@@ -1,5 +1,7 @@
 from algorithm.evolution import EvolutionAlgorithm
+from algorithm.module.rank_test import MannWhitneyu
 from algorithm.mpi_evolution import MPIEvolutionAlgorithm
+from algorithm.parallel_evolution import ParallelEvolutionAlgorithm
 from algorithm.tabu import TabuSearch
 
 from algorithm.module.strategies import MuCommaLambda, MuPlusLambda, Genetic
@@ -11,7 +13,6 @@ from algorithm.module.stop_condition import IterationStop, LocalsStop, PFValueSt
 from predictive_function.gad import GuessAndDetermine
 from predictive_function.ibs import InverseBackdoorSets
 
-from key_generators.key_generator import builder
 from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
 from key_generators.bivium import Bivium
@@ -27,7 +28,7 @@ from key_generators.asg_192_200 import ASG_192_200
 from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
 from predictive_function.module.corrector import MassCorrector, MaxCorrector, RulerCorrector
-from predictive_function.module.selection import AdaptiveFunction, ConstSelection
+from predictive_function.module.selection import AdaptiveFunction, ConstSelection, RankSelection
 
 from solver.solver_net import SolverNet
 
@@ -60,6 +61,7 @@ def get_algorithm(name, mpi):
     return {
         "evolution": EvolutionAlgorithm,
         "mpi_evolution": MPIEvolutionAlgorithm,
+        "mpi_parallel_evolution": ParallelEvolutionAlgorithm,
         "tabu": TabuSearch
     }[name]
 
@@ -93,6 +95,11 @@ stop_conditions = {
     "time": TimeStop
 }
 
+rank_test = {
+    "mann_whitneyu": MannWhitneyu
+}
+
+
 # predictive function
 predictive_functions = {
     "gad": GuessAndDetermine,
@@ -123,7 +130,8 @@ key_generators = {
 
 selection = {
     "const": ConstSelection,
-    "function": AdaptiveFunction
+    "function": AdaptiveFunction,
+    "rank": RankSelection
 }
 
 correctors = {
@@ -179,6 +187,7 @@ options = {
     "crossover_function": __get(crossover_functions),
     "comparator": __get(comparators),
     "stop_condition": __get(stop_conditions),
+    "rank_test": __get(rank_test),
 
     "key_generator": key_generators,
     "selection": __get(selection),
