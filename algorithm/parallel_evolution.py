@@ -8,7 +8,6 @@ from time import time as now
 from constants.runtime import runtime_constants as rc
 from algorithm import MetaAlgorithm, Condition
 from model.backdoor import Backdoor
-from predictive_function.module.selection import RankSelection
 
 
 class ParallelEvolutionAlgorithm(MetaAlgorithm):
@@ -212,31 +211,30 @@ class ParallelEvolutionAlgorithm(MetaAlgorithm):
         pr_P = []
         keys = set()
 
-        rtb = self.rank_test.bound
         mx = sel.max_N
         st = sel.chunk_N
+        best_key = str(best[0])
+        rtb = self.rank_test.bound
         for p in P:
             key = str(p)
             if key not in keys:
                 keys.add(key)
                 if key not in self.rank_cache:
-                    pr_P.append((p, 0))
-
                     for pr in range(st, mx, st):
-                        pr_P.append((p, mx + 1))
+                        pr_P.append((p, mx + 1.))
+
+                    pr_P.append((p, 0.))
                     continue
 
                 cases, pv1, pv2 = self.rank_cache[key]
-                if len(cases) == 0:
-                    pr_P.append((p, 0))
-                elif pv1 < rtb or pv2 < rtb:
-                    continue
+                if key != best_key:
+                    if pv1 < rtb or pv2 < rtb:
+                        continue
+                else:
+                    pv1, pv2 = 0., 0.
 
                 for pr in range(len(cases), mx, st):
                     pr_P.append((p, pr + pv2))
-
-        for pr in range(len(best[2]), mx, st):
-            pr_P.append((best[0], pr))
 
         if len(pr_P) < self.size:
             return []
