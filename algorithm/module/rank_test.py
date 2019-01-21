@@ -42,6 +42,8 @@ class RankCases:
 
 
 class RankTest:
+    name = "rank_test"
+
     def __init__(self, **kwargs):
         self.bound = kwargs["bound"]
 
@@ -50,6 +52,9 @@ class RankTest:
 
     def get_rc(self, s, tl, cases=()):
         return RankCases(s, tl, cases)
+
+    def __str__(self):
+        return self.name
 
 
 class MannWhitneyu(RankTest):
@@ -67,6 +72,9 @@ class MannWhitneyu(RankTest):
         xly = mannwhitneyu(ny, nx, alternative='less')
 
         return ylx.pvalue, xly.pvalue
+
+    def __str__(self):
+        return "mannwhitneyu: (%f)" % self.bound
 
 
 if __name__ == '__main__':
