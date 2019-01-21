@@ -21,6 +21,6 @@ def trace_solver_error(name, title, cnf, output, error):
 
 def __check_n(s):
     s = str(s)
-    if s[-1] == '\n':
+    if len(s) > 0 and s[-1] == '\n':
         return s
     return s + '\n'

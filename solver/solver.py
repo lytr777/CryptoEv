@@ -51,7 +51,7 @@ class Solver:
                 time = now() - st
                 if len(err) != 0 and self.__check_code(sp.returncode):
                     rc.debugger.write(1, 2, "%s didn't solve %s case:\n%s" % (thread_name, self.tag, err))
-                    raise Exception(err)
+                    trace_solver_error(thread_name, 'Unknown return code: %d' % sp.returncode, cnf, output, err)
 
                 try:
                     report = self.parse_out(output)
@@ -59,14 +59,16 @@ class Solver:
                         report.time = time
                 except KeyError as e:
                     rc.debugger.write(1, 2, "%s error while parsing %s case" % (thread_name, self.tag))
-                    trace_solver_error(thread_name, 'Key error while parsing output', cnf, output, e)
                     report = SolverReport("INDETERMINATE", time)
 
-                rc.debugger.write(3, 2, "%s solved %s case with status: %s" % (thread_name, self.tag, report.status))
+                    if len(output) > 0:
+                        title = "Key error while parsing output"
+                        trace_solver_error(thread_name, title, cnf, output, "%s\n\n%s" % (err, e))
 
+                rc.debugger.write(3, 2, "%s solved %s case with status: %s" % (thread_name, self.tag, report.status))
                 if report.check():
-                    trace_solver_error(thread_name, 'Error while parsing solution', cnf, output,
-                                       "%s in %d attempt" % (report.status, i))
+                    title = "Error while parsing solution"
+                    trace_solver_error(thread_name, title, cnf, output, "%s in %d attempt" % (report.status, i))
 
         if report.check():
             report = SolverReport("INDETERMINATE", g("tl"))
