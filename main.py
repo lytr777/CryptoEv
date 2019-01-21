@@ -25,7 +25,6 @@ path, configuration = configurator.load(args.cp)
 key_generator = configurator.get_key_generator(args.keygen)
 rc.configuration = configuration
 
-
 # output
 output = configuration["output"]
 output.create(

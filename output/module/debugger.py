@@ -35,12 +35,12 @@ class Debugger:
 
     def __prepare_str(self, level, *strs):
         s = " ".join(strs)
-        ss = ["(%s) %s%s\n" % (datetime.today(), self.__lp(level), line) for line in s.split('\n')]
+        ss = ["(%s) %s %s\n" % (datetime.today(), self.__lp(level), line) for line in s.split('\n')]
         s = "".join(ss)
         return s
 
     def __lp(self, level):
-        return "--" * level + " "
+        return "--" * level
 
 
 class DebuggerStub:

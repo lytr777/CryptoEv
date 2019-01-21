@@ -9,6 +9,7 @@ class KeyGenerator:
     tag = None
 
     short_statuses = {
+        None: None,
         "SATISFIABLE": "SAT",
         "UNSATISFIABLE": "UNSAT",
         "INDETERMINATE": "INDET"

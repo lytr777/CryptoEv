@@ -4,8 +4,10 @@ import subprocess
 import threading
 
 from time import time as now
+
 from solver_net import SolverSettings
 from constants.static import solver_paths
+from errors.tracer import trace_solver_error
 from model.solver_report import SolverReport
 from constants.runtime import runtime_constants as rc
 
@@ -55,13 +57,19 @@ class Solver:
                     report = self.parse_out(output)
                     if report.status == "INDETERMINATE":
                         report.time = time
-                except KeyError:
+                except KeyError as e:
                     rc.debugger.write(1, 2, "%s error while parsing %s case" % (thread_name, self.tag))
+                    trace_solver_error(thread_name, 'Key error while parsing output', cnf, output, e)
                     report = SolverReport("INDETERMINATE", time)
+
                 rc.debugger.write(3, 2, "%s solved %s case with status: %s" % (thread_name, self.tag, report.status))
 
+                if report.check():
+                    trace_solver_error(thread_name, 'Error while parsing solution', cnf, output,
+                                       "%s in %d attempt" % (report.status, i))
+
         if report.check():
-            raise Exception("All %d times main case hasn't been solved" % g("attempts"))
+            report = SolverReport("INDETERMINATE", g("tl"))
 
         return report
 
