@@ -5,9 +5,9 @@
       "name": "genetic",
       "mu": 1,
       "lambda": 1,
-      "m": 4,
+      "m": 6,
       "l": 2,
-      "c": 4
+      "c": 2
     },
     "mutation_function": {
       "name": "uniform",
@@ -37,7 +37,7 @@
       "name": "rank",
       "value": 1000,
       "min_N": 500,
-      "max_N": 1000,
+      "max_N": 500,
       "chunk_N": 100
     },
     "corrector": {
