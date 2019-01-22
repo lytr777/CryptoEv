@@ -10,7 +10,7 @@ from algorithm import MetaAlgorithm, Condition
 from model.backdoor import Backdoor
 
 
-class ParallelEvolutionAlgorithm(MetaAlgorithm):
+class MPIRankEvolutionAlgorithm(MetaAlgorithm):
     name = "evolution"
 
     def __init__(self, **kwargs):
@@ -94,23 +94,41 @@ class ParallelEvolutionAlgorithm(MetaAlgorithm):
                 time = now() - start_work_time
                 p_time = time / len(P)
 
+                best_key = str(best[0])
                 for p in P:
                     key = str(p)
                     rank_cases = self.rank_cache[key][0]
                     cases = rank_cases.cases
-                    r = predictive_f.calculate(p, (cases, p_time))
 
-                    value, pf_log = r[0], r[1]
-                    condition.increase("pf_calls")
-                    rc.value_hash[key] = value, len(cases)
+                    if key not in rc.value_hash:
+                        hashed = False
+                        r = predictive_f.calculate(p, (cases, p_time))
+                        value, pf_log = r[0], r[1]
+
+                        condition.increase("pf_calls")
+                        rc.value_hash[key] = value, len(cases)
+                    else:
+                        hashed = True
+                        value, n = rc.value_hash[key]
+                        if n < len(cases):
+                            r = predictive_f.calculate(p, (cases, p_time))
+                            value, pf_log = r[0], r[1]
+
+                            rc.value_hash[key] = value, len(cases)
+                        else:
+                            pf_log = ""
+
                     p_v = (p, value, rank_cases)
+                    P_v.append(p_v)
+                    self.print_pf_log(hashed, key, value, pf_log)
 
+                    if best_key == key:
+                        best = p_v
+
+                for p_v in P_v:
                     if self.comparator.compare(best, p_v) > 0:
                         best = p_v
                         condition.set("stagnation", -1)
-
-                    P_v.append(p_v)
-                    self.print_pf_log(False, key, value, pf_log)
 
                 condition.increase("stagnation")
                 if condition.get("stagnation") >= self.stagnation_limit:

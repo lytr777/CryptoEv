@@ -1,7 +1,7 @@
 from algorithm.evolution import EvolutionAlgorithm
 from algorithm.module.rank_test import MannWhitneyu
 from algorithm.mpi_evolution import MPIEvolutionAlgorithm
-from algorithm.parallel_evolution import ParallelEvolutionAlgorithm
+from algorithm.mpi_rank_evolution import MPIRankEvolutionAlgorithm
 from algorithm.tabu import TabuSearch
 
 from algorithm.module.strategies import MuCommaLambda, MuPlusLambda, Genetic
@@ -61,7 +61,7 @@ def get_algorithm(name, mpi):
     return {
         "evolution": EvolutionAlgorithm,
         "mpi_evolution": MPIEvolutionAlgorithm,
-        "mpi_parallel_evolution": ParallelEvolutionAlgorithm,
+        "mpi_rank_evolution": MPIRankEvolutionAlgorithm,
         "tabu": TabuSearch
     }[name]
 

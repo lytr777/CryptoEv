@@ -1,6 +1,6 @@
 {
   "algorithm": {
-    "type": "parallel_evolution",
+    "type": "rank_evolution",
     "strategy": {
       "name": "genetic",
       "mu": 1,

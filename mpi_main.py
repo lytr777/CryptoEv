@@ -88,7 +88,7 @@ if rank == 0:
     rc.logger.deferred_write("-- pf type: %s\n" % predictive_f.type)
     rc.logger.deferred_write("-- time limit: %s\n" % solvers.get_tl("main"))
     rc.logger.deferred_write("-- selection: %s\n" % predictive_f.selection)
-    rc.logger.write("------------------------------------------------------\n")
+    # rc.logger.write("------------------------------------------------------\n")
 
 locals_list = algorithm.start(backdoor)
 
