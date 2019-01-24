@@ -68,10 +68,16 @@ class MannWhitneyu(RankTest):
         else:
             raise TypeError("x or y has bad type")
 
-        ylx = mannwhitneyu(nx, ny, alternative='less')
-        xly = mannwhitneyu(ny, nx, alternative='less')
+        ylx = self.save_mw_call(nx, ny, 'less')
+        xly = self.save_mw_call(ny, nx, 'less')
 
-        return ylx.pvalue, xly.pvalue
+        return ylx, xly
+
+    def save_mw_call(self, x, y, alternative):
+        try:
+            return mannwhitneyu(x, y, alternative=alternative).pvalue
+        except Exception:
+            return 1.
 
     def __str__(self):
         return "mannwhitneyu: (%f)" % self.bound
@@ -81,22 +87,10 @@ if __name__ == '__main__':
     mw = MannWhitneyu(bound=0.05)
     best = RankCases(
         52, 5,
-        [("SAT", 1), ("SAT", 1), ("SAT", 1), ("SAT", 1.5), ("SAT", 1.5), ("SAT", 2), ("SAT", 2), ("SAT", 2)]
+        [("SAT", 3), ("SAT", 3), ("SAT", 3), ("SAT", 4), ("SAT", 4), ("INDET", 5), ("INDET", 5), ("INDET", 5)]
     )
     p = RankCases(
-        51, 5,
+        52, 5,
         [("SAT", 3), ("SAT", 3), ("SAT", 3), ("SAT", 4), ("SAT", 4), ("INDET", 5), ("INDET", 5), ("INDET", 5)]
     )
     print mw.test(best, p)
-
-    d = [[('SAT', 0.068289), ('SAT', 0.072364), ('SAT', 0.072588), ('SAT', 0.073619), ('SAT', 0.069799),
-          ('SAT', 0.073192), ('SAT', 0.072556), ('SAT', 0.074155), ('SAT', 0.075858), ('SAT', 0.073222)],
-         [1, ('SAT', 0.071147), ('SAT', 0.073736), ('SAT', 0.074416), ('SAT', 0.074456), ('SAT', 0.073514),
-          ('SAT', 0.074892), ('SAT', 0.072999), ('SAT', 0.072438), ('SAT', 0.071944), ('SAT', 0.073591)]]
-
-    c = [[('SAT', 0.069824), ('SAT', 0.071318), ('SAT', 0.071895), ('SAT', 0.071379), ('SAT', 0.070181),
-          ('SAT', 0.070978), ('SAT', 0.071567), ('SAT', 0.072602), ('SAT', 0.047508), ('SAT', 0.047815)],
-         [('SAT', 0.072317), ('SAT', 0.072877), ('SAT', 0.072117), ('SAT', 0.072711), ('SAT', 0.071857),
-          ('SAT', 0.073404), ('SAT', 0.072669), ('SAT', 0.073246), ('SAT', 0.047248), ('SAT', 0.045793)]]
-
-    print np.concatenate(c)
