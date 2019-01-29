@@ -44,7 +44,8 @@ class VariableSet:
 
         substitution = CnfSubstitution()
         for var in self.vars:
-            substitution.substitute(var, not solution[var - 1])
+            var = var if solution[var - 1] else -var
+            substitution.substitute(var)
 
         return substitution
 
@@ -52,7 +53,8 @@ class VariableSet:
         substitution = CnfSubstitution()
         values = random_state.randint(2, size=self.__len__())
         for i, var in enumerate(self.vars):
-            substitution.substitute(var, not values[i])
+            var = var if values[i] else -var
+            substitution.substitute(var)
 
         return substitution
 

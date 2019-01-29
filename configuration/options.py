@@ -15,6 +15,9 @@ from predictive_function.ibs import InverseBackdoorSets
 
 from key_generators.a5_1 import A5_1
 from key_generators.e0 import E0
+from key_generators.mickey import Mickey
+from key_generators.salsa20 import Salsa20
+from key_generators.rabbit_513_512 import Rabbit_513_512
 from key_generators.bivium import Bivium
 from key_generators.trivium_64 import Trivium_64
 from key_generators.trivium_96 import Trivium_96
@@ -99,7 +102,6 @@ rank_test = {
     "mann_whitneyu": MannWhitneyu
 }
 
-
 # predictive function
 predictive_functions = {
     "gad": GuessAndDetermine,
@@ -109,6 +111,9 @@ predictive_functions = {
 key_generators = {
     "a5_1": A5_1,
     "e0": E0,
+    "mickey": Mickey,
+    "salsa20": Salsa20,
+    "rabbit_513_512": Rabbit_513_512,
     # Trivium
     "bivium": Bivium,
     "trivium_64": Trivium_64,
@@ -126,7 +131,6 @@ key_generators = {
     "volfram": Volfram,
     "geffe": Geffe
 }
-
 
 selection = {
     "const": ConstSelection,

@@ -9,7 +9,7 @@ class A5_toy(StreamCipher):
     secret_key_len = 48
 
     name = "A5/1 48"
-    tag = "a5_1 48"
+    tag = "a5_1_48"
 
     def __init__(self, cnf):
         StreamCipher.__init__(self, cnf)
