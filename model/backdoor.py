@@ -6,6 +6,20 @@ from model.variable_set import VariableSet
 from algorithm.module.mutation import UniformMutation
 
 
+def build_intervals(variables):
+    intervals = []
+    interval = [variables[0], variables[0]]
+
+    for i in range(1, len(variables)):
+        if variables[i] - interval[1] == 1:
+            interval[1] = variables[i]
+        else:
+            intervals.append(interval)
+            interval = [variables[i], variables[i]]
+    intervals.append(interval)
+    return intervals
+
+
 class Backdoor(VariableSet):
     # overridden methods
     def __init__(self, variables):
@@ -14,11 +28,16 @@ class Backdoor(VariableSet):
         self.mask = [True] * self.length
 
     def __str__(self):
-        s = "["
-        for i in range(self.length):
-            if self.mask[i]:
-                s += "%s " % self.vars[i]
-        s = "%s](%d)" % (s[:-1], np.count_nonzero(self.mask))
+        intervals = build_intervals(self.__variables())
+
+        s = '['
+        for il in intervals:
+            if il[1] - il[0] > 2:
+                s += '%s..%s ' % (il[0], il[1])
+            else:
+                ss = ' '.join(str(x) for x in range(il[0], il[1] + 1))
+                s += '%s ' % ss
+        s = s[:-1] + '](%d)' % np.count_nonzero(self.mask)
         return s
 
     def __len__(self):
@@ -82,6 +101,14 @@ class Backdoor(VariableSet):
         return substitution
 
     # support methods
+    def __variables(self):
+        variables = []
+        for i in range(len(self.mask)):
+            if self.mask[i]:
+                variables.append(self.vars[i])
+
+        return variables
+
     def check(self, algorithm):
         ks_st = algorithm.key_stream_start
         ks_end = ks_st + algorithm.key_stream_len - 1
@@ -101,12 +128,7 @@ class Backdoor(VariableSet):
                 raise Exception("Backdoor intersect with public key: %s" % rng)
 
     def snapshot(self):
-        variables = []
-        for i in range(len(self.mask)):
-            if self.mask[i]:
-                variables.append(self.vars[i])
-
-        return FixedBackdoor(variables)
+        return FixedBackdoor(self.__variables())
 
     def pack(self):
         array = copy(self.vars)
@@ -191,10 +213,16 @@ class FixedBackdoor(VariableSet):
         VariableSet.__init__(self, variables)
 
     def __str__(self):
-        s = "["
-        for var in self.vars:
-            s += "%s " % var
-        s = s[:-1] + "](%d)" % self.__len__()
+        intervals = build_intervals(self.vars)
+
+        s = '['
+        for il in intervals:
+            if il[1] - il[0] > 2:
+                s += '%s..%s ' % (il[0], il[1])
+            else:
+                ss = ' '.join(str(x) for x in range(il[0], il[1] + 1))
+                s += '%s ' % ss
+        s = s[:-1] + '](%d)' % self.__len__()
         return s
 
     @staticmethod
@@ -204,21 +232,30 @@ class FixedBackdoor(VariableSet):
 
         return FixedBackdoor(variables)
 
+    def snapshot(self):
+        return self
+
 
 if __name__ == "__main__":
-    mutation_f = UniformMutation(scale=1.)
-    bd = Backdoor([1, 3, 4, 5, 6])
+    mutation = UniformMutation(scale=1.)
+    bd = Backdoor([1, 2, 3, 4, 5, 6])
     print bd
 
-    bd = bd.get_copy([1, 0, 0, 1, 1])
+    bds = bd.snapshot()
+    print bds
+
+    bd = bd.get_copy([1, 0, 0, 0, 1, 1])
     print bd
 
-    print bd.find(4)
-
-    bd.add(2)
+    bd = mutation.mutate(bd)
     print bd
 
-    print bd.find(4)
-
-    bd = Backdoor.unpack([1, 2, 3, 4, 5, 6, 0, 0, 1, 1, 0, 1])
-    print bd.pack()
+    # print bd.find(4)
+    #
+    # bd.add(2)
+    # print bd
+    #
+    # print bd.find(4)
+    #
+    # bd = Backdoor.unpack([1, 2, 3, 4, 5, 6, 0, 0, 1, 1, 0, 1])
+    # print bd.pack()

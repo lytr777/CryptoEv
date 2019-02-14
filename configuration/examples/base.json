@@ -2,7 +2,7 @@
   "algorithm": {
     "type": "evolution",
     "strategy": {
-      "name": "genetic",
+      "name": "plus",
       "mu": 1,
       "lambda": 1,
       "m": 4,
@@ -23,7 +23,7 @@
     },
     "stop_condition": {
       "name": "time",
-      "limit": "12:00:00"
+      "limit": "24:00:00"
     }
   },
   "predictive_function": {
@@ -57,7 +57,7 @@
       "name": "rokk",
       "tag": "main",
       "tl_util": true,
-      "tl": 10,
+      "tl": 30,
       "workers": 1,
       "attempts": 5,
       "simplify": true
