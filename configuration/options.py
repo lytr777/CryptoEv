@@ -2,6 +2,7 @@ from algorithm.evolution import EvolutionAlgorithm
 from algorithm.module.rank_test import MannWhitneyu
 from algorithm.mpi_evolution import MPIEvolutionAlgorithm
 from algorithm.mpi_rank_evolution import MPIRankEvolutionAlgorithm
+# from algorithm.rank_evolution_eml import MPIRankEvolutionEmlAlgorithm
 from algorithm.tabu import TabuSearch
 
 from algorithm.module.strategies import MuCommaLambda, MuPlusLambda, Genetic
@@ -22,6 +23,8 @@ from key_generators.bivium import Bivium
 from key_generators.trivium_64 import Trivium_64
 from key_generators.trivium_96 import Trivium_96
 from key_generators.trivium import Trivium
+from key_generators.grain_v0 import Grain_v0
+from key_generators.grain_v1 import Grain_v1
 from key_generators.present_5_2kp import Present_5_2KP
 from key_generators.present_6_1kp import Present_6_1KP
 from key_generators.present_6_2kp import Present_6_2KP
@@ -65,6 +68,7 @@ def get_algorithm(name, mpi):
         "evolution": EvolutionAlgorithm,
         "mpi_evolution": MPIEvolutionAlgorithm,
         "mpi_rank_evolution": MPIRankEvolutionAlgorithm,
+        # "mpi_rank_evolution_eml": MPIRankEvolutionEmlAlgorithm,
         "tabu": TabuSearch
     }[name]
 
@@ -119,6 +123,9 @@ key_generators = {
     "trivium_64": Trivium_64,
     "trivium_96": Trivium_96,
     "trivium": Trivium,
+    # Grain
+    "grain_v0": Grain_v0,
+    "grain_v1": Grain_v1,
     # Present
     "present_5_2kp": Present_5_2KP,
     "present_6_1kp": Present_6_1KP,

@@ -228,7 +228,14 @@ class FixedBackdoor(VariableSet):
     @staticmethod
     def from_str(s):
         s = s.split('(')[0]
-        variables = [int(var) for var in s[1:-1].split(' ')]
+        variables = []
+        for lit in s[1:-1].split(' '):
+            if '.' in lit:
+                var = lit.split('..')
+                variables.extend(range(int(var[0]), int(var[1]) + 1))
+            else:
+                variables.append(int(lit))
+        # variables = [int(var) for var in s[1:-1].split(' ')]
 
         return FixedBackdoor(variables)
 

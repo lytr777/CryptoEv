@@ -49,9 +49,9 @@ class Solver:
                 sp = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output, err = sp.communicate(cnf)
                 time = now() - st
-                if len(err) != 0 and self.__check_code(sp.returncode):
+                if len(err) != 0 and not err.startswith('timelimit'):
                     rc.debugger.write(1, 2, "%s didn't solve %s case:\n%s" % (thread_name, self.tag, err))
-                    trace_solver_error(thread_name, 'Unknown return code: %d' % sp.returncode, cnf, output, err)
+                    trace_solver_error(thread_name, "Subprocess error", '-', output, err)
 
                 try:
                     report = self.parse_out(output)
@@ -63,12 +63,12 @@ class Solver:
 
                     if len(output) > 0:
                         title = "Key error while parsing output"
-                        trace_solver_error(thread_name, title, cnf, output, "%s\n\n%s" % (err, e))
+                        trace_solver_error(thread_name, title, '-', output, "%s\n\n%s" % (err, e))
 
                 rc.debugger.write(3, 2, "%s solved %s case with status: %s" % (thread_name, self.tag, report.status))
                 if report.check():
                     title = "Error while parsing solution"
-                    trace_solver_error(thread_name, title, cnf, output, "%s in %d attempt" % (report.status, i))
+                    trace_solver_error(thread_name, title, '-', output, "%s in %d attempt" % (report.status, i))
 
         if report.check():
             report = SolverReport("INDETERMINATE", g("tl"))
@@ -84,8 +84,8 @@ class Solver:
     def __check_code(self, rc):
         if rc == 0 or rc == 10 or rc == 20:  # standard exit
             return False
-        if rc == 143:  # timelimit exit
-            return False
+        # if rc == 143:  # timelimit exit
+        #     return False
         return True
 
     def __str__(self):
