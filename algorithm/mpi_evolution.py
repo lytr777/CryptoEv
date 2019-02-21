@@ -36,7 +36,7 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             updated_logs = {}
 
             P = self.__restart(backdoor)
-            best = (backdoor, max_value, [])
+            rc.best = (backdoor, max_value, [])
             locals_list = []
 
             while not self.stop_condition.check(condition):
@@ -75,8 +75,8 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                         rc.value_hash[key] = value, len(cases)
                         p_v = (p, value)
 
-                        if self.comparator.compare(best, p_v) > 0:
-                            best = p_v
+                        if self.comparator.compare(rc.best, p_v) > 0:
+                            rc.best = p_v
                             condition.set("stagnation", -1)
 
                     P_v.append(p_v)
@@ -84,13 +84,13 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
                 condition.increase("stagnation")
                 if condition.get("stagnation") >= self.stagnation_limit:
-                    locals_list.append((best[0], best[1]))
+                    locals_list.append((rc.best[0], rc.best[1]))
                     condition.increase("local_count")
-                    self.print_local_info(best)
+                    self.print_local_info(rc.best)
                     P = self.__restart(backdoor)
 
                     predictive_f.selection.reset()
-                    best = (backdoor, max_value, [])
+                    rc.best = (backdoor, max_value, [])
                     condition.set("stagnation", 0)
                 else:
                     P_v.sort(cmp=self.comparator.compare)
@@ -100,10 +100,10 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
 
             self.comm.bcast([-1, True], root=0)
 
-            if best[1] != max_value:
-                locals_list.append((best[0].snapshot(), best[1]))
+            if rc.best[1] != max_value:
+                locals_list.append((rc.best[0].snapshot(), rc.best[1]))
                 condition.increase("local_count")
-                self.print_local_info(best)
+                self.print_local_info(rc.best)
 
             return locals_list
         else:

@@ -239,6 +239,10 @@ class FixedBackdoor(VariableSet):
 
         return FixedBackdoor(variables)
 
+    def to_str(self):
+        s = ' '.join(str(v) for v in self.vars)
+        return "[%s](%d)" % (s, len(self))
+
     def snapshot(self):
         return self
 

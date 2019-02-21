@@ -15,7 +15,7 @@ class Grain_v1(StreamCipher):
         StreamCipher.__init__(self, cnf)
 
     def __copy__(self):
-        copy_grain = Grain_V1(self.cnf)
+        copy_grain = Grain_v1(self.cnf)
         copy_grain.substitutions = self.substitutions
 
         return copy_grain

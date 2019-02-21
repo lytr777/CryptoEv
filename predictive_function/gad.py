@@ -27,7 +27,7 @@ class GuessAndDetermine(PredictiveFunction):
             main_tasks.append(main_task)
 
         rc.debugger.write(1, 0, "solving...")
-        solved, time = concurrency.solve(main_tasks, solvers.get_workers("main"))
+        solved, time = concurrency.solve(main_tasks, solvers.get_workers("main"), s=len(backdoor))
 
         rc.debugger.deferred_write(1, 0, "has been solved %d cases" % len(solved))
         if count != len(solved):
@@ -78,11 +78,12 @@ class GuessAndDetermine(PredictiveFunction):
         log += "spent time: %f\n" % time
 
         rc.debugger.write(1, 0, "calculating value...")
-        times_sum = 0
+        time_sum = 0.
         for _, time in cases:
-            times_sum += float(time)
+            time_sum += float(time)
 
-        value = (2 ** len(backdoor)) * times_sum / len(cases)
+        rc.debugger.write(1, 0, "avg time: %f (%f / %d)" % (time_sum / len(cases), time_sum, len(cases)))
+        value = (2 ** len(backdoor)) * time_sum / len(cases)
         rc.debugger.write(1, 0, "value: %.7g\n" % value)
 
         log += "%s\n" % time_stat

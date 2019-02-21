@@ -50,6 +50,8 @@ from concurrency.module.task_queue import TaskQueue
 from concurrency.workers import Workers
 from concurrency.map_pool import MapPool
 from concurrency.apply_pool import ApplyPool
+from concurrency.mpi_workers import MPIWorkers
+from concurrency.mpi_apply_pool import MPIApplyPool
 
 from output.storage import Storage
 
@@ -170,7 +172,9 @@ solvers = {
 concurrency = {
     "workers": Workers,
     "map_pool": MapPool,
-    "apply_pool": ApplyPool
+    "apply_pool": ApplyPool,
+    "mpi_workers": MPIWorkers,
+    "mpi_apply_pool": MPIApplyPool
 }
 
 queues = {
