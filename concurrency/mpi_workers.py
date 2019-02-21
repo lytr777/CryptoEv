@@ -38,7 +38,6 @@ class MPIWorkers:
 
     def __create_workers(self, count):
         count = min(count, self.thread_count - len(self.workers))
-        print "Create %d workers" % count
 
         for i in range(count):
             worker = Process(
@@ -54,7 +53,6 @@ class MPIWorkers:
 
     def __kill_workers(self, count):
         count = min(count, len(self.workers))
-        print "Kill %d workers" % count
 
         killed_workers = []
         for i in range(count):
@@ -130,7 +128,6 @@ class MPIWorkers:
                                            stdout=subprocess.PIPE)
                     ps_out = spc.stdout.read()
                     spc.wait()
-                    print ps_out.strip().split("\n")
                     for pid in ps_out.strip().split("\n"):
                         try:
                             os.kill(int(pid), signal.SIGTERM)
