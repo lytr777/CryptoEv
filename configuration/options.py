@@ -52,6 +52,7 @@ from concurrency.map_pool import MapPool
 from concurrency.apply_pool import ApplyPool
 from concurrency.mpi_workers import MPIWorkers
 from concurrency.mpi_apply_pool import MPIApplyPool
+from concurrency.limit_apply_pool import LimitApplyPool
 
 from output.storage import Storage
 
@@ -174,7 +175,8 @@ concurrency = {
     "map_pool": MapPool,
     "apply_pool": ApplyPool,
     "mpi_workers": MPIWorkers,
-    "mpi_apply_pool": MPIApplyPool
+    "mpi_apply_pool": MPIApplyPool,
+    "limit_apply_pool": LimitApplyPool
 }
 
 queues = {
