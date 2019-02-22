@@ -4,7 +4,8 @@ import signal
 import subprocess
 
 from time import sleep, time as now
-from multiprocessing import Pool
+from multiprocessing.pool import Pool
+from multiprocessing.process import Process
 
 from constants.runtime import runtime_constants as rc
 
@@ -13,10 +14,27 @@ def task_function(task):
     return task.solve()
 
 
+class MyProcess(Process):
+    def terminate(self):
+        spc = subprocess.Popen("pgrep -P %d" % self.pid, shell=True, stdout=subprocess.PIPE)
+        ps_out = spc.stdout.read()
+        spc.wait()
+        for pid in ps_out.strip().split("\n"):
+            try:
+                os.kill(int(pid), signal.SIGTERM)
+            except Exception:
+                pass
+        super(MyProcess, self).terminate()
+
+
+class MyPool(Pool):
+    Process = MyProcess
+
+
 class MPIApplyPool:
     def __init__(self, **kwargs):
         self.thread_count = kwargs["thread_count"]
-        self.pool = Pool(processes=self.thread_count)
+        self.pool = MyPool(processes=self.thread_count)
 
         from mpi4py import MPI
         self.comm = MPI.COMM_WORLD
@@ -38,8 +56,8 @@ class MPIApplyPool:
         if process_count != self.thread_count:
             raise Exception("Pool don't support resizing")
 
-        if self.pool is None:
-            self.pool = Pool(processes=self.thread_count)
+        # if self.pool is None:
+        #     self.pool = MyPool(processes=self.thread_count)
 
         if self.rank == 0:
             tl = float(rc.best[1]) / (2 ** kwargs['s'])
@@ -89,34 +107,34 @@ class MPIApplyPool:
             if avg_time > tl and len(res_list) > 0:
                 rc.debugger.write(2, 3, "Terminate pool (%.2f > %.2f)" % (avg_time, tl))
 
-                # self.pool._taskqueue.mutex.acquire()
-                # self.pool._taskqueue.queue.clear()
-                # self.pool._taskqueue.mutex.release()
-
-                self.pool.close()
-                for worker in self.pool._pool:
-                    if worker and worker._popen:
-                        ppid = worker._popen.pid
-                        spc = subprocess.Popen("pgrep -P %d" % ppid, shell=True,
-                                               stdout=subprocess.PIPE)
-                        ps_out = spc.stdout.read()
-                        spc.wait()
-                        for pid in ps_out.strip().split("\n"):
-                            try:
-                                os.kill(int(pid), signal.SIGTERM)
-                            except OSError:
-                                pass
-                            except ValueError:
-                                pass
+                # self.pool._worker_handler._state = 2
+                # self.pool._task_handler._state = 2
+                # self.pool._inqueue._rlock.acquire()
+                # while self.pool._task_handler.is_alive() and self.pool._inqueue._reader.poll():
+                #     self.pool._inqueue._reader.recv()
+                #     sleep(0)
+                #
+                # for worker in self.pool._pool:
+                #     try:
+                #         ppid = worker.pid
+                #         spc = subprocess.Popen("pgrep -P %d" % ppid, shell=True,
+                #                                stdout=subprocess.PIPE)
+                #         ps_out = spc.stdout.read()
+                #         spc.wait()
+                #         for pid in ps_out.strip().split("\n"):
+                #             os.kill(int(pid), signal.SIGTERM)
+                #     except Exception:
+                #         pass
 
                 self.pool.terminate()
-                self.pool.join()
-                self.pool = None
+                del self.pool
+                self.pool = MyPool(processes=self.thread_count)
 
                 res_list = []
-                left = max(0, len(tasks) - len(result) - p_time_count)
-                result.extend([('INDETERMINATE', avg_time + p_time)] * p_time_count)
-                result.extend([('INDETERMINATE', 0.)] * left)
+                # left = max(0, len(tasks) - len(result) - p_time_count)
+                left = len(tasks) - len(result)
+                # result.extend([('INDETERMINATE', avg_time + p_time)] * p_time_count)
+                result.extend([('INDETERMINATE', float("inf"))] * left)
 
             flag = len(res_list) == 0
             all_sync_flag = self.comm.allgather(flag)
