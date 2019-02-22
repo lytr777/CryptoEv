@@ -160,5 +160,8 @@ class MPIWorkers:
 
     @staticmethod
     def __clear_queue(queue):
-        while not queue.empty():
-            queue.get(False)
+        try:
+            while not queue.empty():
+                queue.get(False)
+        except Exception:
+            pass
