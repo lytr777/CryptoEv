@@ -52,7 +52,7 @@ if args.mpi_debug:
         rc.debugger = Debugger("%s_%d" % (df, rank), args.v)
 
 if rank == 0 and args.restore:
-    s_path = "./output/_logs/_mipro/%s/" % args.keygen + "%s/log"
+    s_path = "./output/_logs/%s/" % args.keygen + "%s/log"
     parser = LogParserV3()
 
     def update_cache(iterations):
