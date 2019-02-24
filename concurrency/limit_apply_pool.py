@@ -37,6 +37,11 @@ class LimitApplyPool:
         self.limit = kwargs["limit"]
         self.pool = MyPool(processes=self.thread_count)
 
+        from mpi4py import MPI
+        self.comm = MPI.COMM_WORLD
+        self.size = self.comm.Get_size()
+        self.rank = self.comm.Get_rank()
+
         signal.signal(signal.SIGINT, self.__signal_handler)
 
     def __signal_handler(self, s, f):
@@ -58,9 +63,11 @@ class LimitApplyPool:
             res = self.pool.apply_async(task_function, (task,))
             res_list.append(res)
 
-        log_time = now()
-        while len(res_list) > 0:
-            sleep(1)
+        sync_flag = False
+        work_time, sleep_time = 0, 1
+        sync_data = [(self.limit, False)] * self.size
+        while not sync_flag:
+            sleep(sleep_time)
 
             i = 0
             while i < len(res_list):
@@ -74,22 +81,59 @@ class LimitApplyPool:
                 else:
                     i += 1
 
-            time = now()
-            if log_time <= time:
+            if work_time % 20 == 0:
                 rc.debugger.write(2, 3, "Already solved %d tasks" % len(result))
-                log_time += self.limit / 20.
 
-            work_time = time - start_work_time
-            if work_time > self.limit and len(res_list) > 0:
-                rc.debugger.write(2, 3, "Terminate pool (%.2f > %.2f)" % (work_time, self.limit))
+            if len(res_list) > 0:
+                work_time += sleep_time
+                left_time = sum(d[0] for d in sync_data)
 
-                self.pool.terminate()
-                del self.pool
-                self.pool = MyPool(processes=self.thread_count)
+                if left_time <= 0:
+                    rc.debugger.write(2, 3, "Terminate pool (%.2f > %.2f)" % (work_time, self.limit))
 
-                res_list = []
-                left = len(tasks) - len(result)
-                result.extend([('INDETERMINATE', float("inf"))] * left)
+                    self.pool.terminate()
+                    del self.pool
+                    self.pool = MyPool(processes=self.thread_count)
+
+                    res_list = []
+                    left = len(tasks) - len(result)
+                    result.extend([('INDETERMINATE', float("inf"))] * left)
+
+            sync_data = self.comm.allgather([self.limit - work_time, len(res_list) == 0])
+            sync_flag = all(d[1] for d in sync_data)
+
+        # log_time = now()
+        # while len(res_list) > 0:
+        #     sleep(1)
+        #
+        #     i = 0
+        #     while i < len(res_list):
+        #         if res_list[i].ready():
+        #             res = res_list.pop(i)
+        #             if res.successful():
+        #                 result.append(res.get())
+        #             else:
+        #                 rc.debugger.write(0, 1, "Pool solving was completed unsuccessfully")
+        #                 result.append(res.get())
+        #         else:
+        #             i += 1
+        #
+        #     time = now()
+        #     if log_time <= time:
+        #         rc.debugger.write(2, 3, "Already solved %d tasks" % len(result))
+        #         log_time += self.limit / 20.
+        #
+        #     work_time = time - start_work_time
+        #     if work_time > self.limit and len(res_list) > 0:
+        #         rc.debugger.write(2, 3, "Terminate pool (%.2f > %.2f)" % (work_time, self.limit))
+        #
+        #         self.pool.terminate()
+        #         del self.pool
+        #         self.pool = MyPool(processes=self.thread_count)
+        #
+        #         res_list = []
+        #         left = len(tasks) - len(result)
+        #         result.extend([('INDETERMINATE', float("inf"))] * left)
 
         return result, now() - start_work_time
 

@@ -29,4 +29,4 @@ class Case:
         return statistic
 
     def __str__(self):
-        return "%s for %s" % (self.value, self.mask)
+        return "%s for %s" % (self.value, self.mask.to_str())

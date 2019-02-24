@@ -36,7 +36,10 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
             updated_logs = {}
 
             P = self.__restart(backdoor)
-            rc.best = (backdoor, max_value, [])
+            if str(backdoor) in rc.value_hash:
+                rc.best = (backdoor, rc.value_hash[str(backdoor)][0], [])
+            else:
+                rc.best = (backdoor, max_value, [])
             locals_list = []
 
             while not self.stop_condition.check(condition):

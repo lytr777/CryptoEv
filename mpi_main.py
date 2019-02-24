@@ -11,6 +11,7 @@ from output.module.debugger import Debugger
 from model.backdoor import SecretKey, Backdoor
 from constants.runtime import runtime_constants as rc
 from util.parse.cnf_parser import CnfParser
+from util.parse.log_parser_v3 import LogParserV3
 
 parser = argparse.ArgumentParser(description='CryptoEv')
 parser.add_argument('keygen', type=str, help='key generator')
@@ -20,6 +21,7 @@ parser.add_argument('-b', '--backdoor', metavar='path', type=str, help='load bac
 parser.add_argument('-d', '--description', metavar='str', default="", type=str, help='experiment description')
 
 parser.add_argument('-md', '--mpi_debug', metavar='0', type=bool, default=False, help='debug file for all nodes')
+parser.add_argument('-r', '--restore', metavar='0', type=bool, default=False, help='restore hash')
 
 args = parser.parse_args()
 path, configuration = configurator.load(args.cp, mpi=True)
@@ -48,6 +50,36 @@ if args.mpi_debug:
     df = comm.bcast(df, root=0)
     if rank != 0:
         rc.debugger = Debugger("%s_%d" % (df, rank), args.v)
+
+if rank == 0 and args.restore:
+    s_path = "./output/_logs/_mipro/%s/" % args.keygen + "%s/log"
+    parser = LogParserV3()
+
+    def update_cache(iterations):
+        for it in iterations:
+            for case in it:
+                key = str(case.mask)
+                if key not in rc.value_hash:
+                    if case.value != float('inf'):
+                        rc.value_hash[key] = case.value, len(case.times)
+                        # print case
+                elif rc.value_hash[key][0] > case.value:
+                    print "upd %f > %f" % (rc.value_hash[key][0], case.value)
+                    rc.value_hash[key] = case.value, len(case.times)
+
+    if args.keygen == 'grain_v1':
+        runs = ["2019.02.23_06:21:31-2019.02.23_18:22:23", "2019.02.24_02:14:40-2019.02.24_14:18:39"]
+    elif args.keygen == 'trivium':
+        runs = ["2019.02.23_20:29:42-2019.02.24_08:31:07", "2019.02.24_09:22:34-2019.02.24_21:24:00"]
+    elif args.keygen == 'mickey':
+        runs = ["2019.02.23_11:57:57-2019.02.24_00:01:40", "2019.02.24_04:12:22-2019.02.24_16:16:26"]
+    else:
+        runs = []
+    for run in runs:
+        _, its = parser.parse_for_path(s_path % run)
+        update_cache(its)
+
+    print "start with %d points in value cache" % len(rc.value_hash)
 
 # backdoor
 if args.backdoor is None:
