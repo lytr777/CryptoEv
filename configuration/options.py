@@ -35,6 +35,7 @@ from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
 from predictive_function.module.corrector import MassCorrector, MaxCorrector, RulerCorrector
 from predictive_function.module.selection import AdaptiveFunction, ConstSelection, RankSelection
+from solver.maplesat import MapleSATSolver
 
 from solver.solver_net import SolverNet
 
@@ -166,6 +167,7 @@ solvers = {
     "treengeling": TreengelingSolver,
     "cryptominisat": CryptoMinisatSolver,
     "rokk": RokkSolver,
+    "maplesat": MapleSATSolver,
     "painless": PainlessSolver
 }
 

@@ -31,6 +31,8 @@ solver_paths = {
     "plingeling": "./lingeling/plingeling",
     "rokk": "./rokk/binary/rokk",
     "cryptominisat": "./cryptominisat/build/cryptominisat5",
+    "maplesat": "./maplesat/maplesat",
+    "painless": "./painless/"
 }
 
 in_out_tools = {
