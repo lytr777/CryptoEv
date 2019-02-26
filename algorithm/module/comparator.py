@@ -18,7 +18,11 @@ class Comparator:
 class MaxMin(Comparator):
     # max s, min value
     def compare(self, p1, p2):
-        vs = int(sign(p1[1] - p2[1]))
+        try:
+            vs = int(sign(p1[1] - p2[1]))
+        except ValueError:
+            vs = 0
+
         if vs != 0:
             return vs
         else:

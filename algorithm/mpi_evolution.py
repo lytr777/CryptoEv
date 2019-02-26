@@ -92,8 +92,11 @@ class MPIEvolutionAlgorithm(MetaAlgorithm):
                     self.print_local_info(rc.best)
                     P = self.__restart(backdoor)
 
+                    if str(backdoor) in rc.value_hash:
+                        rc.best = (backdoor, rc.value_hash[str(backdoor)][0], [])
+                    else:
+                        rc.best = (backdoor, max_value, [])
                     predictive_f.selection.reset()
-                    rc.best = (backdoor, max_value, [])
                     condition.set("stagnation", 0)
                 else:
                     P_v.sort(cmp=self.comparator.compare)
