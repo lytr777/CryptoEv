@@ -8,6 +8,7 @@ from time import time as now
 from constants.runtime import runtime_constants as rc
 from algorithm import MetaAlgorithm, Condition
 from model.backdoor import Backdoor
+from output.module.rank_loger import RankLogger
 
 
 class MPIRankEvolutionAlgorithm(MetaAlgorithm):
@@ -21,6 +22,7 @@ class MPIRankEvolutionAlgorithm(MetaAlgorithm):
         self.stagnation_limit = kwargs["stagnation_limit"]
         self.rank_test = kwargs["rank_test"]
         self.rank_cache = {}
+        self.rank_logger = None
 
         from mpi4py import MPI
         self.comm = MPI.COMM_WORLD
@@ -45,6 +47,7 @@ class MPIRankEvolutionAlgorithm(MetaAlgorithm):
             condition = Condition()
             condition.set("stagnation", 1)
             self.rank_cache = {}
+            self.rank_logger = RankLogger(rc.logger.log_file)
 
             best, P = self.zero_it(backdoor)
             locals_list = []
@@ -52,6 +55,7 @@ class MPIRankEvolutionAlgorithm(MetaAlgorithm):
 
             while not self.stop_condition.check(condition):
                 self.print_iteration_header(condition.get("iteration"))
+                self.rank_logger.write_it(condition.get("iteration"))
                 tl = rc.configuration["solvers"].get_tl("main")
                 P_v = []
 
@@ -88,6 +92,7 @@ class MPIRankEvolutionAlgorithm(MetaAlgorithm):
                     for key in keys:
                         cases = self.rank_cache[key][0]
                         a, b = self.rank_test.test(best[2], cases)
+                        self.rank_logger.write(best, (key, 0, cases), (a, b))
                         self.rank_cache[key] = cases, a, b
 
                 iteration_end = False
@@ -180,7 +185,8 @@ class MPIRankEvolutionAlgorithm(MetaAlgorithm):
     def zero_it(self, backdoor):
         predictive_f = rc.configuration["predictive_function"]
 
-        self.print_iteration_header(0)
+        self.print_iteration_header(0)  # fix
+        self.rank_logger.write_it(0)
 
         tl = rc.configuration["solvers"].get_tl("main")
         key, s = str(backdoor), len(backdoor)
