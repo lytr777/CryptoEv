@@ -85,7 +85,7 @@ if rank == 0 and args.restore:
 if args.backdoor is None:
     backdoor = SecretKey(key_generator)
 else:
-    backdoor = Backdoor.load(args.backdoor)
+    backdoor = Backdoor.load(args.backdoor)[0]
     backdoor.check(key_generator)
 
 # solvers

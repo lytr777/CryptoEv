@@ -146,9 +146,14 @@ class Backdoor(VariableSet):
 
     @staticmethod
     def load(path):
-        with open(path, 'r') as f:
-            variables = [int(var) for var in f.readline().split(' ')]
-            return Backdoor(variables)
+        with open(path) as f:
+            lines = f.readlines()
+            backdoors = []
+            for line in lines:
+                variables = [int(var) for var in line[:-1].split(' ')]
+                backdoors.append(Backdoor(variables))
+
+            return backdoors
 
     # mask
     def __set_mask(self, mask):

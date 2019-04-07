@@ -31,12 +31,10 @@ output.create(
     conf_path=path,
 )
 
-rc.logger = Logger(output.get_log_path())
-rc.debugger = Debugger(output.get_debug_path(), args.v)
-
 # backdoor
-backdoor = Backdoor.load(args.backdoor)
-backdoor.check(key_generator)
+backdoors = Backdoor.load(args.backdoor)
+for backdoor in backdoors:
+    backdoor.check(key_generator)
 
 # solvers
 solvers = configuration["solvers"]
@@ -52,22 +50,27 @@ rc.case_generator = CaseGenerator(
     random_state=np.random.RandomState()
 )
 
-predictive_f = rc.configuration["predictive_function"]
-# print header
-rc.logger.deferred_write("-- key generator: %s\n" % args.keygen)
-rc.logger.deferred_write("-- %s\n" % solvers)
-rc.logger.deferred_write("-- pf type: %s\n" % predictive_f.type)
-rc.logger.deferred_write("-- time limit: %s\n" % solvers.get_tl("main"))
-rc.logger.deferred_write("-- selection: %s\n" % predictive_f.selection)
-rc.logger.deferred_write("-- backdoor: %s\n" % backdoor)
-rc.logger.write("------------------------------------------------------\n")
+for i in range(len(backdoors)):
+    rc.logger = Logger('%s_%d' % (output.get_log_path(), i))
+    rc.debugger = Debugger('%s_%d' % (output.get_debug_path(), i), args.v)
 
-c_out = predictive_f.compute(backdoor)
-r = predictive_f.calculate(backdoor, c_out)
-value, pf_log = r[0], r[1]
+    predictive_f = rc.configuration["predictive_function"]
+    # print header
+    rc.logger.deferred_write("-- key generator: %s\n" % args.keygen)
+    rc.logger.deferred_write("-- %s\n" % solvers)
+    rc.logger.deferred_write("-- pf type: %s\n" % predictive_f.type)
+    rc.logger.deferred_write("-- time limit: %s\n" % solvers.get_tl("main"))
+    rc.logger.deferred_write("-- selection: %s\n" % predictive_f.selection)
+    rc.logger.deferred_write("-- backdoor: %s\n" % backdoors[i])
+    rc.logger.write("------------------------------------------------------\n")
 
-rc.logger.write(pf_log)
-rc.logger.write("true value: %.7g\n" % value)
+    c_out = predictive_f.compute(backdoors[i])
+    r = predictive_f.calculate(backdoors[i], c_out)
+    value, pf_log = r[0], r[1]
+
+    rc.logger.write(pf_log)
+    rc.logger.write("true value: %.7g\n" % value)
+    i += 1
 
 configuration["concurrency"].terminate()
 configuration["output"].close()
