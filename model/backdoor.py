@@ -150,8 +150,10 @@ class Backdoor(VariableSet):
             lines = f.readlines()
             backdoors = []
             for line in lines:
-                variables = [int(var) for var in line[:-1].split(' ')]
-                backdoors.append(Backdoor(variables))
+                if len(line) > 0:
+                    line = line[:-1] if line[-1] == '\n' else line
+                    variables = [int(var) for var in line.split(' ')]
+                    backdoors.append(Backdoor(variables))
 
             return backdoors
 
