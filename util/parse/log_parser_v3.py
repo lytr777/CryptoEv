@@ -79,6 +79,15 @@ class LogParserV3(Parser):
             value = float(case_data[1].split(": ")[1])
 
             return Case(backdoor, [], value, 0)
+        elif st_line.startswith("mask"):
+            bs = st_line.split(": ")[1].split(" ")[0]
+            bss = '[' + bs.split('(')[0] + '](' + bs.split('(')[1]
+            backdoor = Backdoor.from_str(bss)
+
+            assert case_data[1].startswith("with")
+            value = float(case_data[1].split(": ")[1])
+
+            return Case(backdoor, [], value, 0)
         else:
             raise Exception("Unexpected line: %s" % st_line)
 

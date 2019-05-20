@@ -18,9 +18,14 @@ class ColorCasePlot(Plot):
         xs, ys, cs = [], [], []
         xss, yss = [], []
         color, i = 0, 0
+        c_set = set()
         for it in its:
             best = None
             for case in it:
+                key = str(case.mask)
+                if len(case.times) > 0:
+                    times_hash[key] = case.times
+
                 if best is None or self.comparator(best.mv(), case.mv()) > 0:
                     best = case
 
@@ -31,6 +36,7 @@ class ColorCasePlot(Plot):
                 times = times_hash[key]
 
             c = int((len(times) - self.min_N) / divider)
+            c_set.add(c)
             if color != c and len(xss) > 0:
                 xs.append(xss)
                 ys.append(yss)
@@ -42,6 +48,8 @@ class ColorCasePlot(Plot):
             xss.append(i)
             yss.append(best.value)
             color, i = c, i + 1
+
+        print c_set
 
         if len(xss) > 0:
             xs.append(xss)
