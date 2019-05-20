@@ -3,7 +3,7 @@ from algorithm.module.rank_test import MannWhitneyu
 from algorithm.mpi_evolution import MPIEvolutionAlgorithm
 from algorithm.mpi_rank_evolution import MPIRankEvolutionAlgorithm
 # from algorithm.rank_evolution_eml import MPIRankEvolutionEmlAlgorithm
-from algorithm.tabu import TabuSearch
+from algorithm.mpi_simulated_annealing import MPISimulatedAnnealing
 
 from algorithm.module.strategies import MuCommaLambda, MuPlusLambda, Genetic
 from algorithm.module.mutation import UniformMutation
@@ -73,7 +73,7 @@ def get_algorithm(name, mpi):
         "mpi_evolution": MPIEvolutionAlgorithm,
         "mpi_rank_evolution": MPIRankEvolutionAlgorithm,
         # "mpi_rank_evolution_eml": MPIRankEvolutionEmlAlgorithm,
-        "tabu": TabuSearch
+        "mpi_simulated_annealing": MPISimulatedAnnealing
     }[name]
 
 

@@ -14,9 +14,9 @@ class MetaAlgorithm:
     def get_info(self):
         return "-- algorithm: %s\n" % self.name
 
-    def print_iteration_header(self, it):
+    def print_iteration_header(self, it, s=""):
         rc.logger.write("------------------------------------------------------\n",
-                        "iteration step: %d\n" % it)
+                        "iteration step: %d%s\n" % (it, " (%s)" % s if len(s) > 0 else ""))
 
     def print_pf_log(self, hashed, key, value, pf_log):
         rc.logger.deferred_write("------------------------------------------------------\n")

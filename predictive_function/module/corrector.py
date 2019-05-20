@@ -142,7 +142,7 @@ class RulerCorrector(Corrector):
             return tl, 0
 
         det_times.sort()
-        k = int(0.1 * len(cases))
+        k = max(1, int(self.limiter * len(cases)))
         if len(det_times) <= k:
             best_tl = det_times[-1]
         else:

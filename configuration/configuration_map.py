@@ -3,6 +3,7 @@ configurations = {
     "rank": "configuration/examples/rank.json",
     "tabu": "configuration/examples/tabu.json",
     "trivium_64": "configuration/examples/trivium_64.json",
+    "sa": "configuration/examples/sa.json",
 
     "true": "configuration/examples/true.json",
     "verification": "configuration/examples/verification.json",
@@ -11,6 +12,7 @@ configurations = {
     "tabu_test": "configuration/test/tabu.json",
     "true_test": "configuration/test/true.json",
     "rank_test": "configuration/test/rank.json",
+    "sa_test": "configuration/test/sa.json",
 }
 
 
