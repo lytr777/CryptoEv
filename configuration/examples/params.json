@@ -1,0 +1,50 @@
+{
+  "predictive_function": {
+    "type": "ibs",
+    "chunk_size": 1000,
+    "selection": {
+      "name": "const",
+      "value": 1000
+    },
+    "corrector": {
+      "name": "ruler",
+      "coef": 0.1,
+      "min_tl": 0.001
+    }
+  },
+  "solvers": {
+    "type": "net",
+    "init_solver": {
+      "name": "rokk",
+      "tag": "init",
+      "tl_util": false,
+      "tl": 0,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": false
+    },
+    "main_solver": {
+      "name": "rokk",
+      "tag": "main",
+      "tl_util": true,
+      "tl": 10,
+      "workers": 1,
+      "attempts": 5,
+      "simplify": true
+    }
+  },
+  "concurrency": {
+    "type": "apply_pool",
+    "thread_count": 36,
+    "task_queue": {
+      "name": "task"
+    }
+  },
+  "output": {
+    "type": "storage",
+    "base_path": "./parameterizer/_logs",
+    "log_name": "log",
+    "debug_name": "debug",
+    "src_dump": []
+  }
+}

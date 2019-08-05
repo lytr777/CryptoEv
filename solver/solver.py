@@ -9,6 +9,7 @@ from solver_net import SolverSettings
 from constants.static import solver_paths
 from errors.tracer import trace_solver_error
 from model.solver_report import SolverReport
+from options.solver_options import SolverOptions
 from constants.runtime import runtime_constants as rc
 
 
@@ -25,11 +26,21 @@ class Solver:
         self.spaces = re.compile('[\t ]+')
 
         self.sett = SolverSettings(**kwargs)
+        self.options = SolverOptions(self.name)
 
     def check_installation(self):
         if not os.path.isdir(self.dir) or not os.path.exists(self.solver_path):
             args = (self.name, self.script)
             raise Exception("SAT-solver %s is not installed. Try to run %s script." % args)
+
+    def get_params(self):
+        return self.options
+
+    def set_params(self, options):
+        self.options = options
+
+    def reset_params(self):
+        self.options = SolverOptions(self.name)
 
     def solve(self, cnf):
         g = self.sett.get
@@ -39,6 +50,8 @@ class Solver:
             args.extend(["timelimit", "-t%d" % max(1, tl)])
             tl = 0
         l_args = self.get_arguments(args, g("workers"), tl, g("simplify"))
+        if self.tag != 'init':
+            l_args.extend(self.options.get())
         thread_name = threading.current_thread().name
 
         report = None

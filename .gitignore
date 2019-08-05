@@ -7,6 +7,7 @@ output/_true_logs
 output/_lie_logs
 output/_test_logs
 output/_logs_eml
+parameterizer/_logs
 
 # Solvers
 lingeling
