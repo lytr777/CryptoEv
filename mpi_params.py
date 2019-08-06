@@ -117,6 +117,7 @@ for i in range(len(backdoors)):
         options_str = comm.bcast(options_str, root=0)
         if rank != 0:
             solver.options.set(options_str)
+            rc.debugger.write(2, 1, "been received params: %s" % options_str)
 
 
 if rank == 0:
