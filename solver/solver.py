@@ -48,8 +48,9 @@ class Solver:
         args, tl = [], g("tl")
         if g("tl_util"):
             args.extend(["timelimit", "-t%d" % max(1, tl)])
-            tl = 0
+
         l_args = self.get_arguments(args, g("workers"), tl, g("simplify"))
+
         if self.tag != 'init':
             l_args.extend(self.options.get())
         thread_name = threading.current_thread().name

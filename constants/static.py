@@ -32,7 +32,8 @@ solver_paths = {
     "rokk": "./rokk/binary/rokk",
     "cryptominisat": "./cryptominisat/build/cryptominisat5",
     "maplesat": "./maplesat/maplesat",
-    "painless": "./painless/"
+    "painless": "./painless/",
+    "cadical": "./cadical/build/cadical"
 }
 
 in_out_tools = {

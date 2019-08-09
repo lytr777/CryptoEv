@@ -45,6 +45,7 @@ from solver.minisat import MinisatSolver
 from solver.painless import PainlessSolver
 from solver.plingeling import PlingelingSolver
 from solver.treengeling import TreengelingSolver
+from solver.cadical import CadicaLSolver
 from solver.rokk import RokkSolver
 
 from concurrency.module.task_queue import TaskQueue
@@ -168,7 +169,8 @@ solvers = {
     "cryptominisat": CryptoMinisatSolver,
     "rokk": RokkSolver,
     "maplesat": MapleSATSolver,
-    "painless": PainlessSolver
+    "painless": PainlessSolver,
+    "cadical": CadicaLSolver
 }
 
 # concurrency

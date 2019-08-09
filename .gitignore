@@ -15,6 +15,7 @@ minisat
 cryptominisat
 rokk
 painless
+cadical
 
 # Samples cnf
 cnf

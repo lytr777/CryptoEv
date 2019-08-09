@@ -1,31 +1,34 @@
+import platform
 import warnings
 
 from model.solver_report import SolverReport
 from solver import Solver
 
 
-class PlingelingSolver(Solver):
+class CadicaLSolver(Solver):
     statuses = {
         "SATISFIABLE": "SATISFIABLE",
         "UNSATISFIABLE": "UNSATISFIABLE",
         "UNKNOWN": "INDETERMINATE"
     }
 
-    min_time = 0.1
+    min_time = 0.001
 
     def __init__(self, **kwargs):
         info = {
-            "name": "plingeling",
-            "dir": "lingeling",
-            "script": "./untar_lingeling.sh"
+            "name": "cadical",
+            "dir": "cadical",
+            "script": "./untar_cadical.sh"
         }
         Solver.__init__(self, info, **kwargs)
 
     def get_arguments(self, l_args, workers, tl, simp):
-        l_args.extend([self.solver_path, "-t", str(workers)])
+        l_args.append(self.solver_path)
 
         if tl > 0:
-            warnings.warn("Time limit not support in plingeling", UserWarning)
+            l_args.extend(["-t", "%d" % tl])
+        if workers != 1:
+            warnings.warn("workers not support in cadical", UserWarning)
 
         return l_args
 
@@ -33,19 +36,21 @@ class PlingelingSolver(Solver):
         output = output.split('\n')
         solution = ""
         status = ""
+        time = self.min_time
         for i in range(len(output)):
-            if output[i].startswith("c s") or output[i].startswith("s"):
+            if output[i].startswith("c s ") or output[i].startswith("s"):
                 status = output[i].split(' ')
                 status = status[len(status) - 1]
             if output[i].startswith("v"):
                 solution_line = output[i].split(' ')
                 for i in range(1, len(solution_line)):
                     solution += solution_line[i] + " "
-
-        str_time = self.spaces.split(output[len(output) - 2])[1]
-        time = max(float(str_time), self.min_time)
+            if output[i].startswith("c total process time"):
+                str_time = self.spaces.split(output[i])[-2]
+                time = max(time, float(str_time))
 
         solution = solution[:-1]
+        print status, time
 
         report = SolverReport(self.statuses[status], time)
         if status == self.statuses["SATISFIABLE"]:
