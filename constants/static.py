@@ -22,6 +22,9 @@ cnfs = {
 
     "volfram": "./templates/Volfram.cnf",
     "geffe": "./templates/Geffe.cnf",
+
+    "bubble_vs_insert": "./templates/BubbleVsInsertSort/BubbleVsInsertSort_16_8.cnf",
+    "bubble_vs_selection": "./templates/BubbleVsSelectionSort/BubbleVsSelectionSort_8_8.cnf",
 }
 
 solver_paths = {

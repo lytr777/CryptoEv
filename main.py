@@ -41,7 +41,7 @@ if args.backdoor is None:
     backdoor = SecretKey(key_generator)
 else:
     backdoor = Backdoor.load(args.backdoor)[0]
-    backdoor.check(key_generator)
+    # backdoor.check(key_generator)
 
 # solvers
 solvers = configuration["solvers"]
@@ -75,5 +75,6 @@ conclusion.add_conclusion({
     "comparator": algorithm.comparator,
     "locals_list": locals_list
 })
+
 configuration["concurrency"].terminate()
 configuration["output"].close()

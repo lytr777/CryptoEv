@@ -33,9 +33,11 @@ from key_generators.asg_96_112 import ASG_96_112
 from key_generators.asg_192_200 import ASG_192_200
 from key_generators.geffe import Geffe
 from key_generators.volfram import Volfram
+from key_generators.bubble_vs_insert import BubbleVsInsert
+from key_generators.bubble_vs_selection import BubbleVsSelection
+
 from predictive_function.module.corrector import MassCorrector, MaxCorrector, RulerCorrector
 from predictive_function.module.selection import AdaptiveFunction, ConstSelection, RankSelection
-from solver.maplesat import MapleSATSolver
 
 from solver.solver_net import SolverNet
 
@@ -47,6 +49,7 @@ from solver.plingeling import PlingelingSolver
 from solver.treengeling import TreengelingSolver
 from solver.cadical import CadicaLSolver
 from solver.rokk import RokkSolver
+from solver.maplesat import MapleSATSolver
 
 from concurrency.module.task_queue import TaskQueue
 from concurrency.workers import Workers
@@ -55,6 +58,7 @@ from concurrency.apply_pool import ApplyPool
 from concurrency.mpi_workers import MPIWorkers
 from concurrency.mpi_apply_pool import MPIApplyPool
 from concurrency.limit_apply_pool import LimitApplyPool
+from concurrency.tl_apply_pool import TLApplyPool
 
 from output.storage import Storage
 
@@ -141,7 +145,10 @@ key_generators = {
     "asg_192_200": ASG_192_200,
     # Other
     "volfram": Volfram,
-    "geffe": Geffe
+    "geffe": Geffe,
+    # sorting
+    "bubble_vs_insert": BubbleVsInsert,
+    "bubble_vs_selection": BubbleVsSelection
 }
 
 selection = {
@@ -180,7 +187,8 @@ concurrency = {
     "apply_pool": ApplyPool,
     "mpi_workers": MPIWorkers,
     "mpi_apply_pool": MPIApplyPool,
-    "limit_apply_pool": LimitApplyPool
+    "limit_apply_pool": LimitApplyPool,
+    "tl_apply_pool": TLApplyPool
 }
 
 queues = {

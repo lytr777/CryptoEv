@@ -1,7 +1,4 @@
 class KeyGenerator:
-    key_stream_start = None
-    key_stream_len = None
-
     secret_key_start = None
     secret_key_len = None
 

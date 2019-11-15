@@ -26,7 +26,10 @@ class EvolutionAlgorithm(MetaAlgorithm):
         updated_logs = {}
 
         P = self.__restart(backdoor)
-        best = (backdoor, max_value, [])
+        if str(backdoor) in rc.value_hash:
+            rc.best = (backdoor, rc.value_hash[str(backdoor)][0], [])
+        else:
+            rc.best = (backdoor, max_value, [])
         locals_list = []
 
         while not self.stop_condition.check(condition):
@@ -54,32 +57,32 @@ class EvolutionAlgorithm(MetaAlgorithm):
                     rc.value_hash[key] = r[0], len(r[2])
 
                     p_v = (p, r[0], r[2])
-                    if self.comparator.compare(best, p_v) < 0 and len(best[2]) < len(p_v[2]):
-                        ad_key = str(best[0])
-                        ad_c_out = predictive_f.compute(best[0], best[2])
-                        ad_r = predictive_f.calculate(best[0], ad_c_out)
+                    if self.comparator.compare(rc.best, p_v) < 0 and len(rc.best[2]) < len(p_v[2]):
+                        ad_key = str(rc.best[0])
+                        ad_c_out = predictive_f.compute(rc.best[0], rc.best[2])
+                        ad_r = predictive_f.calculate(rc.best[0], ad_c_out)
                         updated_logs[ad_key] = ad_r[1]
 
-                        best = (best[0], ad_r[0], ad_r[2])
+                        rc.best = (rc.best[0], ad_r[0], ad_r[2])
                         rc.value_hash[ad_key] = ad_r[0], len(ad_r[2])
 
-                    if self.comparator.compare(best, p_v) > 0:
-                        best = p_v
+                    if self.comparator.compare(rc.best, p_v) > 0:
+                        rc.best = p_v
                         condition.set("stagnation", -1)
 
                 P_v.append(p_v)
                 self.print_pf_log(hashed, key, value, pf_log)
 
             condition.increase("stagnation")
-            condition.set("pf_value", best[1])
+            condition.set("pf_value", rc.best[1])
             if condition.get("stagnation") >= self.stagnation_limit:
-                locals_list.append((best[0], best[1]))
+                locals_list.append((rc.best[0], rc.best[1]))
                 condition.increase("local_count")
-                self.print_local_info(best)
+                self.print_local_info(rc.best)
                 P = self.__restart(backdoor)
 
                 predictive_f.selection.reset()
-                best = (backdoor, max_value, [])
+                rc.best = (backdoor, max_value, [])
                 condition.set("stagnation", 0)
             else:
                 P_v.sort(cmp=self.comparator.compare)
@@ -87,10 +90,10 @@ class EvolutionAlgorithm(MetaAlgorithm):
             condition.increase("iteration")
             condition.set("time", now() - start_time)
 
-        if best[1] != max_value:
-            locals_list.append((best[0], best[1]))
+        if rc.best[1] != max_value:
+            locals_list.append((rc.best[0], rc.best[1]))
             condition.increase("local_count")
-            self.print_local_info(best)
+            self.print_local_info(rc.best)
 
         return locals_list
 

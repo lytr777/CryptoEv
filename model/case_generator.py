@@ -8,7 +8,7 @@ class CaseGenerator:
         self.random_state = kwargs["random_state"]
 
         self.secret_key = SecretKey(self.algorithm)
-        self.key_stream = KeyStream(self.algorithm)
+        self.key_stream = KeyStream(self.algorithm) if hasattr(self.algorithm, 'key_stream_len') else None
         self.public_key = PublicKey(self.algorithm) if hasattr(self.algorithm, 'public_key_len') else None
 
     def get_init_substitutions(self):
@@ -23,12 +23,14 @@ class CaseGenerator:
 
     def get_substitutions(self, backdoor, solution, rnd=""):
         substitutions = {
-            "key_stream": self.__substitution(self.key_stream, 's', solution, rnd),
             "backdoor": self.__substitution(backdoor, 'b', solution, rnd)
         }
 
         if self.public_key is not None:
             substitutions["public_key"] = self.__substitution(self.public_key, 'p', solution, rnd)
+
+        if self.key_stream is not None:
+            substitutions["key_stream"] = self.__substitution(self.key_stream, 's', solution, rnd)
 
         return substitutions
 

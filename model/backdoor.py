@@ -28,6 +28,8 @@ class Backdoor(VariableSet):
         self.mask = [True] * self.length
 
     def __str__(self):
+        if len(self) == 0:
+            return '[]'
         intervals = build_intervals(self.__variables())
 
         s = '['
@@ -37,7 +39,7 @@ class Backdoor(VariableSet):
             else:
                 ss = ' '.join(str(x) for x in range(il[0], il[1] + 1))
                 s += '%s ' % ss
-        s = s[:-1] + '](%d)' % np.count_nonzero(self.mask)
+        s = s[:-1] + '](%d)' % len(self)
         return s
 
     def __len__(self):

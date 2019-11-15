@@ -18,3 +18,16 @@ class CnfParser(Parser):
                 cnf.add_clause(clause)
 
         return cnf
+
+
+if __name__ == '__main__':
+    from time import time as now
+
+    times, count = [], 10
+    for k in range(1, count):
+        t1 = now()
+        cnf = CnfParser().parse_for_path('./templates/Salsa20.cnf')
+        times.append(now() - t1)
+        if k % (count / 10) == 0: print '%d%%' % (k * 100 / count)
+
+    print(sum(times) / len(times))
