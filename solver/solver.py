@@ -62,6 +62,7 @@ class Solver:
                 st = now()
                 sp = subprocess.Popen(l_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output, err = sp.communicate(cnf)
+
                 time = now() - st
                 if len(err) != 0 and not err.startswith('timelimit'):
                     rc.debugger.write(1, 2, "%s didn't solve %s case:\n%s" % (thread_name, self.tag, err))
@@ -78,7 +79,8 @@ class Solver:
                     if len(output) > 0:
                         title = "Key error while parsing output"
                         trace_solver_error(thread_name, title, '-', output, "%s\n\n%s" % (err, e))
-
+                
+                report.time = time
                 rc.debugger.write(3, 2, "%s solved %s case with status: %s" % (thread_name, self.tag, report.status))
                 if report.check():
                     title = "Error while parsing solution"
