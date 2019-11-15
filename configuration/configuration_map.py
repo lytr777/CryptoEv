@@ -5,6 +5,7 @@ configurations = {
     "trivium_64": "configuration/examples/trivium_64.json",
     "sa": "configuration/examples/sa.json",
     "params": "configuration/examples/params.json",
+    "sorting": "configuration/examples/sorting.json",
 
     "true": "configuration/examples/true.json",
     "verification": "configuration/examples/verification.json",
